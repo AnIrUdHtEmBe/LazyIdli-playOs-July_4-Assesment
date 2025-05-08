@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, ToggleLeft, ToggleRight, X } from "lucide-react";
 import "./QuestionPaperSet.css"; // Import the CSS
+import { ToggleButtonGroup } from "@mui/material";
 
 function QuestionPaperSet() {
   const context = useContext(DataContext);
@@ -92,7 +93,8 @@ function QuestionPaperSet() {
             className="qp-toggle-options"
             onClick={() => setShowoptions(!showOptions)}
           >
-            {showOptions ? "Hide Options" : "Show Options"}
+
+            {showOptions ? <ToggleLeft></ToggleLeft> : <ToggleRight></ToggleRight>}
           </button>
 
           {finalQuestion.length !== 0 ? (

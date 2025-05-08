@@ -2,12 +2,14 @@ import React, { useContext, useState } from "react";
 import { Eye, ArrowRight, X } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import Header from "../assessmentComponents/Header";
-import './Assessment.css'; // ⬅️ Link to the custom CSS
+import "./Assessment.css"; // ⬅️ Link to the custom CSS
 
 const Assessment: React.FC = () => {
   const context = useContext(DataContext);
   const [selectedRow, setSelectedRow] = useState<Object | null>(null);
-  const [selectedAssessment, setSelectedAssessment] = useState<String | null>(null);
+  const [selectedAssessment, setSelectedAssessment] = useState<String | null>(
+    null
+  );
   const [showModal, setShowModal] = useState(false);
 
   if (!context) return <div>Loading...</div>;
@@ -47,9 +49,7 @@ const Assessment: React.FC = () => {
                 key={assessment.id}
                 onClick={() => setSelectedRow(assessment)}
                 className={
-                  selectedRow === assessment
-                    ? "selected-row"
-                    : "hover-row"
+                  selectedRow === assessment ? "selected-row" : "hover-row"
                 }
               >
                 <td>{assessment.id}</td>
@@ -78,18 +78,35 @@ const Assessment: React.FC = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <button className="close-button" onClick={() => setShowModal(false)}>
+            <button
+              className="close-button"
+              onClick={() => setShowModal(false)}
+            >
               <X size={24} />
             </button>
             <h1 className="modal-title">{selectedAssessment}</h1>
-            <h2 className="modal-subtitle">Questions</h2>
-            <div className="questions-container">
-              {mcqQuestions.map((ques, index) => (
-                <div key={ques.questionId} className="question">
-                  <p>{index + 1}. {ques.questionText}</p>
-                </div>
-              ))}
-            </div>
+            <table className="w-full table-auto border-collapse text-left">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="border-b-1 px-4 py-2 w-1/12 text-center">Sl.No</th>
+                  <th className="border-b-1 px-4 py-2 w-8/12">Questions</th>
+                  <th className="border-b-1 px-4 py-2 w-3/12 text-center">
+                    Mandatory
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {mcqQuestions.map((ques, index) => (
+                  <tr key={ques.questionId} className="border-b bg-white">
+                    <td className="border-b-1 px-4 py-2 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="border-b-1 px-4 py-2">{ques.questionText}</td>
+                    <td className="border-b-1 px-4 py-2 text-center">Yes</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

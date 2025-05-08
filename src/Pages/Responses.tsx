@@ -1,8 +1,9 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Header from "../questionPaperComponents/Header";
 import { ArrowRight, Dumbbell, CheckCircle } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./Responses.css"; 
+import { Comment } from "@mui/icons-material";
 
 function Responses() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
@@ -14,6 +15,15 @@ function Responses() {
   }
 
   const { mcqAnswers, setSelectComponent } = context;
+
+  const [commentModal, setCommentModal] = useState(false);
+  const [comment, setComment] = useState<string>("");
+  const handleCommentModal = () => {
+    setCommentModal(!commentModal);
+  };
+  const handleComment = () => {
+    setComment(comment);
+  };
 
   return (
     <div className="responses-root">
@@ -65,7 +75,7 @@ function Responses() {
             <div className="summary-panel">
               <div className="summary-header">
                 <div className="summary-title">Summary</div>
-                <div>Comment Logo</div>
+                <button onClick={handleCommentModal}><Comment></Comment></button>
               </div>
 
               <div>
@@ -85,7 +95,7 @@ function Responses() {
               <div className="plan-text">The recommended plan is ready</div>
               <div className="plan-options">
                 {["Prime Fitness", "Golden Health", "Young Changes", "Custom Plan"].map((plan, i) => (
-                  <div key={i} className="plan-box">{plan}</div>
+                  <button key={i} className="plan-box hover:cursor-pointer">{plan}</button>
                 ))}
               </div>
               <div className="proceed-button-wrapper">

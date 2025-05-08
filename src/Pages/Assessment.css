@@ -49,6 +49,9 @@
   border-collapse: collapse;
 }
 
+.assessment-table tr {
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
+}
 .assessment-table th,
 .assessment-table td {
   padding: 1rem;
@@ -111,9 +114,9 @@
 
 .close-button {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
+  top: 0;
+  right: 0;
+  background: white;
   border: none;
   color: #4b5563;
   cursor: pointer;
@@ -121,6 +124,13 @@
 
 .close-button:hover {
   color: black;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
 }
 
 .modal-title {

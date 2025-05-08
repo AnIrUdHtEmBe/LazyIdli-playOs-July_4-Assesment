@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { ChevronDown, CloudDownload, Filter, Trash2 } from "lucide-react";
+import {
+  CalendarRangeIcon,
+  ChevronDown,
+  CloudDownload,
+  Filter,
+  Trash2,
+} from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./CustomerTable.css";
 import { DownloadSharp } from "@mui/icons-material";
@@ -12,8 +18,27 @@ const CustomerTable: React.FC = () => {
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    new Date().getMonth()
+  );
+  const currentYear = new Date().getFullYear();
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const filteredCustomers = customers.filter((customer) => {
+    const MatchedSearch =
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.phone.includes(searchTerm) ||
       customer.membership
@@ -23,8 +48,15 @@ const CustomerTable: React.FC = () => {
       customer.plan
         .toLowerCase()
         .replace(/\s+/g, "")
-        .includes(searchTerm.toLowerCase().replace(/\s+/g, ""))
-  );
+        .includes(searchTerm.toLowerCase().replace(/\s+/g, ""));
+
+    const joinedDate = new Date(customer.joinedOn);
+    const isMonthMatch =
+      joinedDate.getMonth() === selectedMonth &&
+      joinedDate.getFullYear() === currentYear;
+
+    return MatchedSearch  && isMonthMatch;
+  });
 
   console.log(customers);
 
@@ -63,6 +95,47 @@ const CustomerTable: React.FC = () => {
     localStorage.setItem("user", JSON.stringify(name));
     setSelectComponent("assessment");
   };
+  const handleCsv = () => {
+    if (filteredCustomers.length === 0) return;
+
+    const headers = [
+      "ID",
+      "Name",
+      "Age",
+      "Joined On",
+      "Phone",
+      "Membership",
+      "Last Assessed",
+      "Plan",
+    ];
+
+    const rows = filteredCustomers.map((customer) => [
+      customer.id,
+      customer.name,
+      customer.age,
+      customer.joinedOn,
+      customer.phone,
+      customer.membership,
+      customer.lastAssessed,
+      customer.plan,
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        row.map((field) => `"${String(field).replace(/"/g, '""')}"`).join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "customers.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="customer-table">
@@ -76,6 +149,23 @@ const CustomerTable: React.FC = () => {
           className="search-input"
         />
         <div className="action-buttons">
+          <div className="month-selector">
+            <CalendarRangeIcon size={16} />
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+              className="dropdown"
+            >
+              {months.map((month, index) => (
+                <option key={index} value={index}>
+                  <span>
+                    {month} {currentYear}
+                  </span>
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button className="action-button">
             <Filter size={16} style={{ marginRight: "4px" }} />
             <span>Filter</span>
@@ -88,7 +178,7 @@ const CustomerTable: React.FC = () => {
             <Trash2 size={16} style={{ marginRight: "4px" }} />
             <span>Delete</span>
           </button>
-          <button className="csv-button">
+          <button className="csv-button" onClick={handleCsv}>
             <CloudDownload></CloudDownload>
             <span>Export to csv</span>
           </button>
@@ -124,7 +214,7 @@ const CustomerTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {paddedCustomers.map((customer, idx) => (
+            {filteredCustomers.map((customer, idx) => (
               <tr key={idx}>
                 <td>
                   {customer && (

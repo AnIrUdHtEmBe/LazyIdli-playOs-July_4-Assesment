@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = () => {
   const { selectComponent } = context;
 
   return (
-    <header className="bg-white shadow-sm z-10 w-full">
+    <header className="bg-white  w-full">
       {/* Top Row */}
       <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 px-4 sm:px-10 py-4">
         <FileText size={28} className="text-gray-800" />
