@@ -1,0 +1,37 @@
+.assignment-modal {
+  padding: 2.5rem;
+  background-color: white;
+  height: 500px;
+  width: 640px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 3.75rem; /* equivalent to space-y-15 */
+}
+
+.modal-title {
+  font-size: 2rem; /* Tailwind's text-2xl */
+  font-weight: 400;
+}
+
+.modal-description {
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.modal-button {
+  background-color: #1d4ed8; /* Tailwind's blue-700 */
+  padding: 0.5rem 2rem;
+  border-radius: 0.375rem;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.modal-button:hover {
+  background-color: #1e40af; /* darker blue on hover */
+}

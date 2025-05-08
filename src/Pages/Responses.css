@@ -1,0 +1,281 @@
+/* Root layout */
+.responses-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sticky-header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: white;
+}
+
+.main-container {
+  width: 100%;
+  padding: 12px;
+}
+
+.main-card {
+  background-color: #bfdbfe;
+  width: 100%;
+  padding: 12px;
+  border-radius: 1rem;
+  background: white;
+}
+
+/* Top Info */
+.top-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 2px solid #ccc;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.paper-title {
+  font-size: 1.875rem;
+  font-weight: 200;
+}
+
+.user-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.retake-button {
+  padding: 8px 24px;
+  border-radius: 6px;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+  cursor: pointer;
+  transition: 0.3s;
+  background: transparent;
+}
+
+/* Panels */
+.main-panels {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 150px);
+  gap: 1rem;
+}
+
+/* Question List (Left Panel) */
+.question-list {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid #d1d5db;
+  display: flex;
+  flex-direction: column;
+}
+
+.question-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.question-items {
+  overflow-y: auto;
+  max-height: 550px;
+}
+
+.question-items .question-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.question-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.icon-success {
+  color: #16a34a;
+}
+
+.question-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.question-answer {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: 2.5rem;
+  display: flex;
+  gap: 12px;
+}
+
+/* Summary Panel (Right Panel) */
+.summary-panel {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Assignments */
+.assignment {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.score-card {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  padding: 8px;
+  border-radius: 12px;
+}
+
+.assignment-0 .score-card {
+  background-color: #fee2e2;
+}
+.assignment-1 .score-card {
+  background-color: #fef3c7;
+}
+.assignment-2 .score-card {
+  background-color: #d1fae5;
+}
+
+.assignment-0 .score-icon {
+  color: #f87171;
+}
+.assignment-1 .score-icon {
+  color: #f59e0b;
+}
+.assignment-2 .score-icon {
+  color: #10b981;
+}
+
+.score-icon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Plans */
+.plan-text {
+  margin-top: 1rem;
+}
+
+.plan-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.plan-box {
+  border: 2px solid #000;
+  padding: 12px 20px;
+  text-align: center;
+}
+
+/* Proceed Button */
+.proceed-button-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+
+.proceed-button {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 8px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+  gap: 8px;
+  font-size: 1rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .main-panels {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .question-list,
+  .summary-panel {
+    flex: unset;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .question-items {
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .user-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .paper-title {
+    font-size: 1.5rem;
+  }
+
+  .retake-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .proceed-button-wrapper {
+    position: static;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .proceed-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

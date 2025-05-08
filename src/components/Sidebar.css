@@ -1,0 +1,177 @@
+/* Sidebar.css */
+
+/* === Base Sidebar Styles === */
+.sidebar {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 256px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 40;
+}
+
+.sidebar.collapsed {
+  width: 64px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.sidebar-header.centered {
+  justify-content: center;
+}
+
+.brand {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #4f46e5; /* indigo-600 */
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  color: #4f46e5;
+}
+
+.menu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  color: #4b5563;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: #eef2ff;
+  color: #6366f1;
+}
+
+.nav-item.active {
+  background-color: #6042f5;
+  color: white;
+}
+
+.nav-item.collapsed {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.label {
+  margin-left: 12px;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+.user-info {
+  border-top: 1px solid #e5e7eb;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.user-info.centered {
+  justify-content: center;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  background-color: #6366f1;
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-details {
+  margin-left: 12px;
+}
+
+.username {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.role {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Hide mobile toggle button by default */
+.mobile-sidebar-toggle {
+  display: none;
+}
+
+/* === Responsive: Mobile Sidebar === */
+@media (max-width: 768px) {
+  /* Sidebar off-canvas by default */
+  .sidebar {
+    position: fixed;
+    width: 220px;
+    left: -220px;
+    height: 100vh;
+    z-index: 70;
+  }
+
+  /* When open, slide in */
+  .sidebar.open {
+    left: 0;
+  }
+
+  /* On mobile, collapsed state still shows full width */
+  .sidebar.collapsed {
+    width: 220px;
+  }
+
+  /* Mobile toggle button */
+  .mobile-sidebar-toggle {
+    display: block;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 60;
+    background-color: white;
+    border: none;
+    border-radius: 9999px;
+    padding: 0.5rem;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  /* Hide desktop toggle button inside sidebar header if desired */
+  .sidebar .toggle-btn {
+    display: none;
+  }
+}
