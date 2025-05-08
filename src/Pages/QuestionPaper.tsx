@@ -4,12 +4,18 @@ import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
 import { CommentBank } from "@mui/icons-material";
 import { StickyNote } from "lucide-react";
+
+type Notes = {
+  questionIndex: number;
+  comment: string;
+};
+
 function QuestionPaper() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
   const userDetail = JSON.parse(localStorage.getItem("user"));
 
   console.log(userDetail);
-
+  const [notes , setNotes] = useState<Notes[]>([]);
   const context = useContext(DataContext);
 
   if (!context) {
@@ -21,8 +27,10 @@ function QuestionPaper() {
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [commentMOdal , setCommentModal] = useState(false);
+  const [commentModal , setCommentModal] = useState(false);
   const [comment , setComment] = useState<string>("");
+const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
+
 
   const handleOptionSelect = (questionIndex: number, optionIndex: number) => {
     setAnswers((prev) => ({
@@ -115,7 +123,16 @@ function QuestionPaper() {
                       </div>
                       <div className="font-normal">{question.questionText}</div>
                     </div>
-                    <button onClick={() => setCommentModal(!commentMOdal)}> <StickyNote/> </button>
+                    <button
+  onClick={() => {
+    setActiveQuestionId(question.questionId);
+    const existingNote = notes.find((n) => n.questionId === question.questionId);
+    setComment(existingNote ? existingNote.comment : "");
+    setCommentModal(true);
+  }}
+>
+  <StickyNote />
+</button>
                   </div>
 
                   <div className="space-y-3">
@@ -150,6 +167,56 @@ function QuestionPaper() {
           </div>
         </div>
       </div>
+      {commentModal && (
+  <div className="fixed inset-0 z-50 bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white rounded-xl p-6 w-[400px] space-y-4 shadow-xl">
+      <h2 className="text-xl font-semibold">Add Comment</h2>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        rows={4}
+        placeholder="Write your note..."
+        className="w-full p-2 border border-gray-300 rounded"
+      />
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setCommentModal(false)}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            if (activeQuestionId === null) return;
+
+            setNotes((prevNotes) => {
+              const existingIndex = prevNotes.findIndex(
+                (n) => n.questionId === activeQuestionId
+              );
+              const updatedNote = { questionId: activeQuestionId, comment };
+
+              if (existingIndex !== -1) {
+                const updated = [...prevNotes];
+                updated[existingIndex] = updatedNote;
+                return updated;
+              } else {
+                return [...prevNotes, updatedNote];
+              }
+            });
+
+            setCommentModal(false);
+            setComment("");
+            setActiveQuestionId(null);
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

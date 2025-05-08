@@ -4,6 +4,7 @@ import { ArrowRight, Dumbbell, CheckCircle } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./Responses.css"; 
 import { Comment } from "@mui/icons-material";
+import { StickyNote } from "lucide-react";
 
 function Responses() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
@@ -13,17 +14,31 @@ function Responses() {
   if (!context) {
     return <div>Loading...</div>;
   }
+  const [summaryNote, setSummaryNote] = useState<string>(() => {
+    return localStorage.getItem("summaryNote") || "";
+  });
+  const [commentModal, setCommentModal] = useState(false);
+  const [tempComment, setTempComment] = useState<string>(summaryNote);
+  
 
   const { mcqAnswers, setSelectComponent } = context;
 
-  const [commentModal, setCommentModal] = useState(false);
+
   const [comment, setComment] = useState<string>("");
   const handleCommentModal = () => {
-    setCommentModal(!commentModal);
+    setTempComment(summaryNote); // preload saved note into modal
+    setCommentModal(true);
   };
-  const handleComment = () => {
-    setComment(comment);
+  
+  const saveSummaryNote = () => {
+    setSummaryNote(tempComment);
+    localStorage.setItem("summaryNote", tempComment); // persist it
+    setCommentModal(false);
   };
+  
+  // const handleComment = () => {
+  //   setComment(comment);
+  // };
 
   return (
     <div className="responses-root">
@@ -75,7 +90,7 @@ function Responses() {
             <div className="summary-panel">
               <div className="summary-header">
                 <div className="summary-title">Summary</div>
-                <button onClick={handleCommentModal}><Comment></Comment></button>
+                <button onClick={handleCommentModal} > <StickyNote/></button>
               </div>
 
               <div>
@@ -109,6 +124,35 @@ function Responses() {
           </div>
         </div>
       </div>
+      {commentModal && (
+  <div className="fixed inset-0 z-50 bg-opacity-20 flex justify-center items-center">
+    <div className="bg-white rounded-xl p-6 w-[400px] space-y-4 shadow-xl">
+      <h2 className="text-lg font-semibold">Summary Notes</h2>
+      <textarea
+        value={tempComment}
+        onChange={(e) => setTempComment(e.target.value)}
+        rows={5}
+        className="w-full border border-gray-300 rounded p-2"
+        placeholder="Write your summary notes here..."
+      />
+      <div className="flex justify-end gap-2">
+        <button
+          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          onClick={() => setCommentModal(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          onClick={saveSummaryNote}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
