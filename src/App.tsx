@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContext } from "react";
 import Layout from "./components/Layout";
-// import { useState } from "react";
 import Dashboard from "./Pages/Dashboard";
 import { DataContext } from "./store/DataContext";
 import Assessment from "./Pages/Assessment";
