@@ -14,7 +14,7 @@ import { Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
-  const { sessions, setSessions } = useContext(DataContext)!;
+  const { sessions, setSessions , setSelectComponent } = useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
@@ -275,7 +275,7 @@ function SessionPage() {
                 <span>Add Week</span>
                 <Plus size={20} />
               </button>
-              <button>
+              <button onClick={() => setSelectComponent("AllPlans")}>
                 <span>Confirm</span>
                 <ChevronRight size={20} />
               </button>

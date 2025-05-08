@@ -13,6 +13,7 @@ import PlansPage from "./Pages/PlansPage";
 import AssignmetnCreationPageTwo from "./Pages/AssignmetnCreationPageTwo";
 import SessionsPage from "./Pages/SessionsPage";
 import AllSessionsPage from "./Pages/AllSessionsPage";
+import AllPlans from "./planPageComponent/AllPlans";
 
 function App() {
   const { selectComponent } = useContext(DataContext);
@@ -54,7 +55,10 @@ function App() {
             </>}
           />
           <Route path="/question-bank" element={<QuestionBankPage />} />
-          <Route path="/plans" element={<PlansPage />} />
+          <Route path="/plans" element={<>
+          {selectComponent === "/plans" && <PlansPage />}
+          {selectComponent === "AllPlans" && <AllPlans />}
+          </> } />
           {/* // <Route path="/planCreation" element={< />} /> */}
         </Routes>
       </Layout>
