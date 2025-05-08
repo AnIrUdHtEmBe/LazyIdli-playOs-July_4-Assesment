@@ -18,7 +18,7 @@ export default function Calendar() {
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md w-1/2 l max-w-[900px]">
+    <div className="p-4 bg-white rounded-lg shadow-md w-1/2">
       <input
         type="text"
         placeholder="Plan Name"

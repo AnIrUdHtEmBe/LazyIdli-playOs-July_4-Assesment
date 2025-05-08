@@ -6,7 +6,6 @@ import "./PlanCreation.css"; // Import the CSS file
 import {
   Mediation,
   NordicWalking,
-  RunningWithErrors,
 } from "@mui/icons-material";
 
 function PlanCreation() {
