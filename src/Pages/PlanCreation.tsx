@@ -27,6 +27,9 @@ function PlanCreation() {
       plan.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filterPlansAccordingTo = (category: string) => {
+    setSearchTerm(category);
+  };
   const isAllSelected =
     filteredPlans.length > 0 && selectedIds.length === filteredPlans.length;
 
@@ -102,13 +105,13 @@ function PlanCreation() {
 
             <div className="flex items-center space-x-5">
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <Dumbbell size={30}></Dumbbell>
+                <Dumbbell size={30} onClick={() => filterPlansAccordingTo("Fitness")} ></Dumbbell>
               </button>
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <Mediation style={{ fontSize: "30px" }} />
+                <Mediation style={{ fontSize: "30px" }} onClick={() => filterPlansAccordingTo("Wellness")}/>
               </button>
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <NordicWalking style={{ fontSize: "30px" }}></NordicWalking>
+                <NordicWalking style={{ fontSize: "30px" }} onClick={() => filterPlansAccordingTo("Sports")}></NordicWalking>
               </button>
             </div>
 

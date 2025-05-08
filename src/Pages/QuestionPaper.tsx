@@ -3,7 +3,7 @@ import { CheckCircle, Circle } from "lucide-react";
 import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
 import { CommentBank } from "@mui/icons-material";
-
+import { StickyNote } from "lucide-react";
 function QuestionPaper() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
   const userDetail = JSON.parse(localStorage.getItem("user"));
@@ -115,7 +115,7 @@ function QuestionPaper() {
                       </div>
                       <div className="font-normal">{question.questionText}</div>
                     </div>
-                    <button onClick={() => setCommentModal(!commentMOdal)}> <CommentBank></CommentBank> </button>
+                    <button onClick={() => setCommentModal(!commentMOdal)}> <StickyNote/> </button>
                   </div>
 
                   <div className="space-y-3">
