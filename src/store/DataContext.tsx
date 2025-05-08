@@ -60,6 +60,7 @@ type Activity = {
 };
 
 type Session = {
+  id?: number;
   sessionName : String,
   sessionType: string ,
   activities : Activity[],
@@ -576,8 +577,9 @@ const activityTablePlam: Activity[] = [
 
 const dummySessions: Session[] = [
   {
+    id: 1,
     sessionName: "Morning Energy Boost",
-    sessionType: "Cardio & Strength",
+    sessionType: "Fitness",
     activities: [
       {
         id: 1,
@@ -600,8 +602,9 @@ const dummySessions: Session[] = [
     ],
   },
   {
+    id: 2,
     sessionName: "Evening Flex & Flow",
-    sessionType: "Yoga & Meditation",
+    sessionType: "Wellness",
     activities: [
       {
         id: 3,
@@ -624,8 +627,9 @@ const dummySessions: Session[] = [
     ],
   },
   {
+    id: 3,
     sessionName: "Total Burn",
-    sessionType: "HIIT",
+    sessionType: "Sports",
     activities: [
       {
         id: 5,
@@ -646,8 +650,9 @@ const dummySessions: Session[] = [
     ],
   },
   {
+    id: 4,
     sessionName: "Power Core Session",
-    sessionType: "Strength & Pilates",
+    sessionType: "Fitness",
     activities: [
       {
         id: 6,
@@ -670,8 +675,9 @@ const dummySessions: Session[] = [
     ],
   },
   {
+    id: 5,
     sessionName: "Fun Fit Friday",
-    sessionType: "Dance & Aqua",
+    sessionType: "Fitness",
     activities: [
       {
         id: 8,

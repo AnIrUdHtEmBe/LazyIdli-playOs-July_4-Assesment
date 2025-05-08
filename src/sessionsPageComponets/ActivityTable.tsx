@@ -17,7 +17,6 @@ function ActivityTable() {
   }
 
   const {
-    selectComponent,
     setSelectComponent,
     activityTypePlan,
     setActivityTypePlan,

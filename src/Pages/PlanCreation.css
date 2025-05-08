@@ -149,6 +149,7 @@
   display: grid;
   grid-template-columns: 1fr repeat(7, 1fr);
   gap: 0.25rem;
+  height: 50vh;
 }
 
 .week-label {
@@ -163,6 +164,10 @@
 .calendar-cell {
   height: 4rem;
   border: 3px solid #e5e7eb;
+  padding: 50px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
   background-color: #ffffff;
 }
 .calendar-cell.clickable {
@@ -186,7 +191,7 @@
   color: #333;
 }
 .calendar-cell.empty {
-  background-color: black;
+  background-color: gray;
 }
 
 /* Confirm button */
