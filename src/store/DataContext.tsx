@@ -103,7 +103,7 @@ const initialCustomers: Customer[] = [
     id: 1,
     name: "Brandon",
     age: 18,
-    joinedOn: "2025-03-20", // YYYY-MM-DD
+    joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
     lastAssessed: "2025-03-27",
