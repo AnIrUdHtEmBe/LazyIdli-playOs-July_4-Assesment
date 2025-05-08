@@ -476,13 +476,13 @@ const initialMCQAnswers: MCQAnswer[] = [
 
 const initialPlans: Plan[] = [
   { id: 1, planName: "Prime Fitness", category: "Fitness" },
-  { id: 2, planName: "Golden Health", category: "Yoga" },
-  { id: 3, planName: "Young Champs", category: "Swimming" },
-  { id: 4, planName: "Golden Health", category: "Yoga" },
-  { id: 5, planName: "Young Champs", category: "Swimming" },
-  { id: 6, planName: "Golden Health", category: "Yoga" },
-  { id: 7, planName: "Young Champs", category: "Swimming" },
-  { id: 8, planName: "Custom Plan", category: "Gym" },
+  { id: 2, planName: "Golden Health", category: "Sports" },
+  { id: 3, planName: "Young Champs", category: "Wellness" },
+  { id: 4, planName: "Golden Health", category: "Sports" },
+  { id: 5, planName: "Young Champs", category: "Wellness" },
+  { id: 6, planName: "Golden Health", category: "Sports" },
+  { id: 7, planName: "Young Champs", category: "Wellness" },
+  { id: 8, planName: "Custom Plan", category: "Fitness" },
 ];
 
 const activityTablePlam: Activity[] = [

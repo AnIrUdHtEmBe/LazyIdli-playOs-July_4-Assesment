@@ -27,7 +27,7 @@ const Assessment: React.FC = () => {
 
       <div className="assessment-header">
         <h1 className="assessment-title">Assessments</h1>
-        <button className="start-button" onClick={handleStartAssignment}>
+        <button  className={`${selectedRow ? "start-button" : "disable-button"}`}   disabled={!selectedRow} onClick={handleStartAssignment}>
           <span>Start</span>
           <ArrowRight size={20} />
         </button>

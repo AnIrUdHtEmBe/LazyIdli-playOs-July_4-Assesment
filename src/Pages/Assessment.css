@@ -33,6 +33,19 @@
   transition: background-color 0.3s;
 }
 
+
+.disable-button {
+  background-color: #d1d5db; /* gray-300 */
+  color: #6b7280; /* gray-500 */
+  cursor: not-allowed;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+}
+
 .start-button:hover {
   background-color: #1e3a8a; /* blue-900 */
 }

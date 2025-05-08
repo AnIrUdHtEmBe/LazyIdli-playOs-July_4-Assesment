@@ -1,8 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Header from "../planCreationComponents/Header";
 import { DataContext } from "../store/DataContext";
-import { ChevronRight, Trash2 } from "lucide-react";
+import { ChevronRight, Dumbbell, Plus, Trash2 } from "lucide-react";
 import "./PlanCreation.css"; // Import the CSS file
+import {
+  Mediation,
+  NordicWalking,
+  RunningWithErrors,
+} from "@mui/icons-material";
 
 function PlanCreation() {
   const { plans, setPlans } = useContext(DataContext)!;
@@ -16,7 +21,6 @@ function PlanCreation() {
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
-  
 
   const filteredPlans = plans.filter(
     (plan) =>
@@ -37,11 +41,10 @@ function PlanCreation() {
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
 
-    if(isAllSelected){
+    if (isAllSelected) {
       setSelectedIds([]);
       setActivePlan(null);
-    }
-    else{
+    } else {
       setSelectedIds(filteredPlans.map((p) => p.id));
     }
   };
@@ -85,28 +88,42 @@ function PlanCreation() {
         <Header />
       </div>
 
-      <div className="main-container">
+      <div className="main-container ">
         {/* Left Panel: Plans Table */}
         <div className="left-panel">
           {/* Top Bar */}
           <div className="top-bar">
             <input
+            className="border-2 border-gray-300 px-2 py-1 rounded-md"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by plan name or category"
-              className="search-input"
             />
-            <div className="action-buttons">
-              <button
-                className="action-button delete-button"
-                onClick={handleDelete}
-                disabled={selectedIds.length === 0}
-              >
-                <Trash2 size={16} style={{ marginRight: "4px" }} />
-                <span>Delete</span>
+
+            <div className="flex items-center space-x-5">
+              <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
+                <Dumbbell size={30}></Dumbbell>
+              </button>
+              <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
+                <Mediation style={{ fontSize: "30px" }} />
+              </button>
+              <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
+                <NordicWalking style={{ fontSize: "30px" }}></NordicWalking>
               </button>
             </div>
+
+            <button
+              className="border-3 border-gray-300  px-2 py-1 rounded-md"
+              onClick={handleDelete}
+              disabled={selectedIds.length === 0}
+            >
+              <Trash2 size={30} className="text-red-500" />
+            </button>
+            <button className="flex items-center space-x-3 p-1.5 border-2 rounded-md text-blue-600">
+              <Plus size={30} />
+              <span>NEW</span>
+            </button>
           </div>
 
           {/* Table */}
@@ -180,10 +197,12 @@ function PlanCreation() {
                         <div
                           key={index}
                           className={`calendar-cell ${
-                            activePlan && ! (selectedIds.length > 1) ? "clickable" : ""
-                          } ${( selectedIds.length > 1) ? "disabled" : ""}`}
+                            activePlan && !(selectedIds.length > 1)
+                              ? "clickable"
+                              : ""
+                          } ${selectedIds.length > 1 ? "disabled" : ""}`}
                           onClick={() => {
-                            if (!( selectedIds.length > 1)) {
+                            if (!(selectedIds.length > 1)) {
                               handleGridCellClick(index);
                             }
                           }}
