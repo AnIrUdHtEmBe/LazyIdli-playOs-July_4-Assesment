@@ -17,6 +17,8 @@ const CustomerTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth()
@@ -36,6 +38,9 @@ const CustomerTable: React.FC = () => {
     "November",
     "December",
   ];
+
+
+
 
   const filteredCustomers = customers.filter((customer) => {
     const MatchedSearch =
@@ -60,6 +65,10 @@ const CustomerTable: React.FC = () => {
 
   console.log(customers);
 
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
+  
   useEffect(() => {
     if (checkboxRef.current) {
       checkboxRef.current.indeterminate =
@@ -214,7 +223,7 @@ const CustomerTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCustomers.map((customer, idx) => (
+            {paginatedCustomers.map((customer, idx) => (
               <tr key={idx}>
                 <td>
                   {customer && (
@@ -260,27 +269,46 @@ const CustomerTable: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="footer">
-        <div>
-          Rows per page:
-          <select>
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
-          </select>
-        </div>
-        <div>
-          1-{filteredCustomers.length} of {customers.length}
-        </div>
-        <div className="pagination-buttons">
-          <button>
-            <ChevronDown size={16} style={{ transform: "rotate(90deg)" }} />
-          </button>
-          <button>
-            <ChevronDown size={16} style={{ transform: "rotate(-90deg)" }} />
-          </button>
-        </div>
-      </div>
+<div className="footer">
+  <div>
+    Rows per page:
+    <select
+      value={rowsPerPage}
+      onChange={(e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1); // Reset to first page
+      }}
+    >
+      <option value={10}>10</option>
+      <option value={25}>25</option>
+      <option value={50}>50</option>
+    </select>
+  </div>
+
+  <div>
+    {startIndex + 1}-{Math.min(endIndex, filteredCustomers.length)} of {filteredCustomers.length}
+  </div>
+
+  <div className="pagination-buttons">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+      disabled={currentPage === 1}
+    >
+      <ChevronDown size={16} style={{ transform: "rotate(90deg)" }} />
+    </button>
+    <button
+      onClick={() =>
+        setCurrentPage((prev) =>
+          endIndex < filteredCustomers.length ? prev + 1 : prev
+        )
+      }
+      disabled={endIndex >= filteredCustomers.length}
+    >
+      <ChevronDown size={16} style={{ transform: "rotate(-90deg)" }} />
+    </button>
+  </div>
+</div>
+
     </div>
   );
 };
