@@ -11,6 +11,7 @@ function QuestionPaperSet() {
 
   const {
     setSelectComponent,
+    selectComponent,
     questionsForQuestionBank,
     setQuestionsForQuestionBank,
   } = context;
@@ -89,13 +90,20 @@ function QuestionPaperSet() {
 
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
-          <button
-            className="qp-toggle-options"
-            onClick={() => setShowoptions(!showOptions)}
-          >
-
-            {showOptions ? <ToggleLeft></ToggleLeft> : <ToggleRight></ToggleRight>}
-          </button>
+          <div className="flex justify-end items-center justify-center gap-1 text-xl">
+            <span>Q only</span>
+            <button
+              className="qp-toggle-options"
+              onClick={() => setShowoptions(!showOptions)}
+            >
+              {showOptions ? (
+                <ToggleLeft size={50}></ToggleLeft>
+              ) : (
+                <ToggleRight size={50}></ToggleRight>
+              )}
+            </button>
+            <span>Q & A</span>
+          </div>
 
           {finalQuestion.length !== 0 ? (
             finalQuestion.map((question, index) => (

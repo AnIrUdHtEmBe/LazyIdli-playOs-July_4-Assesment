@@ -24,10 +24,10 @@ const Header: React.FC<HeaderProps> = () => {
 
       {/* Navigation Tabs */}
       <div className="flex justify-center flex-wrap gap-6 sm:gap-10 font-semibold text-sm sm:text-base px-2 py-3">
-        <span className={`cursor-pointer ${selectComponent === "Q&A" ? "border-b-4 border-blue-600" : ""}`}>
+        <span className={`cursor-pointer ${selectComponent === "Q&A" ? "border-b-4 border-black" : ""}`}>
           Questions
         </span>
-        <span className={`cursor-pointer ${selectComponent === "responses" ? "border-b-4 border-blue-600" : ""}`}>
+        <span className={`cursor-pointer ${selectComponent === "responses" ? "border-b-4 border-black" : ""}`}>
           Responses
         </span>
         <span className="cursor-pointer">Settings</span>

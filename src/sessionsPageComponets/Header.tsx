@@ -18,11 +18,11 @@ function Header() {
       </div>
       <div className="header-tabs">
         <button
-          className={`header-tab ${selectComponent === "/sessions" ? "active-tab" : ""}`}
+          className={`text-xl font-medium ${ selectComponent === "/sessions" ? "border-b-3 " : ""}`}
         >
           Session Creator
         </button>
-        <button className="header-tab">All Sessions</button>
+        <button className={`text-xl font-medium ${ selectComponent === "AllSessions" ? "border-b-3 " : ""}`}>All Sessions</button>
       </div>
     </div>
   );

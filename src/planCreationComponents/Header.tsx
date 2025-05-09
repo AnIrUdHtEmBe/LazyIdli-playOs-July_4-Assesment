@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = () => {
       {/* Navigation Tabs */}
       <div className="flex flex-col sm:flex-row justify-center items-center sm:gap-10 gap-2 font-semibold px-4 py-2">
         <button
-          className={`pb-1 sm:pb-2 ${selectComponent === 'planCreation' ? "border-b-2 border-blue-500" : ""}`}
+          className={`pb-1 sm:pb-2 ${selectComponent === 'planCreation' ? "border-b-4 border-black" : ""}`}
         >
           View Plans
         </button>
