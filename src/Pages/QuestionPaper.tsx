@@ -162,7 +162,7 @@ function QuestionPaper() {
 
       {/* Comment Modal */}
       {commentModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/60 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 w-[90%] sm:w-[400px] space-y-4 shadow-xl">
             <h2 className="text-xl font-semibold">Add Comment</h2>
             <textarea
