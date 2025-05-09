@@ -6,9 +6,49 @@ import React, {
   SetStateAction,
 } from "react";
 
+
+ const humans = fetch('http://3.111.32.88:8080/humans' , {
+    method: 'GET',
+  }
+  ).then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  })
+  .then((data) => {
+    console.log("Data fetched successfully:", data);
+  })  
+
+  humans.map()
+
+  const newCustomer = createCustomer("c124", "Bob Smith", 28, "+0987654321", "Silver", "Standard Plan");
+  function createCustomer(
+    id: string,
+    name: string,
+    age: number,
+    phone: string,
+    membership: string,
+    plan: string
+  ): Customer {
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    return {
+      id,
+      name,
+      age,
+      joinedOn: today,
+      phone,
+      membership,
+      lastAssessed: today,
+      plan
+    };
+  }
+  
+  
+
 // ----------------- TYPES -----------------
 type Customer = {
-  id: number;
+  id: string;
   name: string;
   age: number;
   joinedOn: string;
