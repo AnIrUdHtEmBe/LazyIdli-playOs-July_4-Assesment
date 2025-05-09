@@ -79,6 +79,11 @@ function ActivityTable() {
     setShowModal(false);
   };
 
+  const handleDelete = (id: number) => {
+    const updatedPlan = activityTypePlan.filter((item) => item.id !== id);
+    setActivityTypePlan(updatedPlan);
+  };
+
   return (
     <div className="bg-white w-full h-screen flex flex-col px-4 md:px-8">
       {/* Header */}
@@ -166,9 +171,9 @@ function ActivityTable() {
                   <td className="px-4 py-4 border-b">{item.description}</td>
                   <td className="px-4 py-4 border-b">{item.timeInMinutes}</td>
                   <td className="px-4 py-4 border-b">
-                    <button>
+                    <button onClick={() => handleDelete(item.id)}>
                       <LucideCircleMinus className="text-red-400" size={24} />
-                    </button>
+                    </button> 
                   </td>
                 </tr>
               ))}

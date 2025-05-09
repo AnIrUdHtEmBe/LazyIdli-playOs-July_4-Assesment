@@ -176,7 +176,7 @@ function SessionPage() {
                 </tr>
               </thead>
               <tbody>
-                {sessions.map((plan, idx) => (
+                {filteredPlans.map((plan, idx) => (
                   <tr key={plan.id} className="table-row">
                     <td>
                       <input
