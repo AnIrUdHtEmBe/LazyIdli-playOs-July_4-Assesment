@@ -1,3 +1,4 @@
+import { Male } from "@mui/icons-material";
 import React, {
   createContext,
   useState,
@@ -7,50 +8,12 @@ import React, {
 } from "react";
 
 
- const humans = fetch('http://3.111.32.88:8080/humans' , {
-    method: 'GET',
-  }
-  ).then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  })
-  .then((data) => {
-    console.log("Data fetched successfully:", data);
-  })  
-
-  humans.map()
-
-  const newCustomer = createCustomer("c124", "Bob Smith", 28, "+0987654321", "Silver", "Standard Plan");
-  function createCustomer(
-    id: string,
-    name: string,
-    age: number,
-    phone: string,
-    membership: string,
-    plan: string
-  ): Customer {
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-    return {
-      id,
-      name,
-      age,
-      joinedOn: today,
-      phone,
-      membership,
-      lastAssessed: today,
-      plan
-    };
-  }
-  
-  
-
-// ----------------- TYPES -----------------
+// ----------------- TYPES ----------------- //
 type Customer = {
-  id: string;
+  id: number;
   name: string;
   age: number;
+  gender : string,
   joinedOn: string;
   phone: string;
   membership: string;
@@ -146,6 +109,7 @@ const initialCustomers: Customer[] = [
     id: 1,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -156,6 +120,7 @@ const initialCustomers: Customer[] = [
     id: 2,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -166,6 +131,7 @@ const initialCustomers: Customer[] = [
     id: 3,
     name: "Talen",
     age: 21,
+    gender: "male",
     joinedOn: "2025-03-22",
     phone: "5674321890",
     membership: "Union Classic",
@@ -176,6 +142,7 @@ const initialCustomers: Customer[] = [
     id: 4,
     name: "Martin",
     age: 22,
+    gender: "male",
     joinedOn: "2025-03-23",
     phone: "1209348567",
     membership: "Union Plus",
@@ -186,6 +153,7 @@ const initialCustomers: Customer[] = [
     id: 5,
     name: "Ahmad",
     age: 28,
+    gender: "male",
     joinedOn: "2025-03-24",
     phone: "5643782190",
     membership: "Union Prime",
@@ -196,6 +164,7 @@ const initialCustomers: Customer[] = [
     id: 6,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-03-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -206,6 +175,7 @@ const initialCustomers: Customer[] = [
     id: 7,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -216,6 +186,7 @@ const initialCustomers: Customer[] = [
     id: 8,
     name: "Talen",
     age: 21,
+    gender: "male",
     joinedOn: "2025-03-22",
     phone: "5674321890",
     membership: "Union Classic",
@@ -226,6 +197,7 @@ const initialCustomers: Customer[] = [
     id: 9,
     name: "Martin",
     age: 22,
+    gender: "male",
     joinedOn: "2025-03-23",
     phone: "1209348567",
     membership: "Union Plus",
@@ -236,6 +208,7 @@ const initialCustomers: Customer[] = [
     id: 10,
     name: "Ahmad",
     age: 28,
+    gender: "male",
     joinedOn: "2025-03-24",
     phone: "5643782190",
     membership: "Union Prime",
@@ -246,6 +219,7 @@ const initialCustomers: Customer[] = [
     id: 11,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -256,6 +230,7 @@ const initialCustomers: Customer[] = [
     id: 12,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -266,6 +241,7 @@ const initialCustomers: Customer[] = [
     id: 13,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -276,6 +252,7 @@ const initialCustomers: Customer[] = [
     id: 14,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -286,6 +263,7 @@ const initialCustomers: Customer[] = [
     id: 15,
     name: "Brandon",
     age: 18,
+    gender: "male",
     joinedOn: "2025-05-20", // YYYY-MM-DD
     phone: "1234567890",
     membership: "Union Select",
@@ -296,6 +274,7 @@ const initialCustomers: Customer[] = [
     id: 16,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -306,6 +285,7 @@ const initialCustomers: Customer[] = [
     id: 17,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -316,6 +296,8 @@ const initialCustomers: Customer[] = [
     id: 18,
     name: "Davis",
     age: 20,
+    gender: "male",
+
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -326,6 +308,7 @@ const initialCustomers: Customer[] = [
     id: 19,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -336,6 +319,7 @@ const initialCustomers: Customer[] = [
     id: 20,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -346,6 +330,7 @@ const initialCustomers: Customer[] = [
     id: 27,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -356,6 +341,7 @@ const initialCustomers: Customer[] = [
     id: 37,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -367,6 +353,7 @@ const initialCustomers: Customer[] = [
     id: 47,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",
@@ -377,6 +364,7 @@ const initialCustomers: Customer[] = [
     id: 57,
     name: "Davis",
     age: 20,
+    gender: "male",
     joinedOn: "2025-03-21",
     phone: "0987654321",
     membership: "Union Standard",

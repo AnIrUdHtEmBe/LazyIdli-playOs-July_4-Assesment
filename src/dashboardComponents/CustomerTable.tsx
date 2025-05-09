@@ -18,7 +18,7 @@ const CustomerTable: React.FC = () => {
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth()
@@ -39,9 +39,6 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     "December",
   ];
 
-
-
-
   const filteredCustomers = customers.filter((customer) => {
     const MatchedSearch =
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,7 +57,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
       joinedDate.getMonth() === selectedMonth &&
       joinedDate.getFullYear() === currentYear;
 
-    return MatchedSearch  && isMonthMatch;
+    return MatchedSearch && isMonthMatch;
   });
 
   console.log(customers);
@@ -104,36 +101,36 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     localStorage.setItem("user", JSON.stringify(name));
     setSelectComponent("assessment");
   };
-  
-  function filterCustomers(filterType : string ){
-    if(filterType === "Name"){
+
+  function filterCustomers(filterType: string) {
+    if (filterType === "Name") {
       const sortedCustomers = [...customers].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
       setCustomers(sortedCustomers);
     }
-    if(filterType === "Age"){
-      const sortedCustomers = [...customers].sort((a, b) =>
-        a.age - b.age
+    if (filterType === "Age") {
+      const sortedCustomers = [...customers].sort((a, b) => a.age - b.age);
+      setCustomers(sortedCustomers);
+    }
+    if (filterType === "Joined On") {
+      const sortedCustomers = [...customers].sort(
+        (a, b) =>
+          new Date(a.joinedOn).getTime() - new Date(b.joinedOn).getTime()
       );
       setCustomers(sortedCustomers);
     }
-    if(filterType === "Joined On"){
-      const sortedCustomers = [...customers].sort((a, b) =>
-        new Date(a.joinedOn).getTime() - new Date(b.joinedOn).getTime()
-      );
-      setCustomers(sortedCustomers);
-    }
-    if(filterType === "Last Asseessed On"){
-      const sortedCustomers = [...customers].sort((a, b) =>
-        new Date(a.lastAssessed).getTime() - new Date(b.lastAssessed).getTime()
+    if (filterType === "Last Asseessed On") {
+      const sortedCustomers = [...customers].sort(
+        (a, b) =>
+          new Date(a.lastAssessed).getTime() -
+          new Date(b.lastAssessed).getTime()
       );
       setCustomers(sortedCustomers);
     }
   }
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
 
   const handleCsv = () => {
     if (filteredCustomers.length === 0) return;
@@ -207,35 +204,37 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
           </div>
 
           <div className="relative">
-  <button
-    onClick={() => setIsFilterOpen((prev) => !prev)}
-    className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 text-sm"
-  >
-    <Filter size={16} />
-    Filter
-    <ChevronDown size={16} />
-  </button>
+            <button
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+              className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 text-sm"
+            >
+              <Filter size={16} />
+              Filter
+              <ChevronDown size={16} />
+            </button>
 
-  {isFilterOpen && (
-  <div className="absolute right-0 z-50 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg">
-    <ul className="py-1 text-sm text-gray-700">
-      {["Name", "Age", "Joined On", "Last Assessed On"].map((label) => (
-        <li key={label}>
-          <button
-            onClick={() => {
-              filterCustomers(label);
-              setIsFilterOpen(false);
-            }}
-            className="w-full text-left px-4 py-2 hover:bg-gray-100"
-          >
-            {label}
-          </button>
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-        </div>
+            {isFilterOpen && (
+              <div className="absolute right-0 z-50 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg">
+                <ul className="py-1 text-sm text-gray-700">
+                  {["Name", "Age", "Joined On", "Last Assessed On"].map(
+                    (label) => (
+                      <li key={label}>
+                        <button
+                          onClick={() => {
+                            filterCustomers(label);
+                            setIsFilterOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          {label}
+                        </button>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
 
           <button
             className="action-button delete-button"
@@ -269,6 +268,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
                 "Sl No",
                 "Name",
                 "Age",
+                "Gender",
                 "Joined On",
                 "Phone No",
                 "Membership",
@@ -295,6 +295,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
                 <td>{customer ? customer.id : ""}</td>
                 <td>{customer?.name || ""}</td>
                 <td>{customer?.age || ""}</td>
+                <td>{customer?.gender || "" }</td>
                 <td>{customer?.joinedOn || ""}</td>
                 <td>{customer?.phone || ""}</td>
                 <td>{customer?.membership || ""}</td>
@@ -327,46 +328,46 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
       </div>
 
       {/* Footer */}
-<div className="footer">
-  <div>
-    Rows per page:
-    <select
-      value={rowsPerPage}
-      onChange={(e) => {
-        setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1); // Reset to first page
-      }}
-    >
-      <option value={10}>10</option>
-      <option value={25}>25</option>
-      <option value={50}>50</option>
-    </select>
-  </div>
+      <div className="footer">
+        <div>
+          Rows per page:
+          <select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setCurrentPage(1); // Reset to first page
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
 
-  <div>
-    {startIndex + 1}-{Math.min(endIndex, filteredCustomers.length)} of {filteredCustomers.length}
-  </div>
+        <div>
+          {startIndex + 1}-{Math.min(endIndex, filteredCustomers.length)} of{" "}
+          {filteredCustomers.length}
+        </div>
 
-  <div className="pagination-buttons">
-    <button
-      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-      disabled={currentPage === 1}
-    >
-      <ChevronDown size={16} style={{ transform: "rotate(90deg)" }} />
-    </button>
-    <button
-      onClick={() =>
-        setCurrentPage((prev) =>
-          endIndex < filteredCustomers.length ? prev + 1 : prev
-        )
-      }
-      disabled={endIndex >= filteredCustomers.length}
-    >
-      <ChevronDown size={16} style={{ transform: "rotate(-90deg)" }} />
-    </button>
-  </div>
-</div>
-
+        <div className="pagination-buttons">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronDown size={16} style={{ transform: "rotate(90deg)" }} />
+          </button>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                endIndex < filteredCustomers.length ? prev + 1 : prev
+              )
+            }
+            disabled={endIndex >= filteredCustomers.length}
+          >
+            <ChevronDown size={16} style={{ transform: "rotate(-90deg)" }} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
