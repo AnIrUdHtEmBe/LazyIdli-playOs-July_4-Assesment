@@ -68,7 +68,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
-  
+
   useEffect(() => {
     if (checkboxRef.current) {
       checkboxRef.current.indeterminate =
@@ -104,6 +104,37 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
     localStorage.setItem("user", JSON.stringify(name));
     setSelectComponent("assessment");
   };
+  
+  function filterCustomers(filterType : string ){
+    if(filterType === "Name"){
+      const sortedCustomers = [...customers].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+      setCustomers(sortedCustomers);
+    }
+    if(filterType === "Age"){
+      const sortedCustomers = [...customers].sort((a, b) =>
+        a.age - b.age
+      );
+      setCustomers(sortedCustomers);
+    }
+    if(filterType === "Joined On"){
+      const sortedCustomers = [...customers].sort((a, b) =>
+        new Date(a.joinedOn).getTime() - new Date(b.joinedOn).getTime()
+      );
+      setCustomers(sortedCustomers);
+    }
+    if(filterType === "Last Asseessed On"){
+      const sortedCustomers = [...customers].sort((a, b) =>
+        new Date(a.lastAssessed).getTime() - new Date(b.lastAssessed).getTime()
+      );
+      setCustomers(sortedCustomers);
+    }
+  }
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+
   const handleCsv = () => {
     if (filteredCustomers.length === 0) return;
 
@@ -175,10 +206,37 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
             </select>
           </div>
 
-          <button className="action-button">
-            <Filter size={16} style={{ marginRight: "4px" }} />
-            <span>Filter</span>
+          <div className="relative">
+  <button
+    onClick={() => setIsFilterOpen((prev) => !prev)}
+    className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 text-sm"
+  >
+    <Filter size={16} />
+    Filter
+    <ChevronDown size={16} />
+  </button>
+
+  {isFilterOpen && (
+  <div className="absolute right-0 z-50 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg">
+    <ul className="py-1 text-sm text-gray-700">
+      {["Name", "Age", "Joined On", "Last Assessed On"].map((label) => (
+        <li key={label}>
+          <button
+            onClick={() => {
+              filterCustomers(label);
+              setIsFilterOpen(false);
+            }}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+          >
+            {label}
           </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+        </div>
+
           <button
             className="action-button delete-button"
             onClick={handleDelete}
