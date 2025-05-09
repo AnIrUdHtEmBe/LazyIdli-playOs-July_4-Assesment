@@ -25,40 +25,46 @@ function App() {
           <Route
             path="/"
             element={
-              <>
-                {(selectComponent === "dashboard" ||
-                  selectComponent === "/") && <Dashboard />}
-                {selectComponent === "assessment" && <Assessment />}
-                {selectComponent === "Q&A" && <QuestionPaper />}
-                {selectComponent === "responses" && <Responses />}
-                {selectComponent === "planCreation" && <PlanCreation />}
-              </>
+              selectComponent === "assessment" ? (
+                <Assessment />
+              ) : selectComponent === "Q&A" ? (
+                <QuestionPaper />
+              ) : selectComponent === "responses" ? (
+                <Responses />
+              ) : selectComponent === "planCreation" ? (
+                <PlanCreation />
+              ) : (
+                <Dashboard />
+              )
             }
           />
           <Route
             path="/assignment"
             element={
-              <>
-                {selectComponent === "/assignment" && <AssessmentPage />}
-                {selectComponent === "AssessmentCreationPage2" && (
-                  <AssignmetnCreationPageTwo></AssignmetnCreationPageTwo>
-                )}
-              </>
+              selectComponent === "AssessmentCreationPage2" ? (
+                <AssignmetnCreationPageTwo></AssignmetnCreationPageTwo>
+              ) : (
+                <AssessmentPage />
+              )
             }
           />
           <Route
             path="/sessions"
             element={
-            <>
-            {selectComponent === "/sessions" && <SessionsPage />}
-            {selectComponent === "AllSessions" && <AllSessionsPage />}
-            </>}
+              selectComponent === "AllSessions" ? (
+                <AllSessionsPage />
+              ) : (
+                <SessionsPage />
+              )
+            }
           />
           <Route path="/question-bank" element={<QuestionBankPage />} />
-          <Route path="/plans" element={<>
-          {selectComponent === "/plans" && <PlansPage />}
-          {selectComponent === "AllPlans" && <AllPlans />}
-          </> } />
+          <Route
+            path="/plans"
+            element={
+              selectComponent === "AllPlans" ? <AllPlans /> : <PlansPage />
+            }
+          />
           {/* // <Route path="/planCreation" element={< />} /> */}
         </Routes>
       </Layout>

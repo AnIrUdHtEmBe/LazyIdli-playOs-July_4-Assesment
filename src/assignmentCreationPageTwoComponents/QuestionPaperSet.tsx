@@ -19,6 +19,7 @@ function QuestionPaperSet() {
   const [selectedQuestion, setSelectedQuestions] = useState<Object[]>([]);
   const [finalQuestion, setFinalQuestion] = useState<Object[]>([]);
   const [showOptions, setShowoptions] = useState(true);
+  const [requiredQuestion, setRequiredQuestion] = useState(false);
 
   const handleSelect = (question: Object) => {
     if (selectedQuestion.includes(question)) {
@@ -44,6 +45,7 @@ function QuestionPaperSet() {
     );
     setFinalQuestion(deletedSet);
   };
+
 
   return (
     <div className="qp-container">
@@ -91,18 +93,18 @@ function QuestionPaperSet() {
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
           <div className="flex justify-end items-center justify-center gap-1 text-xl">
-            <span>Q only</span>
+            <span>Q & A</span>
             <button
               className="qp-toggle-options"
               onClick={() => setShowoptions(!showOptions)}
             >
               {showOptions ? (
-                <ToggleLeft size={50}></ToggleLeft>
+                <ToggleLeft className="text-blue-500" size={50}></ToggleLeft>
               ) : (
-                <ToggleRight size={50}></ToggleRight>
+                <ToggleRight  className="text-blue-500" size={50}></ToggleRight>
               )}
             </button>
-            <span>Q & A</span>
+            <span>Q Only</span>
           </div>
 
           {finalQuestion.length !== 0 ? (
@@ -114,9 +116,13 @@ function QuestionPaperSet() {
                 }`}
               >
                 <div className="qp-final-header">
-                  <span className="qp-question-label">
-                    Question {index + 1} /<span>{finalQuestion.length}</span>
-                  </span>
+                  <div className="flex items-center gap-5">
+                    <span className="qp-question-label text-xl">
+                      Question {index + 1} /<span className="text-black text-xl">{finalQuestion.length}</span>
+                    </span>
+                    <button className="flex" onClick={() => setRequiredQuestion(!requiredQuestion)}>{requiredQuestion ? <ToggleLeft></ToggleLeft> : <ToggleRight className="text-blue-500"></ToggleRight>} {requiredQuestion ?<span>Not-Required</span> : <span>Required</span> } </button>
+                  </div>
+
                   <button
                     onClick={() => handleDelete(question)}
                     className="qp-delete-btn"

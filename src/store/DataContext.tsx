@@ -99,6 +99,8 @@ type DataProviderProps = {
 
 // ----------------- DUMMY DATA -----------------
 
+
+
 const initialCustomers: Customer[] = [
   {
     id: 1,
