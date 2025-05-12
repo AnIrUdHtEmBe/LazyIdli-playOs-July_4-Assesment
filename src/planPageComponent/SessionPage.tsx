@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { DataContext } from "../store/DataContext";
 import {
+  ArrowRight,
   ChevronRight,
+  CirclePlus,
   Dumbbell,
   EyeClosed,
   EyeIcon,
@@ -10,7 +12,7 @@ import {
 } from "lucide-react";
 import "./SessionPage.css"; // Import the CSS file
 
-import { Mediation, NordicWalking } from "@mui/icons-material";
+import { ArrowRightAlt, Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
@@ -267,17 +269,17 @@ function SessionPage() {
             </div>
 
             {/* Confirm Button */}
-            <div className="confirm-button">
+            <div className="flex justify-between">
               <button
-                className="bg-white text-blue-700 border-2 border-blue-700 rounded-md px-4 py-2"
+                className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
                 onClick={() => setLen(len + 7)}
               >
-                <span>Add Week</span>
-                <Plus size={20} />
+                <CirclePlus size={25} />
+                <span className="text-blue">Add Week</span>
               </button>
-              <button onClick={() => setSelectComponent("AllPlans")}>
+              <button onClick={() => setSelectComponent("AllPlans")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10">
                 <span>Confirm</span>
-                <ChevronRight size={20} />
+                <ArrowRight size={20} />
               </button>
             </div>
           </div>

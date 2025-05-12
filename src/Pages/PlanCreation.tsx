@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Header from "../planCreationComponents/Header";
 import { DataContext } from "../store/DataContext";
-import { Calendar, ChevronRight, Dumbbell, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Calendar, ChevronRight, CirclePlus, Dumbbell, Plus, Trash2 } from "lucide-react";
 import "./PlanCreation.css"; // Import the CSS file
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
@@ -79,7 +79,7 @@ function PlanCreation() {
     setSelectedIds([]);
   };
 
-  let len = 30;
+  const [len , setLen] = useState(30);
 
   return (
     <div className="responses-root">
@@ -242,10 +242,17 @@ function PlanCreation() {
             </div>
 
             {/* Confirm Button */}
-            <div className="confirm-button">
-              <button>
+            <div className="flex justify-between">
+              <button
+                className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
+                onClick={() => setLen(len + 7)}
+              >
+                <CirclePlus size={25} />
+                <span className="text-blue">Add Week</span>
+              </button>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10">
                 <span>Confirm</span>
-                <ChevronRight size={20} />
+                <ArrowRight size={20} />
               </button>
             </div>
           </div>
