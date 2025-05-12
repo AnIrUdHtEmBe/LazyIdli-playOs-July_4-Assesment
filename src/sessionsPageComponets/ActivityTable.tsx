@@ -1,4 +1,4 @@
-import { Refresh } from "@mui/icons-material";
+import { Refresh, ReplayOutlined } from "@mui/icons-material";
 import {
   Cross,
   LucideCircleMinus,
@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
+// import 'ActivityTable.css';
 
 function ActivityTable() {
   const context = useContext(DataContext);
@@ -89,21 +90,21 @@ function ActivityTable() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-5 border-b-2 border-gray-300 mb-5">
         {/* Left Inputs */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-5 w-full md:w-1/2">
+        <div className="flex flex-col md:flex-row justify-between items-start space-x-50 w-full md:w-1/2">
           <div className="flex flex-col w-full">
             <label className="invisible text-sm mb-1">Session</label>
             <input
               type="text"
-              className="border-b-2 font-mono text-lg md:text-xl text-black focus:outline-none focus:ring-0 w-full"
+              className="border-b-2 font-mono text-lg md:text-xl text-black focus:outline-none focus:ring-0 "
               placeholder="Session name"
               value={planName}
               onChange={(e) => setPlanName(e.target.value)}
             />
           </div>
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col  w-full">
             <label className="font-light mb-1">Category</label>
             <select
-              className="font-normal border-b-2 text-lg md:text-xl focus:outline-none focus:ring-0 w-full"
+              className="font-normal border-b-2 text-lg md:text-xl focus:outline-none focus:ring-0 "
               onChange={(e) => setCategory(e.target.value)}
               value={category}
             >
@@ -115,17 +116,17 @@ function ActivityTable() {
         {/* Right Buttons */}
         <div className="flex flex-wrap gap-3">
           <button
-            className="flex items-center space-x-2 text-blue-700 border-2 p-2 rounded-xl text-sm md:text-base"
+            className="flex items-center space-x-2 text-blue-700 border-2 p-2 rounded-md  text-sm md:text-base btn1"
             onClick={() => setShowModal(true)}
           >
-            <Cross />
-            <span>Create Activity</span>
+            <Plus />
+            <span>Create New Activity</span>
           </button>
           <div className="p-2 border border-gray-300 rounded-xl">
-            <RefreshCcw size={24} />
+          <ReplayOutlined></ReplayOutlined>
           </div>
           <button
-            className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl text-sm md:text-base"
+            className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2"
             onClick={handlePlanSaving}
           >
             <Save size={20} />
@@ -144,7 +145,7 @@ function ActivityTable() {
                   (item, index) => (
                     <th
                       key={index}
-                      className="px-4 py-3 md:py-6 border-b font-medium"
+                      className="px-4 py-3 md:py-6 border-b border-b-gray-300 font-medium"
                     >
                       {item}
                     </th>
@@ -158,8 +159,8 @@ function ActivityTable() {
                   key={item.id}
                   className="text-sm text-gray-800 hover:bg-gray-50"
                 >
-                  <td className="px-4 py-4 border-b font-bold">{item.id}</td>
-                  <td className="px-4 py-4 border-b">
+                  <td className="px-4 py-7 border-b border-b-gray-300 font-bold">{item.id}</td>
+                  <td className="px-4 py-7 border-b border-b-gray-300">
                     <select className="border rounded px-2 py-2 w-full max-w-xs focus:outline-blue-500">
                       {item.activityType.map((activity) => (
                         <option key={activity.id} value={activity.activityType}>
@@ -168,9 +169,9 @@ function ActivityTable() {
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-4 border-b">{item.description}</td>
-                  <td className="px-4 py-4 border-b">{item.timeInMinutes}</td>
-                  <td className="px-4 py-4 border-b">
+                  <td className="px-4 py-7 border-b border-b-gray-300">{item.description}</td>
+                  <td className="px-4 py-7 border-b border-b-gray-300">{item.timeInMinutes}</td>
+                  <td className="px-4 py-7 border-b border-b-gray-300">
                     <button onClick={() => handleDelete(item.id)}>
                       <LucideCircleMinus className="text-red-400" size={24} />
                     </button> 
@@ -178,7 +179,7 @@ function ActivityTable() {
                 </tr>
               ))}
               <tr>
-                <td className="p-3" colSpan={5}>
+                <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button
                     className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
                     onClick={handleActivityAddition}

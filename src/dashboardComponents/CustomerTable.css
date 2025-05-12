@@ -18,20 +18,18 @@
 
 .customer-table .search-input {
   flex: 1 1 auto;
-  border: 1px solid #d1d5db;
+  border: none;
+  border-bottom: 2px solid black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow */
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
   font-size: 0.875rem;
   min-width: 200px;
-  max-width: 300px; /* Restrict max width */
+  max-width: 300px;
   width: 100%;
   outline: none;
+  border-radius: 0; /* Remove rounded corners */
 }
 
-
-.customer-table .search-input:focus {
-  box-shadow: 0 0 0 2px #6366f1;
-}
 
 .customer-table .action-buttons {
   display: flex;

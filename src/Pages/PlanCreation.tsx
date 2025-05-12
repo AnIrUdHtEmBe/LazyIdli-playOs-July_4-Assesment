@@ -156,7 +156,7 @@ function PlanCreation() {
                         onChange={() => toggleSelectOne(plan.id)}
                       />
                     </td>
-                    <td>{idx + 1}</td>
+                    <td >{idx + 1}</td>
                     <td>{plan.planName}</td>
                     <td>{plan.category}</td>
                   </tr>

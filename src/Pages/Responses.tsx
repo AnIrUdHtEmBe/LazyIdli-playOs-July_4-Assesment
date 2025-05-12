@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import Header from "../questionPaperComponents/Header";
-import { ArrowRight, Dumbbell, CheckCircle } from "lucide-react";
+import { ArrowRight, Dumbbell, CheckCircle, Calendar } from "lucide-react";
 import { DataContext } from "../store/DataContext";
-import "./Responses.css"; 
+import "./Responses.css";
 import { Comment } from "@mui/icons-material";
 import { StickyNote } from "lucide-react";
 
@@ -19,23 +19,21 @@ function Responses() {
   });
   const [commentModal, setCommentModal] = useState(false);
   const [tempComment, setTempComment] = useState<string>(summaryNote);
-  
 
   const { mcqAnswers, setSelectComponent } = context;
-
 
   const [comment, setComment] = useState<string>("");
   const handleCommentModal = () => {
     setTempComment(summaryNote); // preload saved note into modal
     setCommentModal(true);
   };
-  
+
   const saveSummaryNote = () => {
     setSummaryNote(tempComment);
     localStorage.setItem("summaryNote", tempComment); // persist it
     setCommentModal(false);
   };
-  
+
   // const handleComment = () => {
   //   setComment(comment);
   // };
@@ -69,90 +67,114 @@ function Responses() {
           {/* Main Panels */}
           <div className="main-panels">
             {/* Left Questions List */}
-              <div className="question-list">
-                <div className="question-title">All Questions</div>
-                <div className="question-items">
-                  {mcqAnswers.map((q, index) => (
-                    <div key={q.questionId} className="question-box">
-                      <div className="question-row">
-                        <CheckCircle className="icon-success" />
-                        <span className="question-text">
-                          {index + 1}. {q.questionText}
-                        </span>
-                      </div>
-                      <div className="question-answer">A) {q.correctOption}</div>
+            <div className="question-list">
+              <div className="question-title">All Questions</div>
+              <div className="question-items">
+                {mcqAnswers.map((q, index) => (
+                  <div key={q.questionId} className="question-box">
+                    <div className="question-row">
+                      <CheckCircle className="icon-success" />
+                      <span className="question-text">
+                        {index + 1}. {q.questionText}
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <div className="question-answer">A) {q.correctOption}</div>
+                  </div>
+                ))}
               </div>
+            </div>
 
             {/* Right Summary */}
             <div className="summary-panel">
               <div className="summary-header">
                 <div className="summary-title">Summary</div>
-                <button onClick={handleCommentModal} > <StickyNote/></button>
-              </div>
-
-              <div>
-                {["Assignment 1", "Assignment 2", "Assignment 3"].map((label, i) => (
-                  <div className={`assignment assignment-${i}`} key={i}>
-                    <div>{label}-</div>
-                    <div className={`score-card score-${i}`}>
-                      <div className={`score-icon icon-${i}`}>
-                        <Dumbbell /> Fitness
-                      </div>
-                      <div>80 / 100</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="plan-text">The recommended plan is ready</div>
-              <div className="plan-options">
-                {["Prime Fitness", "Golden Health", "Young Changes", "Custom Plan"].map((plan, i) => (
-                  <button key={i} className="plan-box hover:cursor-pointer">{plan}</button>
-                ))}
-              </div>
-              <div className="proceed-button-wrapper">
-                <button className="proceed-button" onClick={() => setSelectComponent("planCreation")}>
-                  Proceed <ArrowRight />
+                <button onClick={handleCommentModal}>
+                  {" "}
+                  <StickyNote />
                 </button>
               </div>
 
-              
+              <div>
+                {["Assignment 1", "Assignment 2", "Assignment 3"].map(
+                  (label, i) => (
+                    <div className={`assignment assignment-${i}`} key={i}>
+                      <div>{label}-</div>
+                      <div className={`score-card score-${i}`}>
+                        <div className={`score-icon icon-${i}`}>
+                          <Dumbbell /> Fitness
+                        </div>
+                        <div>80 / 100</div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div className="plan-text">
+                The Recommended plan for this Assessment id Ready
+              </div>
+              <div className="plan-options">
+                {[
+                  "Prime Fitness",
+                  "Golden Health",
+                  "Young Changes",
+                  "Custom Plan",
+                ].map((plan, i) => (
+                  <button key={i} className="plan-box hover:cursor-pointer">
+                    {plan}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-12 flex space-x-4">
+               
+               <Calendar></Calendar> <span className="font-normal ">Next assessment On : 10/12/13</span> 
+              </div>
+              <div className="proceed-button-wrapper">
+                <button
+                  className="proceed-button"
+                  onClick={() => setSelectComponent("planCreation")}
+                >
+                  Proceed <ArrowRight />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {commentModal && (
-  <div className="fixed inset-0 z-50  bg-black/60 bg-opacity-20 flex justify-center items-center">
-    <div className="bg-white rounded-xl p-6 w-[400px] space-y-4 shadow-xl">
-      <h2 className="text-lg font-semibold">Summary Notes</h2>
-      <textarea
-        value={tempComment}
-        onChange={(e) => setTempComment(e.target.value)}
-        rows={5}
-        className="w-full border border-gray-300 rounded p-2"
-        placeholder="Write your summary notes here..."
-      />
-      <div className="flex justify-end gap-2">
-        <button
-          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          onClick={() => setCommentModal(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={saveSummaryNote}
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
+
+
+
+
+      {commentModal && (
+        <div className="fixed inset-0 z-50  bg-black/60 bg-opacity-20 flex justify-center items-center">
+          <div className="bg-white rounded-xl p-6 w-[400px] space-y-4 shadow-xl">
+            <h2 className="text-lg font-semibold">Summary Notes</h2>
+            <textarea
+              value={tempComment}
+              onChange={(e) => setTempComment(e.target.value)}
+              rows={5}
+              className="w-full border border-gray-300 rounded p-2"
+              placeholder="Write your summary notes here..."
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                onClick={() => setCommentModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={saveSummaryNote}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

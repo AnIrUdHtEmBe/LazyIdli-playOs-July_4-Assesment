@@ -123,7 +123,7 @@
 /* Summary Panel (Right Panel) */
 .summary-panel {
   flex: 1;
-  padding: 16px;
+  padding: 50px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -133,11 +133,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 4%;
 }
 
 .summary-title {
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.50rem;
 }
 
 /* Assignments */
@@ -152,8 +153,8 @@
 .score-card {
   display: flex;
   justify-content: space-around;
-  gap: 2rem;
-  padding: 8px;
+  gap: 5rem;
+  padding: 15px;
   border-radius: 12px;
 }
 
@@ -185,7 +186,8 @@
 
 /* Plans */
 .plan-text {
-  margin-top: 1rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .plan-options {
