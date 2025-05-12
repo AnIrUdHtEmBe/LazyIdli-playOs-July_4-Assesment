@@ -131,6 +131,9 @@
 .table-container {
   overflow-x: auto;
 }
+.plans-table tbody tr {
+  height: 60px; /* Adjust the height value as needed */
+}
 .plans-table {
   width: 100%;
   border-collapse: collapse;
@@ -141,6 +144,8 @@
   padding: 0.5rem;
   border: 1px solid #e5e7eb;
   text-align: left;
+   vertical-align: middle;
+  padding: 10px 15px;
 }
 .table-row:hover {
   background-color: #f9fafb;

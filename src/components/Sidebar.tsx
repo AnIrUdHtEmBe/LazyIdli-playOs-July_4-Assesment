@@ -131,7 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
         }`}
       >
         <div className={`sidebar-header ${collapsed ? "centered" : ""}`}>
-          <div className="brand">{collapsed ? <img className="h-5 w-10" src="public/play-black.png" ></img>: <img className="h-15 w-40"  src="public/play-black.png"></img> }</div>
+          <div className="brand">{collapsed ? <img className="h-5 w-10" src="/play-black.png" ></img>: <img className="h-15 w-40"  src="public/play-black.png"></img> }</div>
           <button className="toggle-btn" onClick={toggleSidebar}>
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
