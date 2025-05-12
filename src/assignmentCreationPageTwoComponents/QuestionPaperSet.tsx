@@ -3,7 +3,12 @@ import { DataContext } from "../store/DataContext";
 import { ChevronRight, ToggleLeft, ToggleRight, X } from "lucide-react";
 import "./QuestionPaperSet.css"; // Import the CSS
 import { ToggleButtonGroup } from "@mui/material";
-
+type Question = {
+  questionId: number;
+  questionText: string;
+  options: { text: string }[];
+  required: boolean;
+};
 function QuestionPaperSet() {
   const context = useContext(DataContext);
 
@@ -16,10 +21,10 @@ function QuestionPaperSet() {
     setQuestionsForQuestionBank,
   } = context;
 
-  const [selectedQuestion, setSelectedQuestions] = useState<Object[]>([]);
-  const [finalQuestion, setFinalQuestion] = useState<Object[]>([]);
   const [showOptions, setShowoptions] = useState(true);
-  const [requiredQuestion, setRequiredQuestion] = useState(false);
+
+  const [selectedQuestion, setSelectedQuestions] = useState<Question[]>([]);
+  const [finalQuestion, setFinalQuestion] = useState<Question[]>([]);
 
   const handleSelect = (question: Object) => {
     if (selectedQuestion.includes(question)) {
@@ -32,11 +37,23 @@ function QuestionPaperSet() {
   };
 
   const handleMoveToQp = () => {
-    const newQuestions = selectedQuestion.filter(
-      (question) => !finalQuestion.some((q) => q === question)
-    );
+    const newQuestions = selectedQuestion
+      .filter(
+        (question) =>
+          !finalQuestion.some((q) => q.questionId === question.questionId)
+      )
+      .map((q) => ({ ...q, required: false })); // Add required field
+
     setFinalQuestion([...finalQuestion, ...newQuestions]);
     setSelectedQuestions([]);
+  };
+
+  const toggleRequired = (id: number) => {
+    setFinalQuestion((prev) =>
+      prev.map((q) =>
+        q.questionId === id ? { ...q, required: !q.required } : q
+      )
+    );
   };
 
   const handleDelete = (question) => {
@@ -45,7 +62,6 @@ function QuestionPaperSet() {
     );
     setFinalQuestion(deletedSet);
   };
-
 
   return (
     <div className="qp-container">
@@ -101,7 +117,7 @@ function QuestionPaperSet() {
               {showOptions ? (
                 <ToggleLeft className="text-blue-500" size={50}></ToggleLeft>
               ) : (
-                <ToggleRight  className="text-blue-500" size={50}></ToggleRight>
+                <ToggleRight className="text-blue-500" size={50}></ToggleRight>
               )}
             </button>
             <span>Q Only</span>
@@ -118,9 +134,27 @@ function QuestionPaperSet() {
                 <div className="qp-final-header">
                   <div className="flex items-center gap-5">
                     <span className="qp-question-label text-xl">
-                      Question {index + 1} /<span className="text-black text-xl">{finalQuestion.length}</span>
+                      Question {index + 1} /
+                      <span className="text-black text-xl">
+                        {finalQuestion.length}
+                      </span>
                     </span>
-                    <button className="flex" onClick={() => setRequiredQuestion(!requiredQuestion)}>{requiredQuestion ? <ToggleLeft></ToggleLeft> : <ToggleRight className="text-blue-500"></ToggleRight>} {requiredQuestion ?<span>Not-Required</span> : <span>Required</span> } </button>
+                    {/* <button className="flex" onClick={() => setRequiredQuestion(!requiredQuestion)}>{requiredQuestion ? <ToggleLeft></ToggleLeft> : <ToggleRight className="text-blue-500"></ToggleRight>} {requiredQuestion ?<span>Not-Required</span> : <span>Required</span> } </button> */}
+                    <button
+                      className="flex"
+                      onClick={() => toggleRequired(question.questionId)}
+                    >
+                      {question.required ? (
+                        <ToggleLeft />
+                      ) : (
+                        <ToggleRight className="text-blue-500" />
+                      )}
+                      {question.required ? (
+                        <span>Required</span>
+                      ) : (
+                        <span>Not-Required</span>
+                      )}
+                    </button>
                   </div>
 
                   <button
