@@ -65,7 +65,7 @@ function Responses() {
           </div>
 
           {/* Main Panels */}
-          <div className="main-panels">
+          <div className="main-panels relative">
             {/* Left Questions List */}
             <div className="question-list">
               <div className="question-title">All Questions</div>
@@ -90,7 +90,7 @@ function Responses() {
                 <div className="summary-title">Summary</div>
                 <button onClick={handleCommentModal}>
                   {" "}
-                  <StickyNote />
+                  <StickyNote size={40} className="border p-2 rounded-md" />
                 </button>
               </div>
 
@@ -132,10 +132,10 @@ function Responses() {
               </div>
               <div className="proceed-button-wrapper">
                 <button
-                  className="proceed-button"
+                  className="flex bg-blue-600 px-4 py-3 text-white rounded-xl space-x-15 absolute bottom-4 right-4"
                   onClick={() => setSelectComponent("planCreation")}
                 >
-                  Proceed <ArrowRight />
+                 <span>Proceed</span>  <ArrowRight />
                 </button>
               </div>
             </div>

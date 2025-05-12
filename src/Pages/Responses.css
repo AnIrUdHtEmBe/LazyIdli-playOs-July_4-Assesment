@@ -203,13 +203,7 @@
   text-align: center;
 }
 
-/* Proceed Button */
-.proceed-button-wrapper {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 999;
-}
+
 
 .proceed-button {
   border: 2px solid transparent;

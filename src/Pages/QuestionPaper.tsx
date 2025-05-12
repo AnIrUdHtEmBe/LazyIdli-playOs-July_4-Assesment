@@ -55,10 +55,12 @@ function QuestionPaper() {
             <div className="text-2xl sm:text-3xl font-extralight">
               {paperDetails.name}
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-              <div>
+            <div className="flex flex-col sm:flex-row gap-10 sm:items-center">
+              <div className="flex space-x-2.5">
                 <span className="font-semibold">Taking For: </span>
-                {userDetail.name} <br /> ID: {userDetail.id}
+                <div>
+                  {userDetail.name} <br /> ID: {userDetail.id}
+                </div>
               </div>
               <button
                 disabled={!allAnswered}
@@ -87,9 +89,7 @@ function QuestionPaper() {
                     key={q.questionId}
                     onClick={() => setSelectedQuestionIndex(index)}
                     className={`flex items-center gap-2 cursor-pointer p-2 rounded transition ${
-                      selectedQuestionIndex === index
-                        ? ""
-                        : "hover:bg-gray-100"
+                      selectedQuestionIndex === index ? "" : "hover:bg-gray-100"
                     }`}
                   >
                     {answers[index] !== undefined ? (
@@ -129,7 +129,7 @@ function QuestionPaper() {
                         setCommentModal(true);
                       }}
                     >
-                      <StickyNote />
+                      <StickyNote className="border-1 p-2 rounded-md" size={40}/>
                     </button>
                   </div>
 
@@ -181,7 +181,10 @@ function QuestionPaper() {
               </button>
               <button
                 onClick={() => {
-                  setNotes([...notes, { questionId: activeQuestionId, comment }]);
+                  setNotes([
+                    ...notes,
+                    { questionId: activeQuestionId, comment },
+                  ]);
                   setCommentModal(false);
                   setComment("");
                   setActiveQuestionId(null);

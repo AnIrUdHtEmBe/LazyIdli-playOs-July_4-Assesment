@@ -1,12 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Header from "../planCreationComponents/Header";
 import { DataContext } from "../store/DataContext";
-import { ChevronRight, Dumbbell, Plus, Trash2 } from "lucide-react";
+import { Calendar, ChevronRight, Dumbbell, Plus, Trash2 } from "lucide-react";
 import "./PlanCreation.css"; // Import the CSS file
-import {
-  Mediation,
-  NordicWalking,
-} from "@mui/icons-material";
+import { Mediation, NordicWalking } from "@mui/icons-material";
 
 function PlanCreation() {
   const { plans, setPlans } = useContext(DataContext)!;
@@ -94,9 +91,9 @@ function PlanCreation() {
         {/* Left Panel: Plans Table */}
         <div className="left-panel">
           {/* Top Bar */}
-          <div className="top-bar">
+          <div className="top-bar bg-white">
             <input
-            className="border-2 border-gray-300 px-2 py-1 rounded-md"
+              className="border-2 border-gray-300 px-2 py-1 rounded-md"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -105,13 +102,22 @@ function PlanCreation() {
 
             <div className="flex items-center space-x-5">
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <Dumbbell size={30} onClick={() => filterPlansAccordingTo("Fitness")} ></Dumbbell>
+                <Dumbbell
+                  size={30}
+                  onClick={() => filterPlansAccordingTo("Fitness")}
+                ></Dumbbell>
               </button>
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <Mediation style={{ fontSize: "30px" }} onClick={() => filterPlansAccordingTo("Wellness")}/>
+                <Mediation
+                  style={{ fontSize: "30px" }}
+                  onClick={() => filterPlansAccordingTo("Wellness")}
+                />
               </button>
               <button className="border-3 border-gray-300 px-2 py-1 rounded-md">
-                <NordicWalking style={{ fontSize: "30px" }} onClick={() => filterPlansAccordingTo("Sports")}></NordicWalking>
+                <NordicWalking
+                  style={{ fontSize: "30px" }}
+                  onClick={() => filterPlansAccordingTo("Sports")}
+                ></NordicWalking>
               </button>
             </div>
 
@@ -156,7 +162,7 @@ function PlanCreation() {
                         onChange={() => toggleSelectOne(plan.id)}
                       />
                     </td>
-                    <td >{idx + 1}</td>
+                    <td>{idx + 1}</td>
                     <td>{plan.planName}</td>
                     <td>{plan.category}</td>
                   </tr>
@@ -170,15 +176,18 @@ function PlanCreation() {
         <div className="right-panel">
           <div className="plan-details">
             {/* Plan Name Input */}
-            <div className="plan-name-input">
-              <label htmlFor="planName">Plan Name</label>
-              <input
-                type="text"
-                id="planName"
-                value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
-                placeholder="Enter plan name"
-              />
+            <div className="flex justify-between">
+              <div>
+                <input
+                  type="text"
+                  id="planName"
+                  value={planName}
+                  onChange={(e) => setPlanName(e.target.value)}
+                  placeholder="Plan Name"
+                  className="border-b-2 border-gray-300 px-4 py-2 rounded-md font-semibold text-left"
+                />
+              </div>
+              <input type="date" placeholder="" className="border-2 px-10 border-gray-300" />
             </div>
 
             {/* Calendar */}

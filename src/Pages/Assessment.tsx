@@ -88,21 +88,21 @@ const Assessment: React.FC = () => {
             <table className="w-full table-auto border-collapse text-left">
               <thead>
                 <tr className="bg-gray-50">
-                  <th className="border-b-1 px-4 py-2 w-1/12 text-center">Sl.No</th>
-                  <th className="border-b-1 px-4 py-2 w-8/12">Questions</th>
-                  <th className="border-b-1 px-4 py-2 w-3/12 text-center">
+                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-1/12 text-center">Sl.No</th>
+                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-8/12">Questions</th>
+                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-3/12 text-center">
                     Mandatory
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {mcqQuestions.map((ques, index) => (
-                  <tr key={ques.questionId} className="border-b bg-white">
-                    <td className="border-b-1 px-4 py-2 text-center">
+                  <tr key={ques.questionId} className="border-b border-b-gray-300 bg-white">
+                    <td className="border-b-1 border-b-gray-300 px-4 py-4 text-center">
                       {index + 1}
                     </td>
-                    <td className="border-b-1 px-4 py-2">{ques.questionText}</td>
-                    <td className="border-b-1 px-4 py-2 text-center">Yes</td>
+                    <td className="border-b-1 border-b-gray-300 px-4 py-4">{ques.questionText}</td>
+                    <td className="border-b-1 border-b-gray-300 px-4 py-4 text-center">Yes</td>
                   </tr>
                 ))}
               </tbody>
