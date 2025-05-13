@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Header from "../planCreationComponents/Header";
 import { DataContext } from "../store/DataContext";
-import { ArrowRight, Calendar, ChevronRight, CirclePlus, Dumbbell, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Calendar, ChevronRight, CirclePlus, Dumbbell, MinusCircle, Plus, Trash2 } from "lucide-react";
 import "./PlanCreation.css"; // Import the CSS file
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
@@ -236,6 +236,7 @@ function PlanCreation() {
                         </div>
                       );
                     })}
+                    <div className="Remove-button" onClick={() => setLen(len - 7)}> <MinusCircle size={20} /></div>
                   </React.Fragment>
                 ))}
               </div>

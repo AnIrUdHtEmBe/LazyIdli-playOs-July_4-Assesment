@@ -7,6 +7,7 @@ import {
   Dumbbell,
   EyeClosed,
   EyeIcon,
+  MinusCircle,
   Plus,
   Trash2,
 } from "lucide-react";
@@ -16,7 +17,7 @@ import { ArrowRightAlt, Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
-  const { sessions, setSessions , setSelectComponent } = useContext(DataContext)!;
+  const { sessions, setSessions, setSelectComponent } = useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
@@ -92,10 +93,23 @@ function SessionPage() {
   };
 
   const [len, setLen] = useState(30);
+  const [weeks, setWeeks] = useState([0, 1, 2, 3]); // represents 4 weeks initially
 
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewSession, setPreviewSession] = useState<any>(null);
   const [selectedSession, setSelectedSession] = useState<any>(null);
+  const handleRemoveWeek = (weekIndex: number) => {
+    // Remove week from UI
+    setWeeks((prev) => prev.filter((w) => w !== weekIndex));
+
+    // Remove related gridAssignments
+    const updatedAssignments = { ...gridAssignments };
+    for (let i = 0; i < 7; i++) {
+      delete updatedAssignments[weekIndex * 7 + i];
+    }
+    
+    setGridAssignments(updatedAssignments);
+  };
 
   const handlePreviewClick = (session: any) => {
     setPreviewSession(session);
@@ -224,14 +238,17 @@ function SessionPage() {
               </div>
 
               <div className="calendar-grid">
-                {Array.from({ length: Math.ceil(len / 7) }, (_, weekIndex) => (
+                {weeks.map((weekIndex) => (
                   <React.Fragment key={weekIndex}>
-                    <div className="week Label"> Week {weekIndex + 1}</div>
+                    <div className="week Label flex justify-between items-center">
+                      <span>Week {weekIndex + 1}</span>
+                      
+                    </div>
                     {Array.from({ length: 7 }, (_, dayIndex) => {
                       const index = weekIndex * 7 + dayIndex;
                       const assignedPlan = gridAssignments[index];
 
-                      return index < len ? (
+                      return (
                         <div
                           key={index}
                           className={`calendar-cell ${
@@ -254,16 +271,16 @@ function SessionPage() {
                             </div>
                           ) : null}
                         </div>
-                      ) : (
-                        <div
-                          key={`empty-${index}`}
-                          className="calendar-cell empty"
-                        >
-                          {" "}
-                        </div>
                       );
                     })}
+                    <button
+                        className="flex justify-between items-center"
+                        onClick={() => handleRemoveWeek(weekIndex)}
+                      >
+                      <MinusCircle size={20} className="text-red-500" />
+                      </button>
                   </React.Fragment>
+                  
                 ))}
               </div>
             </div>
@@ -272,12 +289,20 @@ function SessionPage() {
             <div className="flex justify-between">
               <button
                 className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
-                onClick={() => setLen(len + 7)}
+                onClick={() =>
+                  setWeeks((prev) => [
+                    ...prev,
+                    prev.length > 0 ? Math.max(...prev) + 1 : 0,
+                  ])
+                }
               >
                 <CirclePlus size={25} />
                 <span className="text-blue">Add Week</span>
               </button>
-              <button onClick={() => setSelectComponent("AllPlans")} className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10">
+              <button
+                onClick={() => setSelectComponent("AllPlans")}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
+              >
                 <span>Confirm</span>
                 <ArrowRight size={20} />
               </button>

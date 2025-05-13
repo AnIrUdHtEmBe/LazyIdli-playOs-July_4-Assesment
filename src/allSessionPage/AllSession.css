@@ -1,0 +1,254 @@
+.all-session-container {
+  background-color: rgb(243 244 246);
+  width: 100%;
+  min-height: 100vh;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .all-session-container {
+    flex-direction: row;
+  }
+}
+
+.left-panel {
+  width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+@media (min-width: 1024px) {
+  .left-panel {
+    width: 40%;
+  }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.badge {
+  background-color: rgb(219 234 254);
+  color: rgb(30 64 175);
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.new-button {
+  display: flex;
+  align-items: center;
+  border: 2px solid rgb(37 99 235);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.new-button-icon {
+  color: rgb(37 99 235);
+}
+
+.new-button-text {
+  color: rgb(37 99 235);
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background-color: rgb(229 231 235);
+  color: rgb(75 85 99);
+  font-size: 0.875rem;
+}
+
+.table-header th {
+  padding: 1rem;
+}
+
+.table-row {
+  cursor: pointer;
+}
+
+.table-row:hover {
+  background-color: rgb(243 244 246);
+}
+
+.table-cell {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.right-panel {
+  width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .right-panel {
+    width: 60%;
+  }
+}
+
+.right-panel-header {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .right-panel-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .input-container {
+    flex-direction: row;
+    width: 66.666667%;
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.input-field {
+  border-bottom: 2px solid;
+  font-size: 1.125rem;
+  color: black;
+  font-family: monospace;
+}
+
+.input-field:focus {
+  outline: none;
+}
+
+.select-field {
+  border-bottom: 2px solid;
+  font-size: 1.125rem;
+}
+
+.select-field:focus {
+  outline: none;
+}
+
+.save-button {
+  background-color: rgb(29 78 216);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .save-button {
+    margin-top: 0;
+  }
+}
+
+.activities-table {
+  width: 100%;
+  border-collapse: collapse;
+  flex: 1;
+}
+
+.activities-table-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.activities-table-header th {
+  text-align: left;
+  color: rgb(55 65 81);
+  font-size: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-row {
+  font-size: 0.875rem;
+}
+
+.activity-row:hover {
+  background-color: rgb(249 250 251);
+}
+
+.activity-cell {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-select {
+  border: 1px solid;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.activity-select:focus {
+  outline: 2px solid rgb(59 130 246);
+}
+
+.delete-button {
+  color: rgb(248 113 113);
+}
+
+.add-activity-button {
+  background-color: rgb(29 78 216);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 0;
+  color: rgb(107 114 128);
+} 

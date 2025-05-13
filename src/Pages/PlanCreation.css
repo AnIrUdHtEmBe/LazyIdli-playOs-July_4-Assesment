@@ -6,6 +6,12 @@
   min-height: 100vh;
 }
 
+.Remove-button{
+  color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 /* Sticky header */
 .sticky-header {
   position: sticky;
@@ -149,7 +155,7 @@
 }
 .calendar-grid {
   display: grid;
-  grid-template-columns: 1fr repeat(7, 1fr);
+  grid-template-columns: 1fr repeat(8, 1fr);
   gap: 0.25rem;
   height: 50vh;
 }

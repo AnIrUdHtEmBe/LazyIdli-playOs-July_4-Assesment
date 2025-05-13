@@ -53,7 +53,7 @@ const Assessment: React.FC = () => {
                 }
               >
                 <td>{assessment.id}</td>
-                <td>{assessment.name}</td>
+                <td className="font-medium">{assessment.name}</td>
                 <td>{assessment.questionCount}</td>
                 <td>
                   {assessment.questionCount !== "-" && (
