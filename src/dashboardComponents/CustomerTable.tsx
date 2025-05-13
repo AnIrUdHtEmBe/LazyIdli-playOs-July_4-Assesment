@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
+  Calendar,
   CalendarRangeIcon,
   ChevronDown,
   CloudDownload,
@@ -187,7 +188,7 @@ const CustomerTable: React.FC = () => {
         />
         <div className="action-buttons">
           <div className="month-selector">
-            <CalendarRangeIcon size={16} />
+            <Calendar size={16} className="ml-5" />
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(Number(e.target.value))}
@@ -206,11 +207,11 @@ const CustomerTable: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setIsFilterOpen((prev) => !prev)}
-              className="flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 text-sm"
+              className="btnFilter"
             >
               <Filter size={16} />
               Filter
-              <ChevronDown size={16} />
+              <i className="fa fa-caret-down" style={{ fontSize: "18  px" }}></i>
             </button>
 
             {isFilterOpen && (
@@ -237,7 +238,7 @@ const CustomerTable: React.FC = () => {
           </div>
 
           <button
-            className="action-button delete-button"
+            className="delete-button"
             onClick={handleDelete}
             disabled={selectedIds.length === 0}
           >
@@ -295,7 +296,7 @@ const CustomerTable: React.FC = () => {
                 <td>{customer ? customer.id : ""}</td>
                 <td>{customer?.name || ""}</td>
                 <td>{customer?.age || ""}</td>
-                <td>{customer?.gender || "" }</td>
+                <td>{customer?.gender || ""}</td>
                 <td>{customer?.joinedOn || ""}</td>
                 <td>{customer?.phone || ""}</td>
                 <td>{customer?.membership || ""}</td>
@@ -313,7 +314,7 @@ const CustomerTable: React.FC = () => {
                       }}
                     >
                       <option value="" disabled hidden>
-                        Actions
+                        See Actions
                       </option>
                       <option value="Go_To_Profile">Go To Profile</option>
                       <option value="See_Plan">See Plan</option>
@@ -354,7 +355,7 @@ const CustomerTable: React.FC = () => {
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            <ChevronDown size={16} style={{ transform: "rotate(90deg)" }} />
+            <ChevronDown size={20} style={{ transform: "rotate(90deg)" }} />
           </button>
           <button
             onClick={() =>
@@ -364,7 +365,7 @@ const CustomerTable: React.FC = () => {
             }
             disabled={endIndex >= filteredCustomers.length}
           >
-            <ChevronDown size={16} style={{ transform: "rotate(-90deg)" }} />
+            <ChevronDown size={20} style={{ transform: "rotate(-90deg)" }} />
           </button>
         </div>
       </div>

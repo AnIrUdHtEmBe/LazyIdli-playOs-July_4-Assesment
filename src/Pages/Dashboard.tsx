@@ -1,16 +1,15 @@
-import React, { useContext, useState } from "react";
-import { Users, FileCheck, UserCheck } from "lucide-react";
-import StatCard from "../dashboardComponents/StatCard";
+import React, { useContext } from "react";
 import CustomerTable from "../dashboardComponents/CustomerTable";
 import { DataContext } from "../store/DataContext";
 import Header from "../dashboardComponents/Header";
-// import Assessment from './Assessment';
+import "./Dashboard.css";
+
 
 const Dashboard: React.FC = () => {
   const context = useContext(DataContext);
 
   if (!context) {
-    return <div>Loading...</div>; // Or handle context not available
+    return <div>Loading...</div>;
   }
 
   const { customers } = context;
@@ -22,42 +21,29 @@ const Dashboard: React.FC = () => {
   ).length;
 
   return (
-    <div className="space-y-6 min-h-screen bg-gray-50">
-      <div>
-        <Header></Header>
-      </div>
+    <div className="dashboard">
+      <Header />
+      
       {/* Table Section */}
-      <div
-        className="bg-white shadow-sm overflow-hidden rounded-lg"
-        style={{ height: "65vh" }}
-      >
+      <div className="table-section">
         <CustomerTable />
       </div>
 
       {/* Stats Section */}
-      <div className="bg-white rounded-lg p-6 shadow-md flex justify-around">
-        <div className="flex flex-col items-center justify-between mb-4">
-          <span className="text-gray-900 font-semibold text-4xl">{assessmentDue}</span>
-          <div className="flex items-center gap-3">
-            <FileCheck size={24} className="text-blue-500" />
-            <span className="text-gray-700 font-medium">Assessment Due:</span>
-          </div>
+      <div className="stats-section">
+        <div className="stat-card first-card">
+          <span className="stat-value">{assessmentDue}</span>
+          <div className="stat-label">Assessment Due</div>
         </div>
 
-        <div className="flex flex-col items-center justify-between mb-4">
-          <span className="text-gray-900 font-semibold text-4xl">{totalCustomers}</span>
-          <div className="flex items-center gap-3">
-            <Users size={24} className="text-purple-500" />
-            <span className="text-gray-700 font-medium">Total Customers:</span>
-          </div>
+        <div className="stat-card">
+          <span className="stat-value">{totalCustomers}</span>
+          <div className="stat-label">Total Customers</div>
         </div>
 
-        <div className="flex flex-col items-center justify-between mb-4">
-          <span className="text-gray-900 font-semibold text-4xl">{totalMembers}</span>
-          <div className="flex items-center gap-3">
-            <UserCheck size={24} className="text-green-500" />
-            <span className="text-gray-700 font-medium">Total Members:</span>
-          </div>
+        <div className="stat-card">
+          <span className="stat-value">{totalMembers}</span>
+          <div className="stat-label">Total Members</div>
         </div>
       </div>
     </div>
