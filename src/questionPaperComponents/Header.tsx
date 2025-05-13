@@ -23,10 +23,13 @@ const Header: React.FC<HeaderProps> = () => {
           Assessment {assignment?.id ?? ""}
         </h1>
       </div>
-      <div className="flex ml-12 gap-3">
-        <Calendar></Calendar>
-        <h2>Last Assessed : 15/24/35</h2>
-      </div>
+
+      {selectComponent === "responses" && (
+        <div className="flex ml-12 gap-3">
+          <Calendar></Calendar>
+          <h2>Last Assessed : 15/24/35</h2>
+        </div>
+      )}
 
       {/* Navigation Tabs */}
       <div className="flex justify-center flex-wrap gap-6 sm:gap-10 font-normal text-sm sm:text-base px-2 py-3">

@@ -48,17 +48,21 @@ function QuestionPaper() {
       </div>
 
       {/* Scrollable body area */}
-      <div className="flex-1 overflow-hidden p-3 sm:p-6">
-        <div className="p-3 sm:p-5 bg-white rounded-xl bg-blue-200 h-full">
+      <div className="flex-1 overflow-hidden p-5 sm:p-5 ">
+        <div className=" bg-white rounded-xl bg-blue-200 h-full">
           {/* Top Info */}
-          <div className="flex justify-between flex-col sm:flex-row gap-4 sm:gap-0 p-3 border-b-2">
-            <div className="text-2xl sm:text-3xl font-extralight">
-              {paperDetails.name}
+          <div className="flex justify-between flex-col sm:flex-row gap-4 sm:gap-0 p-6 border-b-2">
+            <div>
+              <div className="text-2xl sm:text-3xl font-extralight">
+                {paperDetails.name}
+              </div>
+              <div>For adults, optimizing strength, metabolism, and diet. </div>
             </div>
+
             <div className="flex flex-col sm:flex-row gap-10 sm:items-center">
               <div className="flex space-x-2.5">
                 <span className="font-semibold">Taking For: </span>
-                <div>
+                <div> 
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
               </div>
@@ -77,7 +81,7 @@ function QuestionPaper() {
           </div>
 
           {/* Main Scrollable Panels */}
-          <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
+          <div className="flex flex-1 overflow-hidden flex-col md:flex-row p-3">
             {/* Left Scrollable Questions List */}
             <div className="w-full md:w-1/2 p-4 overflow-y-auto h-[300px] md:h-[calc(100vh-150px)] border-b md:border-b-0 md:border-r border-gray-300">
               <div className="text-lg font-semibold mb-4 text-blue-700">
@@ -94,7 +98,7 @@ function QuestionPaper() {
                   >
                     {answers[index] !== undefined ? (
                       <CheckCircle className="text-green-600" />
-                    ) : (
+                    ) : ( 
                       <Circle className="text-gray-400" />
                     )}
                     <span className="text-sm font-medium">
@@ -129,7 +133,10 @@ function QuestionPaper() {
                         setCommentModal(true);
                       }}
                     >
-                      <StickyNote className="border-1 p-2 rounded-md" size={40}/>
+                      <StickyNote
+                        className="border-1 p-2 rounded-md"
+                        size={40}
+                      />
                     </button>
                   </div>
 
@@ -147,8 +154,9 @@ function QuestionPaper() {
                           name={`question-${questionIndex}`}
                           checked={answers[questionIndex] === optionIndex}
                           onChange={() => {}}
-                          className="form-radio h-4 w-4 text-green-600 cursor-pointer"
+                          className="appearance-none h-4 w-4 border border-gray-400 rounded-none checked:bg-blue-600 checked:border-blue-600 cursor-pointer"
                         />
+
                         <span className="text-sm">{option.text}</span>
                       </label>
                     ))}

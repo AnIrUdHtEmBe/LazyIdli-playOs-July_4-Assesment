@@ -16,6 +16,8 @@
 .main-container {
   width: 100%;
   padding: 12px;
+  font-family: 'roboto', sans-serif;
+  /* font-weight: 500 */
 }
 
 .main-card {
@@ -37,22 +39,41 @@
 }
 
 .paper-title {
-  font-size: 1.875rem;
-  font-weight: 200;
+  color: #2B3C4E;
+  font-size: 36px;
+  font-weight: 300;
+}
+.paper-subtitle{
+  color: #101011;
+  font-size: 20px;
+  font-weight: 400;
 }
 
 .user-actions {
   display: flex;
   gap: 9.5rem;
-  align-items: center;
   flex-wrap: wrap;
 }
 
-.retake-button {
-  padding: 8px 24px;
-  border-radius: 6px;
-  color: #3b82f6;
-  border: 1px solid #3b82f6;
+.user-actions .user-info{
+  display: flex;
+  gap: 1rem;
+  border-top: none;
+  align-items: top;
+}
+
+.user-info .taking{
+  font-weight: 600;
+}
+
+.user-actions .retake-button {
+  height: 50px;
+  font-weight: 400;
+  width: 250px;
+  font-size: 20px;
+  border-radius: 4px;
+  color: #1976D2;
+  border: 1px solid #1976D2;
   cursor: pointer;
   transition: 0.3s;
   background: transparent;
@@ -78,14 +99,16 @@
 }
 
 .question-title {
-  font-size: 1.125rem;
-  font-weight: 600;
+  color: #2563EB;
+  font-size: 20px;
+  font-weight: 700;
   margin-bottom: 1rem;
 }
 
 .question-items {
   overflow-y: auto;
   max-height: 550px;
+  /* font-size: 18px; */
 }
 
 .question-items .question-box {
@@ -107,15 +130,15 @@
   color: #16a34a;
 }
 
-.question-text {
-  font-size: 0.875rem;
-  font-weight: 500;
+.question-row .question-text {
+  font-size: 18px;
+  font-weight: 400;
 }
 
-.question-answer {
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-left: 2.5rem;
+.question-box .question-answer {
+  font-size: 18px;
+  font-weight: 400;
+  margin-left: 2.2rem;
   display: flex;
   gap: 12px;
 }
@@ -139,6 +162,7 @@
 .summary-title {
   font-weight: 700;
   font-size: 1.50rem;
+  margin-bottom: 30px;
 }
 
 /* Assignments */
@@ -158,24 +182,42 @@
   border-radius: 12px;
 }
 
+.label {
+  font-size: 18px;
+  font-weight: 400;
+}
+
 .assignment-0 .score-card {
-  background-color: #fee2e2;
+  height: 57px;
+  background-color: #FF55551A;
 }
 .assignment-1 .score-card {
-  background-color: #fef3c7;
+  height: 57px;
+  background-color: #FFB21E1A;
 }
 .assignment-2 .score-card {
-  background-color: #d1fae5;
+  height: 57px;
+  background-color: #00BB8F1A;
 }
 
 .assignment-0 .score-icon {
-  color: #f87171;
+  color: #FF5555;
 }
 .assignment-1 .score-icon {
-  color: #f59e0b;
+  color: #FFB21E;
 }
 .assignment-2 .score-icon {
-  color: #10b981;
+  color: #00BB8F;
+}
+
+.score-card-text-0 {
+  padding: 10px 10px 4px 10px;
+}
+.score-card-text-1 {
+  padding: 10px 10px 4px 10px;
+}
+.score-card-text-2 {
+  padding: 10px 10px 4px 10px;
 }
 
 .score-icon {
@@ -186,6 +228,8 @@
 
 /* Plans */
 .plan-text {
+  font-size: 18px;
+  font-weight: 400;
   margin-top: 3rem;
   margin-bottom: 3rem;
 }
@@ -198,6 +242,7 @@
 }
 
 .plan-box {
+  font-size: 21px;
   border: 2px solid #000;
   padding: 12px 20px;
   text-align: center;

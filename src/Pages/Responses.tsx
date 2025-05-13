@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
 import Header from "../questionPaperComponents/Header";
-import { ArrowRight, Dumbbell, CheckCircle, Calendar } from "lucide-react";
+import { ArrowRight, Dumbbell, CheckCircle, Calendar, Edit } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./Responses.css";
-import { Comment } from "@mui/icons-material";
+import { Comment, ReplayOutlined } from "@mui/icons-material";
 import { StickyNote } from "lucide-react";
 
 function Responses() {
@@ -49,17 +49,26 @@ function Responses() {
         <div className="main-card">
           {/* Top Info */}
           <div className="top-info">
-            <div className="paper-title">{paperDetails.name}</div>
-            <div className="user-actions">
-              <div>
-                <span className="bold">Taking For: </span>
-                {userDetail.name} <br /> ID: {userDetail.id}
+            <div>
+              <div className="paper-title">{paperDetails.name}</div>
+              <div className="paper-subtitle">
+                For adults, optimizing strength, metabolism, and diet.
               </div>
+            </div>
+            <div className="user-actions">
+              <div className="user-info">
+                <span className="taking">Taking For: </span>
+                <div>
+                  {userDetail.name} <br /> ID: {userDetail.id}
+                </div>
+              </div>
+
               <button
                 onClick={() => setSelectComponent("Q&A")}
                 className="retake-button"
               >
-                retake Assessment
+                <ReplayOutlined></ReplayOutlined>
+                Retake Assessment
               </button>
             </div>
           </div>
@@ -68,7 +77,7 @@ function Responses() {
           <div className="main-panels relative">
             {/* Left Questions List */}
             <div className="question-list">
-              <div className="question-title">All Questions</div>
+              <div className="question-title">Responses</div>
               <div className="question-items">
                 {mcqAnswers.map((q, index) => (
                   <div key={q.questionId} className="question-box">
@@ -98,10 +107,11 @@ function Responses() {
                 {["Assignment 1", "Assignment 2", "Assignment 3"].map(
                   (label, i) => (
                     <div className={`assignment assignment-${i}`} key={i}>
-                      <div>{label}-</div>
+                      <div className="label">{label} -</div>
                       <div className={`score-card score-${i}`}>
                         <div className={`score-icon icon-${i}`}>
-                          <Dumbbell /> Fitness
+                          <Dumbbell />
+                          <span className={`score-card-text-${i}`}>Fitness</span> 
                         </div>
                         <div>80 / 100</div>
                       </div>
@@ -111,7 +121,7 @@ function Responses() {
               </div>
 
               <div className="plan-text">
-                The Recommended plan for this Assessment id Ready
+              The Recommended Plan for this assessment is ready! Please refer the monthly plan below.
               </div>
               <div className="plan-options">
                 {[
@@ -126,26 +136,25 @@ function Responses() {
                 ))}
               </div>
 
-              <div className="mt-12 flex space-x-4">
-               
-               <Calendar></Calendar> <span className="font-normal ">Next assessment On : 10/12/13</span> 
+              <div className="mt-12 flex space-x-4 items-center">
+                <Calendar></Calendar>{" "}
+                <span className="font-normal text-xl ">
+                  Next assessment On : 10/12/13
+                </span>
+                <Edit></Edit>
               </div>
               <div className="proceed-button-wrapper">
                 <button
                   className="flex bg-blue-600 px-4 py-3 text-white rounded-xl space-x-15 absolute bottom-4 right-4"
                   onClick={() => setSelectComponent("planCreation")}
                 >
-                 <span>Proceed</span>  <ArrowRight />
+                  <span>Proceed</span> <ArrowRight />
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-
-
-
 
       {commentModal && (
         <div className="fixed inset-0 z-50  bg-black/60 bg-opacity-20 flex justify-center items-center">

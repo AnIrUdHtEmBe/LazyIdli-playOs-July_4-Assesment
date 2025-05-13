@@ -83,34 +83,36 @@ const Assessment: React.FC = () => {
 
         {showModal && (
           <div className="modal-overlay">
-            <div className="modal">
+            <div className="modal-content">
               <button
                 className="close-button"
                 onClick={() => setShowModal(false)}
               >
-                <X size={24} />
+                <X size={24} className="" />
               </button>
-              <h1 className="modal-title">{selectedAssessment}</h1>
-              <table className="modal-table">
-                <thead>
-                  <tr className="modal-table-header-row">
-                    <th className="modal-th slno-header">Sl.No</th>
-                    <th className="modal-th question-header">Questions</th>
-                    <th className="modal-th mandatory-header">Mandatory</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mcqQuestions.map((ques, index) => (
-                    <tr key={ques.questionId} className="modal-table-row">
-                      <td className="modal-td slno-cell">{index + 1}</td>
-                      <td className="modal-td question-cell">
-                        {ques.questionText}
-                      </td>
-                      <td className="modal-td mandatory-cell">Yes</td>
+              <div className="modal">
+                <h1 className="modal-title">{selectedAssessment}</h1>
+                <table className="modal-table">
+                  <thead>
+                    <tr className="modal-table-header-row">
+                      <th className="modal-th slno-header">Sl.No</th>
+                      <th className="modal-th question-header">Questions</th>
+                      <th className="modal-th mandatory-header">Mandatory</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {mcqQuestions.map((ques, index) => (
+                      <tr key={ques.questionId} className="modal-table-row">
+                        <td className="modal-td slno-cell">{index + 1}</td>
+                        <td className="modal-td question-cell">
+                          {ques.questionText}
+                        </td>
+                        <td className="modal-td mandatory-cell">Yes</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
