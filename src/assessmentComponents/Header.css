@@ -9,6 +9,8 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
+  height: 130px;
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
 }
 
 .header-title {

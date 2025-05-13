@@ -275,7 +275,7 @@ const CustomerTable: React.FC = () => {
                 "Membership",
                 "Last Assessed On",
                 "Plan Allocated",
-                "Actions",
+                "",
               ].map((col) => (
                 <th key={col}>{col}</th>
               ))}

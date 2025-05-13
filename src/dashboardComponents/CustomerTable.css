@@ -37,19 +37,6 @@
     flex-wrap: wrap;
   }
 
-  /* .customer-table .action-button {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    display: flex;
-    align-items: center;
-    background-color: white;
-    color: black;
-    cursor: pointer;
-    white-space: nowrap;
-  } */
-
   .customer-table .btnFilter{
     display: flex;
     gap: 0.5rem;
@@ -99,7 +86,7 @@
   }
 
   .customer-table thead {
-    background-color: #f9fafb;
+    background-color: white;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -143,11 +130,12 @@
 
   .customer-table select.actions option {
     color: black;
+    width: 98px;
     background-color: white;
     font-size: 9.5px;
     font-family: 'roboto', sans-serif;
     font-weight: 400;
-    text-align: center;
+    text-align: left;
   }
 
   /* Footer */

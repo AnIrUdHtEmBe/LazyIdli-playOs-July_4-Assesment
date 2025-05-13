@@ -22,94 +22,99 @@ const Assessment: React.FC = () => {
   };
 
   return (
-    <div className="assessment-container">
+    <div>
       <Header />
-
-      <div className="assessment-header">
-        <h1 className="assessment-title">Assessments</h1>
-        <button  className={`${selectedRow ? "start-button" : "disable-button"}`}   disabled={!selectedRow} onClick={handleStartAssignment}>
-          <span>Start</span>
-          <ArrowRight size={20} />
-        </button>
-      </div>
-
-      <div className="assessment-table-wrapper">
-        <table className="assessment-table">
-          <thead>
-            <tr>
-              <th>Sl.No</th>
-              <th>Assessment</th>
-              <th>No.of Questions</th>
-              <th>Preview</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assessments.map((assessment) => (
-              <tr
-                key={assessment.id}
-                onClick={() => setSelectedRow(assessment)}
-                className={
-                  selectedRow === assessment ? "selected-row" : "hover-row"
-                }
-              >
-                <td>{assessment.id}</td>
-                <td className="font-medium">{assessment.name}</td>
-                <td>{assessment.questionCount}</td>
-                <td>
-                  {assessment.questionCount !== "-" && (
-                    <button
-                      className="preview-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowModal(true);
-                        setSelectedAssessment(assessment.name);
-                      }}
-                    >
-                      <Eye size={20} />
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
+      <div className="assessment-container">
+        <div className="assessment-content">
+          <div className="assessment-header">
+            <h1 className="assessment-title">Assessments</h1>
             <button
-              className="close-button"
-              onClick={() => setShowModal(false)}
+              className={`${selectedRow ? "start-button" : "disable-button"}`}
+              disabled={!selectedRow}
+              onClick={handleStartAssignment}
             >
-              <X size={24} />
+              <span>Start</span>
+              <ArrowRight size={20} />
             </button>
-            <h1 className="modal-title">{selectedAssessment}</h1>
-            <table className="w-full table-auto border-collapse text-left">
+          </div>
+
+          <div className="assessment-table-wrapper">
+            <table className="assessment-table">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-1/12 text-center">Sl.No</th>
-                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-8/12">Questions</th>
-                  <th className="border-b-1 border-b-gray-300 px-4 py-2 w-3/12 text-center">
-                    Mandatory
-                  </th>
+                <tr>
+                  <th className="sl-header">Sl.No</th>
+                  <th className="assess-header">Assessment</th>
+                  <th className="ques-header">No.of Questions</th>
+                  <th className="prev-header">Preview</th>
                 </tr>
               </thead>
               <tbody>
-                {mcqQuestions.map((ques, index) => (
-                  <tr key={ques.questionId} className="border-b border-b-gray-300 bg-white">
-                    <td className="border-b-1 border-b-gray-300 px-4 py-4 text-center">
-                      {index + 1}
+                {assessments.map((assessment) => (
+                  <tr
+                    key={assessment.id}
+                    onClick={() => setSelectedRow(assessment)}
+                    className={
+                      selectedRow === assessment ? "selected-row" : "hover-row"
+                    }
+                  >
+                    <td>{assessment.id}</td>
+                    <td>{assessment.name}</td>
+                    <td>{assessment.questionCount}</td>
+                    <td>
+                      {assessment.questionCount !== "-" && (
+                        <button
+                          className="preview-button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowModal(true);
+                            setSelectedAssessment(assessment.name);
+                          }}
+                        >
+                          <Eye size={25} />
+                        </button>
+                      )}
                     </td>
-                    <td className="border-b-1 border-b-gray-300 px-4 py-4">{ques.questionText}</td>
-                    <td className="border-b-1 border-b-gray-300 px-4 py-4 text-center">Yes</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      )}
+
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <button
+                className="close-button"
+                onClick={() => setShowModal(false)}
+              >
+                <X size={24} />
+              </button>
+              <h1 className="modal-title">{selectedAssessment}</h1>
+              <table className="modal-table">
+                <thead>
+                  <tr className="modal-table-header-row">
+                    <th className="modal-th slno-header">Sl.No</th>
+                    <th className="modal-th question-header">Questions</th>
+                    <th className="modal-th mandatory-header">Mandatory</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mcqQuestions.map((ques, index) => (
+                    <tr key={ques.questionId} className="modal-table-row">
+                      <td className="modal-td slno-cell">{index + 1}</td>
+                      <td className="modal-td question-cell">
+                        {ques.questionText}
+                      </td>
+                      <td className="modal-td mandatory-cell">Yes</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
