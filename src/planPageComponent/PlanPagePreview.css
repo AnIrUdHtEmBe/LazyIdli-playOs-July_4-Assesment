@@ -1,0 +1,61 @@
+/* PagePreview.css */
+
+.page-preview {
+    background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* shadow-lg approximation */
+    padding: 1.25rem; /* p-5 */
+    display: flex;
+    gap: 1rem; /* space-x-4 */
+  }
+  
+  .scrollable-table-container {
+    overflow-y: auto;
+    flex: 1;
+  }
+  
+  .session-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .session-table thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+  }
+  
+  .session-table th {
+    padding: 1.5rem 1rem; /* px-4 py-6 */
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #374151; /* text-gray-700 */
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+  
+  .session-table td {
+    padding: 1.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937; /* text-gray-800 */
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .session-table td select {
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    padding: 0.75rem 0.5rem;
+    width: 100%;
+    max-width: 15rem;
+    outline-color: #3b82f6; /* focus:outline-blue-500 */
+  }
+  
+  .session-table tr:hover {
+    background-color: #f9fafb; /* hover:bg-gray-50 */
+  }
+  
+  .icon-button {
+    color: #f87171; /* text-red-400 */
+  }
+  

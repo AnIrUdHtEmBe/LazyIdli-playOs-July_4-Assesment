@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "../store/DataContext";
-import { LucideCircleMinus, Plus, Save } from "lucide-react";
+import { LucideCircleMinus } from "lucide-react";
+import "./PagePreview.css"; // Import the CSS file
 
 function PagePreview() {
   const context = useContext(DataContext);
@@ -10,10 +11,7 @@ function PagePreview() {
   }
 
   const { sessions, setSessions } = context;
-  console.log(sessions);
-
   const [selecteddPlan, setSelectedPlan] = useState<any>(null);
-  console.log(selecteddPlan);
   const [planName, setPlanName] = useState<string>(
     selecteddPlan?.sessionName || ""
   );
@@ -29,62 +27,47 @@ function PagePreview() {
   }, [selecteddPlan]);
 
   return (
-    <div className="bg-gray-100 shadow-lg p-5 flex space-x-4 ">
-      
-        {/* Scrollable Table Container */}
-        <div className="overflow-y-auto flex-1">
-            <table className="w-full table-auto border-collapse">
-              <thead className="sticky top-0 bg-white z-10">
-                <tr className="text-left text-gray-700 text-normal">
-                  {["ID", "Activity", "Description", "Time (mins)", ""].map(
-                    (item, index) => (
-                      <th
-                        key={index}
-                        className="px-4 py-6 text-xl border-b font-medium"
+    <div className="page-preview">
+      <div className="scrollable-table-container">
+        <table className="session-table">
+          <thead>
+            <tr>
+              {["ID", "Activity", "Description", "Time (mins)", ""].map(
+                (item, index) => (
+                  <th key={index}>{item}</th>
+                )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {selecteddPlan?.activities?.map((item) => (
+              <tr key={item.id}>
+                <td className="font-black">{item.id}</td>
+                <td>
+                  <select>
+                    {item.activityType.map((activity) => (
+                      <option
+                        key={activity.id}
+                        value={activity.activityType}
                       >
-                        {item}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {selecteddPlan?.activities?.map((item, index) => (
-                  <tr
-                    key={item.id}
-                    className="text-sm text-gray-800 hover:bg-gray-50"
-                  >
-                    <td className="px-4 py-6 border-b font-black">{item.id}</td>
-                    <td className="px-4 py-6 border-b">
-                      <select className="border rounded px-2 py-3 w-full max-w-60 focus:outline-blue-500">
-                        {item.activityType.map((activity) => (
-                          <option
-                            key={activity.id}
-                            value={activity.activityType}
-                          >
-                            {activity.activityType}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-6 border-b font-semibold">
-                      {item.description}
-                    </td>
-                    <td className="px-4 py-6 border-b font-semibold">
-                      {item.timeInMinutes}
-                    </td>
-                    <td className="px-4 py-6 border-b font-semibold">
-                      <button>
-                        <LucideCircleMinus className="text-red-400" size={30} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-        </div>
+                        {activity.activityType}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>{item.description}</td>
+                <td>{item.timeInMinutes}</td>
+                <td>
+                  <button>
+                    <LucideCircleMinus className="icon-button" size={30} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-   
+    </div>
   );
 }
 
