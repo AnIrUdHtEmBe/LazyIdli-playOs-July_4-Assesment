@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { FileText } from "lucide-react";
 import { DataContext } from '../store/DataContext';
+import './Header.css'; // Import the CSS file
 
 interface HeaderProps {}
 
@@ -15,23 +16,27 @@ const Header: React.FC<HeaderProps> = () => {
   const { selectComponent } = context;
 
   return (
-    <header className="bg-white shadow-sm z-10 w-full">
+    <header className="header">
       {/* Top Row */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 px-4 sm:px-10 py-4">
-        <FileText size={28} className="text-gray-800" />
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 text-center sm:text-left">
+      <div className="header-top">
+        <FileText size={28} className="header-icon" />
+        <h1 className="header-title">
           Plan Creation {assignment?.id ?? ''}
         </h1>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex flex-col sm:flex-row justify-center items-center sm:gap-10 gap-2 font-semibold px-4 py-2">
+      <div className="nav-tabs">
         <button
-          className={`pb-1 sm:pb-2 ${selectComponent === '/plans' ? "border-b-3 border-black" : ""}`}
+          className={`tab-button ${selectComponent === '/plans' ? "active" : ""}`}
         >
           Plan Creator
         </button>
-        <button className={`pb-1 sm:pb-2 ${selectComponent === 'AllPlans' ? "border-b-3 border-black" : ""}`}>All Plans</button>
+        <button
+          className={`tab-button ${selectComponent === 'AllPlans' ? "active" : ""}`}
+        >
+          All Plans
+        </button>
       </div>
     </header>
   );
