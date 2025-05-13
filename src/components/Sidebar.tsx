@@ -66,10 +66,10 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
 
   const { selectComponent, setSelectComponent } = context;
 
-  const handleClick = (path : string) => {
+  const handleClick = (path: string) => {
     navigate(path);
     setSelectComponent(path);
-  }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -131,17 +131,41 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
         }`}
       >
         <div className={`sidebar-header ${collapsed ? "centered" : ""}`}>
-          <div className="brand">{collapsed ? <img className="h-5 w-10" src="/play-black.png" ></img>: <img className="h-15 w-40"  src="public/play-black.png"></img> }</div>
+          <div className="brand">
+            {collapsed ? (
+              <img className="h-50px w-102.5px" src="/play-black.png"></img>
+            ) : (
+              <img className="h-13 w-30" src="public/play-black.png"></img>
+            )}
+          </div>
           <button className="toggle-btn" onClick={toggleSidebar}>
             {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
         </div>
 
         <div className="menu">
+          {/* Group 1: Dashboard to Plans */}
           <ul>
-            {menuItems.map((item, index) => (
+            {menuItems.slice(0, 5).map((item, index) => (
               <NavItem
                 key={index}
+                icon={item.icon}
+                text={item.text}
+                collapsed={collapsed}
+                onClick={() => handleClick(item.path)}
+                active={location.pathname === item.path}
+              />
+            ))}
+          </ul>
+
+          {/* Separator */}
+          <div className="menu-separator" />
+
+          {/* Group 2: Notifications to Help */}
+          <ul>
+            {menuItems.slice(5).map((item, index) => (
+              <NavItem
+                key={index + 5}
                 icon={item.icon}
                 text={item.text}
                 collapsed={collapsed}
@@ -156,8 +180,8 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           <div className="avatar">U</div>
           {!collapsed && (
             <div className="user-details">
-              <p className="username">User Name</p>
-              <p className="role">Admin</p>
+              <p className="username">Welcome Back  </p>
+              <p className="role">Naveen</p>
             </div>
           )}
         </div>

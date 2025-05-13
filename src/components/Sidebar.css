@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 256px;
+  width: 290px;
   position: relative;
   left: 0;
   top: 0;
@@ -55,9 +55,10 @@
 
 .nav-item {
   display: flex;
+  gap: 12px;
   align-items: center;
   width: 100%;
-  padding: 8px;
+  padding: 12px 16px 12px 16px;
   border-radius: 25px;
   color: #4b5563;
   background-color: transparent;
@@ -66,14 +67,10 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.nav-item:hover {
-  background-color: #eef2ff;
-  color: #6366f1;
-}
 
 .nav-item.active {
-  background-color: #6042f5;
-  color: white;
+  background-color: #2563EB33;
+  color:#0A0A0A;
 }
 
 .nav-item.collapsed {
@@ -87,9 +84,8 @@
 }
 
 .label {
-  margin-left: 12px;
-  white-space: nowrap;
-  transition: opacity 0.3s;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
 }
 
 .user-info {
@@ -120,19 +116,30 @@
 }
 
 .username {
-  font-size: 0.875rem;
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
+  size: 12px;
+  color: #64748B;
 }
 
 .role {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  size: 14px;
+  color: #081021;
 }
 
 /* Hide mobile toggle button by default */
 .mobile-sidebar-toggle {
   display: none;
 }
+
+.menu-separator {
+  border-top: 1px solid #d1d5db; /* Tailwind gray-300 */
+  margin: 0.75rem 1rem; /* spacing above and below the line */
+  opacity: 0.6;
+}
+
 
 /* === Responsive: Mobile Sidebar === */
 @media (max-width: 768px) {
