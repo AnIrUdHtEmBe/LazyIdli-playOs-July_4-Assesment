@@ -1,5 +1,6 @@
 .header-container {
   display: flex;
+  height: 124px;
   flex-direction: column;
   padding: 1rem;
   background-color: white;

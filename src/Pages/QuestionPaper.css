@@ -78,6 +78,7 @@
   overflow-y: auto;
   height: calc(100vh - 150px);
   border-right: 1px solid #ccc;
+  gap: 2rem;
 }
 
 .questions-title {

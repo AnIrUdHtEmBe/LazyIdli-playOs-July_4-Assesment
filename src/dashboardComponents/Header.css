@@ -5,6 +5,7 @@
 }
 
 .header-container {
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +15,7 @@
 .header-title {
   font-family: Gilroy-Bold;
   font-size: 32px;
-  font-weight: bold;
+  font-weight:400;
   color: #1f2937; /* Tailwind's gray-800 */
   padding: 12px;
   text-align: center;

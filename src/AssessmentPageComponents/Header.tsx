@@ -1,4 +1,4 @@
-import { File } from "lucide-react";
+import { FileText } from "lucide-react";
 import React, { useContext } from "react";
 import { DataContext } from "../store/DataContext";
 import "./Header.css"; // Assuming this is the path to your CSS file
@@ -13,7 +13,7 @@ function Header() {
   return (
     <div className="header-container">
       <div className="header-top">
-        <File size={35} />
+        <FileText size={28} className="text-gray-800" />
         <span className="header-title">Assignment Creation</span>
       </div>
       <div className="header-tabs">
