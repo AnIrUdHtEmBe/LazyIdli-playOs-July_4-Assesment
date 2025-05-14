@@ -47,7 +47,9 @@
 }
 
 /* Left panel */
+
 .left-panel {
+  min-width: 50% ;
   width: 50%;
   background-color: #ffffff;
   padding: 2rem;
