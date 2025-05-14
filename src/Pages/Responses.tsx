@@ -48,7 +48,7 @@ function Responses() {
       <div className="main-container">
         <div className="main-card">
           {/* Top Info */}
-          <div className="top-info">
+          <div className="top">
             <div>
               <div className="paper-title">{paperDetails.name}</div>
               <div className="paper-subtitle">

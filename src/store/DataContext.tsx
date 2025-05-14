@@ -373,7 +373,6 @@ const initialCustomers: Customer[] = [
   },
 ];
 
-
 const initialAssessments: Assessment[] = [
   { id: 1, name: "Prime Health", questionCount: "30 Q" },
   { id: 2, name: "Golden Health", questionCount: "50 Q" },
@@ -578,96 +577,6 @@ const initialMCQQuestions: MCQQuestion[] = [
       { text: "Kotlin", selected: false },
       { text: "JavaScript", selected: false },
       { text: "Python", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
     ],
   },
   {

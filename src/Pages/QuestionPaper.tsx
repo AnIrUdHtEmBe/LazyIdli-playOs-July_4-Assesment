@@ -44,9 +44,8 @@ function QuestionPaper() {
   return (
     <div className="dashboard-container">
       {/* Fixed Header */}
-      <div className="header-container">
         <Header />
-      </div>
+      
 
       {/* Scrollable body area */}
       <div className="body-container">
@@ -60,13 +59,13 @@ function QuestionPaper() {
               </div>
             </div>
 
-            <div className="user-details">
-              {/* <div className="flex space-x-2.5">
+            <div className="user-det">
+              <div className="flex space-x-2.5">
                 <span className="label">Taking For: </span>
                 <div> 
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
-              </div> */}
+              </div>
               <button
                 disabled={!allAnswered}
                 onClick={() => setSelectComponent("responses")}
