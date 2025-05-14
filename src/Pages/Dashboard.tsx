@@ -14,11 +14,11 @@ const Dashboard: React.FC = () => {
 
   const { customers } = context;
 
-  const assessmentDue = customers.filter((c) => c.lastAssessed === "-").length;
-  const totalCustomers = customers.length;
-  const totalMembers = customers.filter(
-    (c) => c.membership !== "-" && c.membership.trim() !== ""
-  ).length;
+  // const assessmentDue = customers.filter((c) => c.lastAssessed === "-").length;
+  // const totalCustomers = customers.length;
+  // const totalMembers = customers.filter(
+  //   (c) => c.membership !== "-" && c.membership.trim() !== ""
+  // ).length;
 
   return (
     <div className="dashboard">
@@ -29,23 +29,6 @@ const Dashboard: React.FC = () => {
         <CustomerTable />
       </div>
 
-      {/* Stats Section */}
-      <div className="stats-section">
-        <div className="stat-card first-card">
-          <span className="stat-value">{assessmentDue}</span>
-          <div className="stat-label">Assessment Due</div>
-        </div>
-
-        <div className="stat-card">
-          <span className="stat-value">{totalCustomers}</span>
-          <div className="stat-label">Total Customers</div>
-        </div>
-
-        <div className="stat-card">
-          <span className="stat-value">{totalMembers}</span>
-          <div className="stat-label">Total Members</div>
-        </div>
-      </div>
     </div>
   );
 };

@@ -9,7 +9,7 @@ import React, {
 
 
 // ----------------- TYPES ----------------- //
-type Customer = {
+export type Customer = {
   id: number;
   name: string;
   age: number;
