@@ -114,7 +114,10 @@
 .user-details {
   margin-left: 12px;
   display: flex;
-  flex-direction: column;
+  width: 100%;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  /* gap: 44px */
 }
 
 .username {

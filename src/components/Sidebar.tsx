@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from "react";
 import {
   LayoutDashboard,
@@ -181,8 +180,13 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
           <div className="avatar">U</div>
           {!collapsed && (
             <div className="user-details">
-              <p className="username">Welcome Back  </p>
-              <p className="role">Naveen</p>
+              <div>
+                <p className="username">Welcome Back </p>
+                <p className="role">Naveen</p>
+              </div>
+              <div>
+                <ChevronRight size={20} />
+              </div>
             </div>
           )}
         </div>
