@@ -103,11 +103,11 @@ const Assessment: React.FC = () => {
                   <tbody>
                     {mcqQuestions.map((ques, index) => (
                       <tr key={ques.questionId} className="modal-table-row">
-                        <td className="modal-td slno-cell">{index + 1}</td>
-                        <td className="modal-td question-cell">
+                        <td className="modal-td slno-header">{index + 1}</td>
+                        <td className="modal-td question-header">
                           {ques.questionText}
                         </td>
-                        <td className="modal-td mandatory-cell">Yes</td>
+                        <td className="modal-td mandatory-header">Yes</td>
                       </tr>
                     ))}
                   </tbody>

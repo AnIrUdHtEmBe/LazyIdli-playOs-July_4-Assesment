@@ -2,7 +2,7 @@
 .assessment-container {
   background-color: white;
   padding: 1.5rem;
-  min-height: 100vh;
+  min-height: calc(100vh - 130px);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -160,11 +160,10 @@
 /* Make modal-content blend with overlay and remove shadow */
 .modal-overlay .modal-content {
   background-color: transparent;
-  width: 60%;
+  /* width: 70%; */
   box-shadow: none;
   position: relative;
-  max-width: 84rem;
-  min-width: 350px;
+  min-width: 70%;
   min-height: 200px;
   display: flex;
   align-items: flex-start;
@@ -201,14 +200,14 @@
 
 /* The actual modal card */
 .modal {
+  min-height: 800px;
   background-color: #E8E8E8;
   width: 100%;
-  max-width: 84rem;
   border-radius: 0.5rem;
   padding: 1.5rem;
   position: relative;
-  max-height: 70vh;
-  overflow-y: auto;
+  /* max-height: 70vh; */
+  /* overflow-y: auto; */
   font-family: 'roboto', sans-serif;
   font-weight: 500;
   box-shadow: none; /* Remove any shadow */
@@ -222,13 +221,49 @@
   background-color: white;
 }
 
+
+
 /* Modal Table Styles */
 .modal-table {
   width: 100%;
-  table-layout: auto;
   border-collapse: collapse;
-  text-align: left;
+  table-layout: fixed;
   background: white;
+}
+
+/* Make thead and tbody block elements */
+.modal-table thead,
+.modal-table tbody {
+  display: block;
+  width: 100%;
+}
+
+.modal-table tbody {
+  max-height: 600px;   /* Adjust height as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.modal-table tr {
+  display: table;
+  height: 70px;
+  width: 100%;
+  table-layout: auto;
+}
+
+.modal-table th,
+.modal-table td {
+  padding: 0.5rem 1rem;
+  font-size: 15px;
+  border-bottom: 1px solid #d1d5db;
+  box-sizing: border-box;
+}
+
+.modal-table td{
+  font-size: 16px;
+  color: #344054; /* gray-900 */
+  font-weight: 400;
+  padding: 0.5rem 1rem;
 }
 
 /* Header row background */
@@ -237,9 +272,10 @@
 }
 
 /* Table header cells */
+
 .modal-th {
-  border-bottom: 1px solid #d1d5db; /* border-b-gray-300 */
-  padding: 0.5rem 1rem;              /* px-4 py-2 */
+  border-bottom: 1px solid #d1d5db; 
+  padding: 0.5rem 1rem;            
   font-weight: 500;
   color: #667085;
   font-size: 13px;
@@ -247,15 +283,15 @@
 
 /* Specific column widths and alignment */
 .slno-header {
-  width: 8.33%; /* w-1/12 */
+  width: 10%; /* w-1/12 */
   text-align: center;
 }
 .question-header {
-  width: 66.66%; /* w-8/12 */
+  width: 60%; /* w-8/12 */
   text-align: left;
 }
 .mandatory-header {
-  width: 25%; /* w-3/12 */
+  width: 30%; /* w-3/12 */
   text-align: center;
 }
 
@@ -264,21 +300,6 @@
   background: white;
   border-bottom: 1px solid #d1d5db; 
   font-size: 16px; /* border-b-gray-300 */
-}
-
-/* Table body cells */
-.modal-td {
-  border-bottom: 1px solid #d1d5db; /* border-b-1 border-b-gray-300 */
-  padding: 1rem;                    /* px-4 py-4 */
-  font-size: 1rem;
-}
-
-/* Specific cell alignment */
-.slno-cell, .mandatory-cell {
-  text-align: center;
-}
-.question-cell {
-  text-align: left;
 }
 
 

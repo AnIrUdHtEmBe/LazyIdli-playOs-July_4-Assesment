@@ -590,6 +590,96 @@ const initialMCQQuestions: MCQQuestion[] = [
       { text: "Spring", selected: false },
     ],
   },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
+  {
+    questionId: 5,
+    questionText: "Which of the following is a JavaScript framework?",
+    options: [
+      { text: "Laravel", selected: false },
+      { text: "Django", selected: false },
+      { text: "React", selected: false },
+      { text: "Spring", selected: false },
+    ],
+  },
 ];
 
 const initialMCQAnswers: MCQAnswer[] = [
