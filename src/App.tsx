@@ -33,7 +33,7 @@ function App() {
               ) : selectComponent === "responses" ? (
                 <Responses />
               ) : selectComponent === "planCreation" ? (
-                <PlanCreation />
+                <PlansPage />
               ) : (
                 <Dashboard />
               )
