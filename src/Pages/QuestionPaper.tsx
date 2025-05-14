@@ -10,7 +10,9 @@ type Notes = {
 };
 
 function QuestionPaper() {
-  const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails") || "{}");
+  const paperDetails = JSON.parse(
+    localStorage.getItem("assessmentDetails") || "{}"
+  );
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
 
   const [notes, setNotes] = useState<Notes[]>([]);
@@ -51,24 +53,24 @@ function QuestionPaper() {
         <div className="paper-details">
           {/* Top Info */}
           <div className="top-info">
-            <div>
-              <div className="paper-title">
-                {paperDetails.name}
+            <div className="paper-info">
+              <div className="paper-title">{paperDetails.name}</div>
+              <div className="paper-subtitle">
+                For adults, optimizing strength, metabolism, and diet.{" "}
               </div>
-              <div>For adults, optimizing strength, metabolism, and diet. </div>
             </div>
 
             <div className="user-details">
-              <div className="flex space-x-2.5">
+              {/* <div className="flex space-x-2.5">
                 <span className="label">Taking For: </span>
                 <div> 
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
-              </div>
+              </div> */}
               <button
                 disabled={!allAnswered}
                 onClick={() => setSelectComponent("responses")}
-                className={`submit-btn ${allAnswered ? 'active' : 'disabled'}`}
+                className={`submit-btn ${allAnswered ? "active" : "disabled"}`}
               >
                 Submit
               </button>
@@ -79,23 +81,24 @@ function QuestionPaper() {
           <div className="main-container">
             {/* Left Scrollable Questions List */}
             <div className="questions-list">
-              <div className="questions-title">
-                Questions
-              </div>
+              <div className="questions-title">Questions</div>
               <div className="questions-container">
                 {mcqQuestions.map((q, index) => (
                   <div
                     key={q.questionId}
                     onClick={() => setSelectedQuestionIndex(index)}
-                    className={`question-item ${selectedQuestionIndex === index ? 'selected' : 'hover'}`}
+                    className={`question-item ${
+                      selectedQuestionIndex === index ? "selected" : "hover"
+                    }`}
                   >
                     {answers[index] !== undefined ? (
                       <CheckCircle className="answered-icon" />
-                    ) : ( 
+                    ) : (
                       <Circle className="unanswered-icon" />
                     )}
                     <span className="question-text">
-                      {index + 1}. {q.questionText}
+                      <div>{index + 1})</div>
+                      <div>{q.questionText}</div>
                     </span>
                   </div>
                 ))}
@@ -106,15 +109,15 @@ function QuestionPaper() {
             <div className="questions-display">
               {mcqQuestions.map((question, questionIndex) => (
                 <div key={question.questionId} className="question-header">
-                  <div className="flex justify-between items-center">
+                  <div className="question-subheader">
                     <div>
-                      <div className="text-blue-700">
+                      <div className="question-number">
                         Question {questionIndex + 1} /{" "}
-                        <span className="text-black">
+                        <span className="question-count">
                           {mcqQuestions.length}
                         </span>
                       </div>
-                      <div className="font-normal">{question.questionText}</div>
+                      <div className="font-normal mt-[5px] mb-[10px] text-[18px] font-[400]">{question.questionText}</div>
                     </div>
                     <button
                       onClick={() => {
@@ -137,7 +140,11 @@ function QuestionPaper() {
                     {question.options.map((option, optionIndex) => (
                       <label
                         key={optionIndex}
-                        className={`option-item ${answers[questionIndex] === optionIndex ? 'selected-option' : 'default-option'}`}
+                        className={`option-item ${
+                          answers[questionIndex] === optionIndex
+                            ? "selected-option"
+                            : "default-option"
+                        }`}
                         onClick={() =>
                           handleOptionSelect(questionIndex, optionIndex)
                         }
