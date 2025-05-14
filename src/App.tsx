@@ -14,6 +14,7 @@ import AssignmetnCreationPageTwo from "./Pages/AssignmetnCreationPageTwo";
 import SessionsPage from "./Pages/SessionsPage";
 import AllSessionsPage from "./Pages/AllSessionsPage";
 import AllPlans from "./planPageComponent/AllPlans";
+import QuestionBank from './QuestionBank/QuestionBank'
 
 function App() {
   const { selectComponent } = useContext(DataContext);
@@ -58,7 +59,8 @@ function App() {
               )
             }
           />
-          <Route path="/question-bank" element={<QuestionBankPage />} />
+          <Route path="/question-bank" element={ <QuestionBank></QuestionBank>} />
+         
           <Route
             path="/plans"
             element={

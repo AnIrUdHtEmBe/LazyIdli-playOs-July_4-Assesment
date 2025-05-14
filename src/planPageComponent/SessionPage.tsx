@@ -121,39 +121,37 @@ function SessionPage() {
 
   return (
     <div className="responses-root">
-      <div className="sticky-header">
+      
         <Header />
-      </div>
+     
 
       <div className="main-container ">
         {/* Left Panel: Plans Table */}
         <div className="left-panel">
           {/* Top Bar */}
           <div className="top-bar">
-            <input
-              className="border-2 border-gray-300 px-2 py-1 rounded-md"
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by plan name or category"
-            />
+
+            <div className="flex items-center justify-center gap-1">
+            <span className="sessions-text-header">Sessions</span>
+            <span className="all-button">All</span>
+            </div>
 
             <div className="button-group">
               <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
                 <Dumbbell
-                  size={30}
+                  size={20}
                   onClick={() => filterPlansAccordingTo("Fitness")}
                 />
               </button>
               <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
                 <Mediation
-                  style={{ fontSize: "30px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => filterPlansAccordingTo("Wellness")}
                 />
               </button>
               <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
                 <NordicWalking
-                  style={{ fontSize: "30px" }}
+                  style={{ fontSize: "20px" }}
                   onClick={() => filterPlansAccordingTo("Sports")}
                 />
               </button>
@@ -164,10 +162,10 @@ function SessionPage() {
               onClick={handleDelete}
               disabled={selectedIds.length === 0}
             >
-              <Trash2 size={30} className="text-red-500" />
+              <Trash2 size={20} className="text-red-500" />
             </button>
             <button className="new-button">
-              <Plus size={30} />
+              <Plus size={20} />
               <span>NEW</span>
             </button>
           </div>
@@ -180,13 +178,14 @@ function SessionPage() {
                   <th>
                     <input
                       type="checkbox"
+                      className="session-checkbox"
                       ref={checkboxRef}
-                      onChange={toggleSelectAll}
                       checked={isAllSelected}
+                      onChange={toggleSelectAll}
                     />
                   </th>
-                  <th>Sl No</th>
-                  <th>Plan Name</th>
+                  
+                  <th>Session Name</th>
                   <th>Category</th>
                   <th>Preview</th>
                 </tr>
@@ -197,11 +196,12 @@ function SessionPage() {
                     <td>
                       <input
                         type="checkbox"
+                        className="session-checkbox"
                         checked={selectedIds.includes(plan.id)}
                         onChange={() => toggleSelectOne(plan.id)}
                       />
                     </td>
-                    <td>{idx + 1}</td>
+                   
                     <td>{plan.sessionName}</td>
                     <td>{plan.sessionType}</td>
                     <td>
@@ -227,7 +227,7 @@ function SessionPage() {
                 id="planName"
                 value={planName}
                 onChange={(e) => setPlanName(e.target.value)}
-                placeholder="Enter plan name"
+                placeholder="Enter plan name "
               />
             </div>
 
@@ -236,7 +236,6 @@ function SessionPage() {
               <div className="calendar-header">
                 <h2>My Personalised Plan</h2>
               </div>
-
               <div className="calendar-grid">
                 {weeks.map((weekIndex) => (
                   <React.Fragment key={weekIndex}>
@@ -274,11 +273,11 @@ function SessionPage() {
                       );
                     })}
                     <button
-                        className="flex justify-between items-center"
+                        className="flex justify-center items-center"
                         onClick={() => handleRemoveWeek(weekIndex)}
                       >
                       <MinusCircle size={20} className="text-red-500" />
-                      </button>
+                    </button>
                   </React.Fragment>
                   
                 ))}

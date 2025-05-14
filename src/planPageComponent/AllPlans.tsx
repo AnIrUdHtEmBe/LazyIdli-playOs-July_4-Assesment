@@ -85,7 +85,7 @@ function AllPlans() {
             </h2>
             <div className="section-buttons">
               <button className="icon-button">
-                <LucideTrash2 size={40} />
+                <LucideTrash2 size={20} />
               </button>
               <button className="primary-button">
                 <Plus size={20} />
@@ -112,12 +112,9 @@ function AllPlans() {
 
         <div className="plan-section md">
           <div className="controls">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by plan name or category"
-            />
+            <h2 className="section-title">
+              Sessions <span className="badge">All</span>
+            </h2>
             <button onClick={() => filterPlansAccordingTo("Fitness")}>
               <Dumbbell size={20} />
             </button>
@@ -133,6 +130,10 @@ function AllPlans() {
             >
               <Trash2 size={20} className="text-red-500" />
             </button>
+            <button className="primary-button">
+                <Plus size={20} />
+                <span>New Session</span>
+              </button>
           </div>
 
           <div className="table-wrapper">

@@ -1,0 +1,51 @@
+.header-container {
+  height: 124px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: white;
+  width: 100%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-top {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+.header-title {
+  font-size: 2.00rem; /* equivalent to Tailwind's text-xl */
+  font-weight: 500;
+}
+
+.header-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem; /* equivalent to space-x-15 */
+}
+
+.header-tab {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 500;
+  border-bottom: 4px solid transparent;
+  padding-bottom: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header-tab.active-tab {
+  border-color: black;
+}
+
+
+.question-bank-top-container {
+    width:fit-content;
+    display: flex;
+    justify-content: space-between;
+}
