@@ -67,10 +67,16 @@ const ActionsContainer = (props: ActionsContainerProps) => {
 };
 
 const CustomerTable = () => {
-	const { customers } = useContext(DataContext);
+	const { customers, setSelectComponent } = useContext(DataContext);
 	const [columns, setColumns] = useState<any[]>([]);
 	const [rows, setRows] = useState<any[]>([]);
 	const ref = useRef<HTMLDivElement | null>(null);
+
+
+  const assessmentHandler = () => {
+    setSelectComponent('assessment');
+  }
+
 
 	const generateColumns = () => {
 		const columns: GridColDef[] = [
@@ -85,7 +91,7 @@ const CustomerTable = () => {
 			{
 				field: 'action',
 				headerName: '',
-				renderCell: () => <ActionsContainer takeAssessment={() => {}} />,
+				renderCell: () => <ActionsContainer takeAssessment={assessmentHandler} />,
 			},
 		];
 		return columns;
