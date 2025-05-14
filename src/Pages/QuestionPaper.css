@@ -18,7 +18,7 @@
 }
 
 .paper-details {
-  background-color: #e0f7fa;
+  background-color: white;
   padding: 1rem;
   border-radius: 0.75rem;
 }
@@ -146,13 +146,12 @@
 .option-item {
   padding: 1rem;
   border-radius: 0.375rem;
-  border: 1px solid #e5e7eb;
+  /* border: 1px solid #e5e7eb; */
   cursor: pointer;
 }
 
 .option-item.selected-option {
   background-color: #f0fff4;
-  border-color: #38a169;
 }
 
 .option-item.default-option:hover {

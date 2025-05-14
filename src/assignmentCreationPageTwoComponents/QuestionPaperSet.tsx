@@ -7,7 +7,7 @@ type Question = {
   questionId: number;
   questionText: string;
   options: { text: string }[];
-  required: boolean;
+  required?: boolean;  // Make required optional since it's not present in MCQQuestion
 };
 function QuestionPaperSet() {
   const context = useContext(DataContext);
@@ -26,7 +26,7 @@ function QuestionPaperSet() {
   const [selectedQuestion, setSelectedQuestions] = useState<Question[]>([]);
   const [finalQuestion, setFinalQuestion] = useState<Question[]>([]);
 
-  const handleSelect = (question: Object) => {
+  const handleSelect = (question: Question) => {
     if (selectedQuestion.includes(question)) {
       setSelectedQuestions(
         selectedQuestion.filter((item) => item !== question)
@@ -56,7 +56,7 @@ function QuestionPaperSet() {
     );
   };
 
-  const handleDelete = (question) => {
+  const handleDelete = (question: Question) => {
     const deletedSet = finalQuestion.filter(
       (item) => item.questionId !== question.questionId
     );
@@ -108,8 +108,8 @@ function QuestionPaperSet() {
 
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
-          <div className="flex justify-end items-center justify-center gap-1 text-xl">
-            <span>Q & A</span>
+          <div className="qp-toggle-section">
+            <span className="qp-toggle-text">Q & A</span>
             <button
               className="qp-toggle-options"
               onClick={() => setShowoptions(!showOptions)}
@@ -120,7 +120,7 @@ function QuestionPaperSet() {
                 <ToggleRight className="text-blue-500" size={50}></ToggleRight>
               )}
             </button>
-            <span>Q Only</span>
+            <span className="qp-toggle-text">Q Only</span>
           </div>
 
           {finalQuestion.length !== 0 ? (
@@ -132,16 +132,15 @@ function QuestionPaperSet() {
                 }`}
               >
                 <div className="qp-final-header">
-                  <div className="flex items-center gap-5">
-                    <span className="qp-question-label text-xl">
+                  <div className="qp-question-header">
+                    <span className="qp-question-number">
                       Question {index + 1} /
-                      <span className="text-black text-xl">
+                      <span className="qp-question-count">
                         {finalQuestion.length}
                       </span>
                     </span>
-                    {/* <button className="flex" onClick={() => setRequiredQuestion(!requiredQuestion)}>{requiredQuestion ? <ToggleLeft></ToggleLeft> : <ToggleRight className="text-blue-500"></ToggleRight>} {requiredQuestion ?<span>Not-Required</span> : <span>Required</span> } </button> */}
                     <button
-                      className="flex"
+                      className="qp-required-toggle"
                       onClick={() => toggleRequired(question.questionId)}
                     >
                       {question.required ? (
@@ -149,11 +148,9 @@ function QuestionPaperSet() {
                       ) : (
                         <ToggleRight className="text-blue-500" />
                       )}
-                      {question.required ? (
-                        <span>Required</span>
-                      ) : (
-                        <span>Not-Required</span>
-                      )}
+                      <span className="qp-required-text">
+                        {question.required ? "Required" : "Not-Required"}
+                      </span>
                     </button>
                   </div>
 

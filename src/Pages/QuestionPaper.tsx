@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { CheckCircle, Circle, StickyNote } from "lucide-react";
 import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
+import "./QuestionPaper.css";
 
 type Notes = {
   questionId: number;
@@ -9,10 +10,9 @@ type Notes = {
 };
 
 function QuestionPaper() {
-  const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
-  const userDetail = JSON.parse(localStorage.getItem("user"));
+  const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails") || "{}");
+  const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
 
-  console.log(userDetail);
   const [notes, setNotes] = useState<Notes[]>([]);
   const context = useContext(DataContext);
 
@@ -21,7 +21,6 @@ function QuestionPaper() {
   }
 
   const { mcqQuestions, setSelectComponent } = context;
-  console.log(mcqQuestions);
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -41,27 +40,27 @@ function QuestionPaper() {
     mcqQuestions.every((_, index) => answers[index] !== undefined);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="dashboard-container">
       {/* Fixed Header */}
-      <div className="w-full sticky top-0 z-50 bg-white shadow-md">
+      <div className="header-container">
         <Header />
       </div>
 
       {/* Scrollable body area */}
-      <div className="flex-1 overflow-hidden p-5 sm:p-5 ">
-        <div className=" bg-white rounded-xl bg-blue-200 h-full">
+      <div className="body-container">
+        <div className="paper-details">
           {/* Top Info */}
-          <div className="flex justify-between flex-col sm:flex-row gap-4 sm:gap-0 p-6 border-b-2">
+          <div className="top-info">
             <div>
-              <div className="text-2xl sm:text-3xl font-extralight">
+              <div className="paper-title">
                 {paperDetails.name}
               </div>
               <div>For adults, optimizing strength, metabolism, and diet. </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-10 sm:items-center">
+            <div className="user-details">
               <div className="flex space-x-2.5">
-                <span className="font-semibold">Taking For: </span>
+                <span className="label">Taking For: </span>
                 <div> 
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
@@ -69,11 +68,7 @@ function QuestionPaper() {
               <button
                 disabled={!allAnswered}
                 onClick={() => setSelectComponent("responses")}
-                className={`px-4 sm:px-6 py-2 rounded-md text-white transition ${
-                  allAnswered
-                    ? "bg-green-500 hover:bg-green-700"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
+                className={`submit-btn ${allAnswered ? 'active' : 'disabled'}`}
               >
                 Submit
               </button>
@@ -81,27 +76,25 @@ function QuestionPaper() {
           </div>
 
           {/* Main Scrollable Panels */}
-          <div className="flex flex-1 overflow-hidden flex-col md:flex-row p-3">
+          <div className="main-container">
             {/* Left Scrollable Questions List */}
-            <div className="w-full md:w-1/2 p-4 overflow-y-auto h-[300px] md:h-[calc(100vh-150px)] border-b md:border-b-0 md:border-r border-gray-300">
-              <div className="text-lg font-semibold mb-4 text-blue-700">
+            <div className="questions-list">
+              <div className="questions-title">
                 Questions
               </div>
-              <div className="space-y-4">
+              <div className="questions-container">
                 {mcqQuestions.map((q, index) => (
                   <div
                     key={q.questionId}
                     onClick={() => setSelectedQuestionIndex(index)}
-                    className={`flex items-center gap-2 cursor-pointer p-2 rounded transition ${
-                      selectedQuestionIndex === index ? "" : "hover:bg-gray-100"
-                    }`}
+                    className={`question-item ${selectedQuestionIndex === index ? 'selected' : 'hover'}`}
                   >
                     {answers[index] !== undefined ? (
-                      <CheckCircle className="text-green-600" />
+                      <CheckCircle className="answered-icon" />
                     ) : ( 
-                      <Circle className="text-gray-400" />
+                      <Circle className="unanswered-icon" />
                     )}
-                    <span className="text-sm font-medium">
+                    <span className="question-text">
                       {index + 1}. {q.questionText}
                     </span>
                   </div>
@@ -110,11 +103,11 @@ function QuestionPaper() {
             </div>
 
             {/* Right Scrollable All Questions Display */}
-            <div className="w-full md:w-1/2 p-4 overflow-y-auto h-[300px] md:h-[calc(100vh-150px)] space-y-8">
+            <div className="questions-display">
               {mcqQuestions.map((question, questionIndex) => (
-                <div key={question.questionId} className="border-b pb-4">
+                <div key={question.questionId} className="question-header">
                   <div className="flex justify-between items-center">
-                    <div className="text-lg font-semibold mb-2">
+                    <div>
                       <div className="text-blue-700">
                         Question {questionIndex + 1} /{" "}
                         <span className="text-black">
@@ -140,11 +133,11 @@ function QuestionPaper() {
                     </button>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="options-container">
                     {question.options.map((option, optionIndex) => (
                       <label
                         key={optionIndex}
-                        className="flex items-center space-x-3 p-2 rounded-md cursor-pointer transition bg-white hover:bg-gray-100"
+                        className={`option-item ${answers[questionIndex] === optionIndex ? 'selected-option' : 'default-option'}`}
                         onClick={() =>
                           handleOptionSelect(questionIndex, optionIndex)
                         }
@@ -157,7 +150,7 @@ function QuestionPaper() {
                           className="appearance-none h-4 w-4 border border-gray-400 rounded-none checked:bg-blue-600 checked:border-blue-600 cursor-pointer"
                         />
 
-                        <span className="text-sm">{option.text}</span>
+                        <span className="option-text">{option.text}</span>
                       </label>
                     ))}
                   </div>
@@ -170,34 +163,36 @@ function QuestionPaper() {
 
       {/* Comment Modal */}
       {commentModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-6 w-[90%] sm:w-[400px] space-y-4 shadow-xl">
-            <h2 className="text-xl font-semibold">Add Comment</h2>
+        <div className="comment-modal">
+          <div className="comment-modal-content">
+            <h2 className="comment-modal-title">Add Comment</h2>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Write your note..."
-              className="w-full p-2 border border-gray-300 rounded"
+              className="comment-textarea"
             />
-            <div className="flex justify-end gap-2">
+            <div className="comment-modal-buttons">
               <button
                 onClick={() => setCommentModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                className="comment-modal-button cancel"
               >
                 Cancel
               </button>
               <button
                 onClick={() => {
-                  setNotes([
-                    ...notes,
-                    { questionId: activeQuestionId, comment },
-                  ]);
-                  setCommentModal(false);
-                  setComment("");
-                  setActiveQuestionId(null);
+                  if (activeQuestionId !== null) {
+                    setNotes([
+                      ...notes,
+                      { questionId: activeQuestionId, comment },
+                    ]);
+                    setCommentModal(false);
+                    setComment("");
+                    setActiveQuestionId(null);
+                  }
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="comment-modal-button save"
               >
                 Save
               </button>

@@ -230,3 +230,80 @@
     max-height: calc(100vh - 100px);
   }
 }
+
+/* Toggle Options Section */
+.qp-toggle-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1.25rem;
+}
+
+.qp-toggle-text {
+  font-size: 1.25rem;
+}
+
+/* Question Header */
+.qp-question-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.qp-question-number {
+  font-size: 1.25rem;
+}
+
+.qp-question-count {
+  color: black;
+  font-size: 1.25rem;
+}
+
+/* Required Toggle Button */
+.qp-required-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.qp-required-text {
+  font-size: 1rem;
+}
+
+/* Question Text */
+.qp-question-text {
+  font-size: 1.25rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+/* Options */
+.qp-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qp-option {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+/* No Questions Message */
+.qp-no-questions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.25rem;
+  color: #111827;
+  text-align: center;
+  padding: 2rem;
+  line-height: 1.5;
+}

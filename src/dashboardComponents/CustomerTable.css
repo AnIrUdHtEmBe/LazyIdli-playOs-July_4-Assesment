@@ -61,6 +61,11 @@
     padding: 10px 16px 10px 16px;
   }
 
+  .arrow-down{
+    color: grey;
+    height: 24.92px;
+    width: 36.34px;
+  }
   .csv-button {
     display: flex;
     gap: 0.5rem;

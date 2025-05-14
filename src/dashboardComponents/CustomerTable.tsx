@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./CustomerTable.css";
-import { DownloadSharp } from "@mui/icons-material";
+import { ArrowDownwardSharp, DownloadSharp } from "@mui/icons-material";
 
 const CustomerTable: React.FC = () => {
   const { customers, setCustomers, selectComponent, setSelectComponent } =
@@ -78,7 +78,7 @@ const CustomerTable: React.FC = () => {
     ...filteredCustomers,
     ...Array(Math.max(0, 11 - filteredCustomers.length)).fill(null),
   ];
-
+  const nonArrowFilters = ["Gender" , "Phone No" , "Membership" , "Plan Allocated", ""];
   const isAllSelected =
     filteredCustomers.length > 0 &&
     selectedIds.length === filteredCustomers.length;
@@ -108,6 +108,10 @@ const CustomerTable: React.FC = () => {
       const sortedCustomers = [...customers].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
+      setCustomers(sortedCustomers);
+    }
+    if(filterType === "Sl No"){
+      const sortedCustomers = [...customers].sort((a, b) => a.id - b.id);
       setCustomers(sortedCustomers);
     }
     if (filterType === "Age") {
@@ -277,7 +281,10 @@ const CustomerTable: React.FC = () => {
                 "Plan Allocated",
                 "",
               ].map((col) => (
-                <th key={col}>{col}</th>
+                <th key={col}>
+                  {col}
+                  {nonArrowFilters.includes(col) ? null : <button className="arrow-down" onClick={() => filterCustomers(col)}> <ArrowDownwardSharp/></button>}
+                  </th>
               ))}
             </tr>
           </thead>
