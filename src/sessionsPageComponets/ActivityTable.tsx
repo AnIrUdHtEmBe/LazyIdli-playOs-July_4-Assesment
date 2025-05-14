@@ -86,7 +86,7 @@ function ActivityTable() {
   };
 
   return (
-    <div className="bg-white w-full h-screen flex flex-col px-4 md:px-8">
+    <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-5 border-b-2 border-gray-300 mb-5">
         {/* Left Inputs */}
@@ -197,20 +197,21 @@ function ActivityTable() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4 py-8">
+           
           <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative p-6">
             {/* Close Button */}
+           
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-black"
             >
               <X size={30} />
             </button>
-
             <div className="flex justify-between items-center border-b pb-2 mb-4">
               <h2 className="text-xl font-semibold">Create New Activities</h2>
               <button
                 onClick={handleModalSave}
-                className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
+                className="activity-save-button mx-6 m flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
               >
                 <Save size={20} />
                 <span>Save All</span>

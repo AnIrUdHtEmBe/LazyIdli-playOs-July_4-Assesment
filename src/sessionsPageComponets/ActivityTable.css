@@ -5,3 +5,11 @@
 .btn2{
   background-color: #0070FF;
 }
+
+.activity-table-container{
+  height: calc(100vh - 124px);
+}
+
+.activity-save-button{
+  margin-right: 20px;
+}

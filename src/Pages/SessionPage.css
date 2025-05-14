@@ -1,0 +1,6 @@
+.session-creation-container {
+    height: 100vh;
+}
+.activity-box{
+    height: calc(100vh - 124px);
+}
