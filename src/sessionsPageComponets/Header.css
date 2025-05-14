@@ -1,11 +1,12 @@
 .header-container {
   display: flex;
-  height: 124px;
+  height: 144px;
   flex-direction: column;
   padding: 1rem;
   background-color: white;
   width: 100%;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  font-family: 'roboto', sans-serif;
 }
 
 .header-top {
@@ -26,6 +27,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 500;
   gap: 3rem; /* equivalent to space-x-15 */
 }
 

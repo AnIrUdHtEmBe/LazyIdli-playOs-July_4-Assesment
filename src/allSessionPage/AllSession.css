@@ -1,7 +1,7 @@
 .all-session-container {
   background-color: rgb(243 244 246);
+  font-family: 'roboto', sans-serif;
   width: 100%;
-  min-height: 100vh;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   }
 }
 
-.left-panel {
+.left-p {
   width: 100%;
   background-color: white;
   border-radius: 0.5rem;
@@ -22,8 +22,9 @@
 }
 
 @media (min-width: 1024px) {
-  .left-panel {
+  .left-p {
     width: 40%;
+    /* padding: 1rem; */
   }
 }
 
@@ -31,12 +32,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem;
+  padding: 15px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.header-title {
-  font-size: 1.5rem;
+.header-tit {
+  font-size: 22px;
   font-weight: 500;
 }
 
@@ -75,11 +76,11 @@
   border-collapse: collapse;
 }
 
-.table-header {
-  background-color: rgb(229 231 235);
-  color: rgb(75 85 99);
-  font-size: 0.875rem;
-}
+/* .table-r {
+  background-color: rgb(20, 91, 233);
+  color: rgb(3, 48, 104);
+  /* font-size: 0.875rem; */
+/* } */
 
 .table-header th {
   padding: 1rem;
@@ -87,18 +88,36 @@
 
 .table-row {
   cursor: pointer;
+  /* height: 40px; */
 }
 
 .table-row:hover {
   background-color: rgb(243 244 246);
 }
 
-.table-cell {
-  padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+.table-cell .sess{
+  font-weight: 300;
 }
 
-.right-panel {
+.table-cell {
+  padding: 1rem;
+  text-align: center;
+  height: 40px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.one{
+  text-align: left;
+}
+
+.onee{
+  text-align: left;
+  font-weight: 500;
+}
+
+
+
+
+.right-panell {
   width: 100%;
   background-color: white;
   border-radius: 0.5rem;
@@ -108,7 +127,7 @@
 }
 
 @media (min-width: 1024px) {
-  .right-panel {
+  .right-panell {
     width: 60%;
   }
 }
@@ -116,7 +135,8 @@
 .right-panel-header {
   display: flex;
   flex-direction: column;
-  padding: 1.25rem;
+  justify-content: space-between;
+  padding: 10px;
   border-bottom: 1px solid #e5e7eb;
   gap: 1rem;
 }
@@ -131,7 +151,6 @@
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
   width: 100%;
 }
 
@@ -145,6 +164,8 @@
 .input-group {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  align-items: space-around;
   width: 100%;
 }
 
@@ -155,9 +176,10 @@
 
 .input-field {
   border-bottom: 2px solid;
+  width: 150px;
   font-size: 1.125rem;
   color: black;
-  font-family: monospace;
+  /* font-family: monospace; */
 }
 
 .input-field:focus {
@@ -166,6 +188,7 @@
 
 .select-field {
   border-bottom: 2px solid;
+  width: 150px;
   font-size: 1.125rem;
 }
 

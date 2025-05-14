@@ -28,8 +28,12 @@ function AllSession() {
 
   const { sessions, setSessions } = context;
   const [selecteddPlan, setSelectedPlan] = useState<Session | null>(null);
-  const [planName, setPlanName] = useState<string>(selecteddPlan?.sessionName || "");
-  const [category, setCategory] = useState<string>(selecteddPlan?.sessionType || "Fitness");
+  const [planName, setPlanName] = useState<string>(
+    selecteddPlan?.sessionName || ""
+  );
+  const [category, setCategory] = useState<string>(
+    selecteddPlan?.sessionType || "Fitness"
+  );
 
   useEffect(() => {
     if (selecteddPlan) {
@@ -41,13 +45,10 @@ function AllSession() {
   return (
     <div className="all-session-container">
       {/* Left Panel */}
-      <div className="left-panel">
+      <div className="left-p">
         <div className="panel-header">
-          <div className="header-title">
-            Sessions{" "}
-            <span className="badge">
-              All
-            </span>
+          <div className="header-tit">
+            Sessions <span className="badge">All</span>
           </div>
           <button className="new-button">
             <Plus size={20} className="new-button-icon" />
@@ -59,9 +60,15 @@ function AllSession() {
           <table className="table">
             <thead className="table-header">
               <tr>
-                {["Sl.No", "Session Name", "Category"].map((item, index) => (
-                  <th key={index}>{item}</th>
-                ))}
+                <th className="table-cell">
+                  Sl.No
+                </th>
+                <th className="one">
+                  Session Name
+                </th>
+                <th className="table-cell">
+                  Category
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -72,8 +79,8 @@ function AllSession() {
                   className="table-row"
                 >
                   <td className="table-cell">{index + 1}</td>
-                  <td className="table-cell">{session.sessionName}</td>
-                  <td className="table-cell">{session.sessionType}</td>
+                  <td className="onee">{session.sessionName}</td>
+                  <td className="table-cell sess">{session.sessionType}</td>
                 </tr>
               ))}
             </tbody>
@@ -82,7 +89,7 @@ function AllSession() {
       </div>
 
       {/* Right Panel */}
-      <div className="right-panel">
+      <div className="right-panell">
         {/* Header */}
         <div className="right-panel-header">
           {/* Input Fields */}
@@ -110,9 +117,7 @@ function AllSession() {
           </div>
 
           {/* Save Button */}
-          <button className="save-button">
-            Save Changes
-          </button>
+          <button className="save-button">Save Changes</button>
         </div>
 
         {/* Activities Table */}
@@ -121,33 +126,48 @@ function AllSession() {
             <table className="activities-table">
               <thead className="activities-table-header">
                 <tr>
-                  {["ID", "Activity", "Description", "Time (mins)", ""].map((item, index) => (
-                    <th key={index}>{item}</th>
-                  ))}
+                  {["ID", "Activity", "Description", "Time (mins)", ""].map(
+                    (item, index) => (
+                      <th key={index}>{item}</th>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {selecteddPlan?.activities?.map((item: Activity, index: number) => (
-                  <tr key={item.id} className="activity-row">
-                    <td className="activity-cell font-bold">{item.id}</td>
-                    <td className="activity-cell">
-                      <select className="activity-select">
-                        {item.activityType.map((activity: { id: string; activityType: string }) => (
-                          <option key={activity.id} value={activity.activityType}>
-                            {activity.activityType}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="activity-cell">{item.description}</td>
-                    <td className="activity-cell">{item.timeInMinutes}</td>
-                    <td className="activity-cell">
-                      <button>
-                        <LucideCircleMinus className="delete-button" size={24} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {selecteddPlan?.activities?.map(
+                  (item: Activity, index: number) => (
+                    <tr key={item.id} className="activity-row">
+                      <td className="activity-cell font-bold">{item.id}</td>
+                      <td className="activity-cell">
+                        <select className="activity-select">
+                          {item.activityType.map(
+                            (activity: {
+                              id: string;
+                              activityType: string;
+                            }) => (
+                              <option
+                                key={activity.id}
+                                value={activity.activityType}
+                              >
+                                {activity.activityType}
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </td>
+                      <td className="activity-cell">{item.description}</td>
+                      <td className="activity-cell">{item.timeInMinutes}</td>
+                      <td className="activity-cell">
+                        <button>
+                          <LucideCircleMinus
+                            className="delete-button"
+                            size={24}
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                )}
                 <tr>
                   <td colSpan={5} className="activity-cell">
                     <button className="add-activity-button">
@@ -159,9 +179,7 @@ function AllSession() {
               </tbody>
             </table>
           ) : (
-            <div className="empty-state">
-              Select a session to view details.
-            </div>
+            <div className="empty-state">Select a session to view details.</div>
           )}
         </div>
       </div>

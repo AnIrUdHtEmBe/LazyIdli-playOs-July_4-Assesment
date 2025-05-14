@@ -106,7 +106,7 @@
 .plans-table th,
 .plans-table td {
   padding: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
   text-align: left;
   vertical-align: middle;
   padding: 10px 15px;
