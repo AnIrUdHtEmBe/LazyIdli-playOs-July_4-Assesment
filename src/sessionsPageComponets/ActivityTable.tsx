@@ -95,7 +95,7 @@ function ActivityTable() {
             <label className="invisible text-sm mb-1">Session</label>
             <input
               type="text"
-              className="border-b-2 font-mono text-lg md:text-xl text-black focus:outline-none focus:ring-0 "
+              className="border-b-2 font-roberto text-lg md:text-xl text-black focus:outline-none focus:ring-0 "
               placeholder="Session name"
               value={planName}
               onChange={(e) => setPlanName(e.target.value)}
@@ -104,7 +104,7 @@ function ActivityTable() {
           <div className="flex flex-col  w-full">
             <label className="font-light mb-1">Category</label>
             <select
-              className="font-normal border-b-2 text-lg md:text-xl focus:outline-none focus:ring-0 "
+              className="font-roberto border-b-2 text-lg md:text-xl focus:outline-none focus:ring-0 "
               onChange={(e) => setCategory(e.target.value)}
               value={category}
             >
@@ -145,7 +145,7 @@ function ActivityTable() {
                   (item, index) => (
                     <th
                       key={index}
-                      className="px-4 py-3 md:py-6 border-b border-b-gray-300 font-medium"
+                      className="justify-center font-roberto px-4 py-3 md:py-6 border-b border-b-gray-300"
                     >
                       {item}
                     </th>
