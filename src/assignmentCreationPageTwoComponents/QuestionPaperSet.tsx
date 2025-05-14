@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
-import { ChevronRight, ToggleLeft, ToggleRight, X } from "lucide-react";
+import { ChevronRight, CrossIcon, ToggleLeft, ToggleRight, X } from "lucide-react";
 import "./QuestionPaperSet.css"; // Import the CSS
-import { ToggleButtonGroup } from "@mui/material";
+import { Switch, ToggleButtonGroup } from "@mui/material";
 type Question = {
   questionId: number;
   questionText: string;
@@ -78,7 +78,7 @@ function QuestionPaperSet() {
       <div className="qp-content">
         {/* Question Selection Panel */}
         <div className="qp-question-bank">
-          <h2 className="qp-section-title">Question Bank</h2>
+          <h2 className="qp-section-title">Questions</h2>
           <div className="qp-question-list">
             {questionsForQuestionBank.map((question) => (
               <div key={question.questionId} className="qp-question-item">
@@ -109,18 +109,20 @@ function QuestionPaperSet() {
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
           <div className="qp-toggle-section">
-            <span className="qp-toggle-text">Q & A</span>
+            <span className="qp-toggle-text">Q only</span>
             <button
               className="qp-toggle-options"
               onClick={() => setShowoptions(!showOptions)}
             >
-              {showOptions ? (
+              {/* {showOptions ? (
                 <ToggleLeft className="text-blue-500" size={50}></ToggleLeft>
               ) : (
                 <ToggleRight className="text-blue-500" size={50}></ToggleRight>
-              )}
+              )} */}
+
+            <Switch  defaultChecked ></Switch>
             </button>
-            <span className="qp-toggle-text">Q Only</span>
+            <span className="qp-toggle-text">Q & A</span>
           </div>
 
           {finalQuestion.length !== 0 ? (
@@ -143,11 +145,16 @@ function QuestionPaperSet() {
                       className="qp-required-toggle"
                       onClick={() => toggleRequired(question.questionId)}
                     >
-                      {question.required ? (
+                      {/* {question.required ? (
                         <ToggleLeft />
                       ) : (
                         <ToggleRight className="text-blue-500" />
-                      )}
+                      )} */}
+                      <Switch
+                          checked={question.required}
+                          onCheckedChange={() => toggleRequired(question.questionId)}
+                        />
+
                       <span className="qp-required-text">
                         {question.required ? "Required" : "Not-Required"}
                       </span>
@@ -168,7 +175,7 @@ function QuestionPaperSet() {
                   <div className="qp-options">
                     {question.options.map((item, i) => (
                       <div key={i} className="qp-option">
-                        <input type="checkbox" />
+                        <input className="qp-checkbox" type="checkbox" />
                         <span>{item.text}</span>
                       </div>
                     ))}

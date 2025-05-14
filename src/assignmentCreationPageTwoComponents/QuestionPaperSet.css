@@ -52,6 +52,7 @@
 .qp-content {
   display: flex;
   flex-direction: row;
+  /* justify-content: space-evenly; */
   flex-wrap: wrap;
   flex: 1;
   overflow: hidden;
@@ -66,7 +67,7 @@
 
 .qp-question-bank {
   flex: 1 1 100%;
-  background-color: #f9fafb;
+  background-color: white;
   border-bottom: 1px solid #e5e7eb;
   max-height: 300px;
   overflow-y: auto;
@@ -98,7 +99,7 @@
 }
 
 .qp-label {
-  font-size: 1rem;
+  font-size: 16px;
   color: #1f2937;
   line-height: 1.5;
 }
@@ -106,6 +107,7 @@
 .qp-label-id {
   font-weight: 500;
   margin-right: 0.5rem;
+  font-weight: 400;
 }
 
 .qp-move-btn-container {
@@ -166,10 +168,10 @@
 }
 
 .qp-delete-btn {
+  border: 1px solid grey;
   padding: 0.5rem;
-  border: 2px solid #ef4444;
   border-radius: 0.375rem;
-  background-color: #fef2f2;
+  background-color:white;
   cursor: pointer;
 }
 
@@ -184,11 +186,12 @@
   gap: 0.5rem;
 }
 
-.qp-option {
+.qp-options .qp-option {
   display: flex;
   gap: 0.75rem;
   align-items: center;
-  font-size: 0.875rem;
+  font-weight: 400;
+  font-size: 16px;
 }
 
 .qp-no-questions {
