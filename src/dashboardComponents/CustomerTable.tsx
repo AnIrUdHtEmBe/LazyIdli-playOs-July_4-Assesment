@@ -9,12 +9,12 @@ import {
 } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./CustomerTable.css";
-import { ArrowDownwardSharp, DownloadSharp } from "@mui/icons-material";
+import { ArrowDownwardSharp, ArrowUpwardSharp, DownloadSharp } from "@mui/icons-material";
 
 const CustomerTable: React.FC = () => {
   const { customers, setCustomers, selectComponent, setSelectComponent } =
     useContext(DataContext)!;
-
+  const [sortType, setSortType] = useState<string>("asc");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -103,35 +103,64 @@ const CustomerTable: React.FC = () => {
     setSelectComponent("assessment");
   };
 
-  function filterCustomers(filterType: string) {
-    if (filterType === "Name") {
+  function filterCustomers(filterType: string, sortType: string) {
+    if (filterType === "Name" && sortType === "asc") {
       const sortedCustomers = [...customers].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
       setCustomers(sortedCustomers);
     }
-    if(filterType === "Sl No"){
+    if(filterType === "Name" && sortType === "desc"){
+      const sortedCustomers = [...customers].sort((a, b) =>
+        b.name.localeCompare(a.name)
+      );
+      setCustomers(sortedCustomers);
+    }
+    if(filterType === "Sl No" && sortType === "asc"){
       const sortedCustomers = [...customers].sort((a, b) => a.id - b.id);
       setCustomers(sortedCustomers);
     }
-    if (filterType === "Age") {
+    if(filterType === "Sl No" && sortType === "desc"){
+      const sortedCustomers = [...customers].sort((a, b) => b.id - a.id);
+      setCustomers(sortedCustomers);
+    }
+    if (filterType === "Age" && sortType === "asc") {
       const sortedCustomers = [...customers].sort((a, b) => a.age - b.age);
       setCustomers(sortedCustomers);
     }
-    if (filterType === "Joined On") {
+    if (filterType === "Age" && sortType === "desc") {
+      const sortedCustomers = [...customers].sort((a, b) => b.age - a.age);
+      setCustomers(sortedCustomers);
+    }
+
+    if (filterType === "Joined On" && sortType === "asc") {
       const sortedCustomers = [...customers].sort(
         (a, b) =>
           new Date(a.joinedOn).getTime() - new Date(b.joinedOn).getTime()
       );
       setCustomers(sortedCustomers);
     }
-    if (filterType === "Last Asseessed On") {
+    if (filterType === "Joined On" && sortType === "desc") {
+      const sortedCustomers = [...customers].sort(
+        (a, b) =>
+          new Date(b.joinedOn).getTime() - new Date(a.joinedOn).getTime()
+      );
+      setCustomers(sortedCustomers);
+    }
+
+    if (filterType === "Last Asseessed On" && sortType === "asc") {
       const sortedCustomers = [...customers].sort(
         (a, b) =>
           new Date(a.lastAssessed).getTime() -
           new Date(b.lastAssessed).getTime()
       );
       setCustomers(sortedCustomers);
+    }
+    if (filterType === "Last Asseessed On" && sortType === "desc") {
+      const sortedCustomers = [...customers].sort(
+        (a, b) =>
+          new Date(b.lastAssessed).getTime() - new Date(a.lastAssessed).getTime()
+      );
     }
   }
 
@@ -226,7 +255,7 @@ const CustomerTable: React.FC = () => {
                       <li key={label}>
                         <button
                           onClick={() => {
-                            filterCustomers(label);
+                            filterCustomers(label , "asc");
                             setIsFilterOpen(false);
                           }}
                           className="w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -283,7 +312,8 @@ const CustomerTable: React.FC = () => {
               ].map((col) => (
                 <th key={col}>
                   {col}
-                  {nonArrowFilters.includes(col) ? null : <button className="arrow-down" onClick={() => filterCustomers(col)}> <ArrowDownwardSharp/></button>}
+                  {nonArrowFilters.includes(col) ? null : sortType === "asc" ? <ArrowDownwardSharp className="arrow-down" onClick={() => {setSortType("desc") ; filterCustomers(col, sortType)}}/> : <ArrowUpwardSharp className="arrow-down" onClick={() => {setSortType("asc") ; filterCustomers(col, sortType)}}/>}
+                  {/* {nonArrowFilters.includes(col) ? null : <button className="arrow-down" onClick={() => filterCustomers(col, sortType)}> <ArrowDownwardSharp/></button>} */}
                   </th>
               ))}
             </tr>
