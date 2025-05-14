@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
-// import 'ActivityTable.css';
+import "./ActivityTable.css";
 
 function ActivityTable() {
   const context = useContext(DataContext);
@@ -88,7 +88,7 @@ function ActivityTable() {
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-5 border-b-2 border-gray-300 mb-5">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-5 border-b-2 border-gray-200 mb-5">
         {/* Left Inputs */}
         <div className="flex flex-col md:flex-row justify-between items-start space-x-50 w-full md:w-1/2">
           <div className="flex flex-col w-full">
@@ -123,7 +123,7 @@ function ActivityTable() {
             <span>Create New Activity</span>
           </button>
           <div className="p-2 border border-gray-300 rounded-xl">
-          <ReplayOutlined></ReplayOutlined>
+            <ReplayOutlined></ReplayOutlined>
           </div>
           <button
             className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2"
@@ -141,11 +141,11 @@ function ActivityTable() {
           <table className="w-full table-auto border-collapse">
             <thead className="sticky top-0 bg-white z-10">
               <tr className="text-left text-gray-700 text-sm md:text-base">
-                {["ID", "Activity", "Description", "Time (mins)", ""].map(
+                {["ID", "Activity", "Description", "Time/Reps", ""].map(
                   (item, index) => (
                     <th
                       key={index}
-                      className="justify-center font-roberto px-4 py-3 md:py-6 border-b border-b-gray-300"
+                      className="justify-center font-roberto px-4 py-3 md:py-6 border-b border-b-gray-300 text-center"
                     >
                       {item}
                     </th>
@@ -159,8 +159,10 @@ function ActivityTable() {
                   key={item.id}
                   className="text-sm text-gray-800 hover:bg-gray-50"
                 >
-                  <td className="px-4 py-7 border-b border-b-gray-300 font-bold">{item.id}</td>
-                  <td className="px-4 py-7 border-b border-b-gray-300">
+                  <td className="px-4 py-7 border-b border-b-gray-200 font-bold text-center">
+                    {item.id}
+                  </td>
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <select className="border rounded px-2 py-2 w-full max-w-xs focus:outline-blue-500">
                       {item.activityType.map((activity) => (
                         <option key={activity.id} value={activity.activityType}>
@@ -169,12 +171,16 @@ function ActivityTable() {
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-7 border-b border-b-gray-300">{item.description}</td>
-                  <td className="px-4 py-7 border-b border-b-gray-300">{item.timeInMinutes}</td>
-                  <td className="px-4 py-7 border-b border-b-gray-300">
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
+                    {item.description}
+                  </td>
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
+                    {item.timeInMinutes}
+                  </td>
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <button onClick={() => handleDelete(item.id)}>
                       <LucideCircleMinus className="text-red-400" size={24} />
-                    </button> 
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -197,92 +203,94 @@ function ActivityTable() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4 py-8">
-           
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative p-6">
-            {/* Close Button */}
-           
+          <div className="relative bg-transparent p-5">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              className="absolute top-2 right-2 z-10 rounded-full bg-white p-1 text-gray-500 hover:text-black shadow-md"
             >
-              <X size={30} />
+              <X size={20} />
             </button>
-            <div className="flex justify-between items-center border-b pb-2 mb-4">
-              <h2 className="text-xl font-semibold">Create New Activities</h2>
-              <button
-                onClick={handleModalSave}
-                className="activity-save-button mx-6 m flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
-              >
-                <Save size={20} />
-                <span>Save All</span>
-              </button>
-            </div>
 
-            {/* Modal Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="px-4 py-2">Sl.No</th>
-                    <th className="px-4 py-2">Activity Type</th>
-                    <th className="px-4 py-2">Description</th>
-                    <th className="px-4 py-2">Time (mins)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {newActivities.map((activity, index) => (
-                    <tr key={index}>
-                      <td className="px-4 py-2 text-center">{index + 1}</td>
-                      <td className="px-4 py-2">
-                        <input
-                          type="text"
-                          value={activity.activityType}
-                          onChange={(e) => {
-                            const updated = [...newActivities];
-                            updated[index].activityType = e.target.value;
-                            setNewActivities(updated);
-                          }}
-                          className="w-full border rounded p-2"
-                        />
-                      </td>
-                      <td className="px-4 py-2">
-                        <input
-                          type="text"
-                          value={activity.description}
-                          onChange={(e) => {
-                            const updated = [...newActivities];
-                            updated[index].description = e.target.value;
-                            setNewActivities(updated);
-                          }}
-                          className="w-full border rounded p-2"
-                        />
-                      </td>
-                      <td className="px-4 py-2">
-                        <input
-                          type="number"
-                          value={activity.timeInMinutes}
-                          onChange={(e) => {
-                            const updated = [...newActivities];
-                            updated[index].timeInMinutes = e.target.value;
-                            setNewActivities(updated);
-                          }}
-                          className="w-full border rounded p-2"
-                        />
-                      </td>
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative p-6 ">
+              {/* Close Button */}
+
+              <div className="flex justify-between items-center border-gray-200 border-b pb-2 mb-4">
+                <h2 className="text-xl font-semibold">Create New Activities</h2>
+                <button
+                  onClick={handleModalSave}
+                  className="activity-save-button mx-6 m flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
+                >
+                  <Save size={20} />
+                  <span>Save</span>
+                </button>
+              </div>
+
+              {/* Modal Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="px-4 py-2">Sl.No</th>
+                      <th className="px-4 py-2">Activity Type</th>
+                      <th className="px-4 py-2">Description</th>
+                      <th className="px-4 py-2">Time/reps</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {newActivities.map((activity, index) => (
+                      <tr key={index}>
+                        <td className="px-4 py-2 text-center border-b-2 border-gray-200">{index + 1}</td>
+                        <td className="px-4 py-2 border-b-2 border-gray-200">
+                          <input
+                            type="text"
+                            value={activity.activityType}
+                            onChange={(e) => {
+                              const updated = [...newActivities];
+                              updated[index].activityType = e.target.value;
+                              setNewActivities(updated);
+                            }}
+                            className="w-full border rounded p-2 border border-gray-400"
+                          />
+                        </td>
+                        <td className="px-4 py-2 border-b-2 border-gray-200">
+                          <input
+                            type="text"
+                            value={activity.description}
+                            onChange={(e) => {
+                              const updated = [...newActivities];
+                              updated[index].description = e.target.value;
+                              setNewActivities(updated);
+                            }}
+                            className="w-full rounded p-2 border border-gray-400"
+                          />
+                        </td>
+                        <td className="px-4 py-2 border-b-2 border-gray-200">
+                          <input
+                            type="number"
+                            value={activity.timeInMinutes}
+                            onChange={(e) => {
+                              const updated = [...newActivities];
+                              updated[index].timeInMinutes = e.target.value;
+                              setNewActivities(updated);
+                            }}
+                            className="w-full border border-gray-400 rounded p-2"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={handleAddNewRow}
-                className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
-              >
-                <Plus />
-                <span>Add New</span>
-              </button>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={handleAddNewRow}
+                  className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
+                >
+                  <Plus />
+                  <span>Add New</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

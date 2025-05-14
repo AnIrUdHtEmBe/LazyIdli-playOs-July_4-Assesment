@@ -7,22 +7,26 @@
 
 .sticky-header {
   width: 100%;
+  height: 200px;
   position: sticky;
   top: 0;
   z-index: 50;
   background-color: white;
 }
 
-.main-container {
+.main-containers {
   width: 100%;
+  display: flex;
   padding: 12px;
   font-family: 'roboto', sans-serif;
-  height: calc(100vh - 150px);
+  /* height: calc(100vh - 200px); */
   /* font-weight: 500 */
 }
 
-.main-card {
+.main-containers .main-card {
   background-color: #bfdbfe;
+  height: calc(100vh - 215px);
+  overflow-y: auto;
   width: 100%;
   padding: 12px;
   border-radius: 1rem;

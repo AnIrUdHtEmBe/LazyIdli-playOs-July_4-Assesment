@@ -49,7 +49,7 @@ function QuestionPaper() {
 
       {/* Scrollable body area */}
       <div className="body-container">
-        <div className="paper-details">
+        <div className="paper-det">
           {/* Top Info */}
           <div className="top-info">
             <div className="paper-info">

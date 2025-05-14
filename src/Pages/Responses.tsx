@@ -41,11 +41,11 @@ function Responses() {
   return (
     <div className="responses-root">
       {/* Fixed Header */}
-      <div className="sticky-header">
+      {/* <div className="sticky-header"> */}
         <Header />
-      </div>
+      {/* </div> */}
 
-      <div className="main-container">
+      <div className="main-containers">
         <div className="main-card">
           {/* Top Info */}
           <div className="top">

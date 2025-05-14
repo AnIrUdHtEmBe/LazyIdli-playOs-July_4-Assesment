@@ -7,7 +7,8 @@
 }
 
 .activity-table-container{
-  height: calc(100vh - 124px);
+  height: calc(100vh - 160px);
+  font-family: 'robroto', sans-serif;
 }
 
 .activity-save-button{
