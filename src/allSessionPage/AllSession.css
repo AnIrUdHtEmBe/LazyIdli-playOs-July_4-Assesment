@@ -176,6 +176,7 @@
 .input-container {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   width: 100%;
 }
 
@@ -191,7 +192,7 @@
   flex-direction: column;
   justify-content: space-around;
   align-items: space-around;
-  width: 100%;
+  width: 30%;
 }
 
 .input-label {

@@ -9,7 +9,15 @@ import {
   Rows,
 } from "lucide-react";
 import "./AllSession.css";
-import { Stack, Switch } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Switch,
+  TextField,
+} from "@mui/material";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
 interface Activity {
@@ -36,6 +44,7 @@ function AllSession() {
   }
 
   const { sessions, setSessions } = context;
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selecteddPlan, setSelectedPlan] = useState<Session | null>(null);
   const [planName, setPlanName] = useState<string>(
@@ -61,7 +70,13 @@ function AllSession() {
   );
 
   const filterPlansAccordingTo = (category: string) => {
-    setSearchTerm(category);
+    if (activeFilter === category) {
+      setActiveFilter(null); // Remove filter if clicked again
+      setSearchTerm(""); // Show all
+    } else {
+      setActiveFilter(category);
+      setSearchTerm(category);
+    }
   };
 
   return (
@@ -73,23 +88,29 @@ function AllSession() {
             Sessions <span className="badge">All</span>
           </div>
           <div className="h-i">
-            <button className="btnn">
-              <Dumbbell
-                size={22}
-                onClick={() => filterPlansAccordingTo("Fitness")}
-              ></Dumbbell>{" "}
+            <button
+              className={`filter-btn ${
+                activeFilter === "Fitness" ? "filter-btn-active" : ""
+              }`}
+              onClick={() => filterPlansAccordingTo("Fitness")}
+            >
+              <Dumbbell size={20} />
             </button>
-            <button className="btnn">
-              <Mediation
-                onClick={() => filterPlansAccordingTo("wellness")}
-                style={{ fontSize: "17px" }}
-              ></Mediation>{" "}
+            <button
+              className={`filter-btn ${
+                activeFilter === "Wellness" ? "filter-btn-active" : ""
+              }`}
+              onClick={() => filterPlansAccordingTo("Wellness")}
+            >
+              <Mediation style={{ fontSize: "20px" }} />
             </button>
-            <button className="btnn">
-              <NordicWalking
-                style={{ fontSize: "17px" }}
-                onClick={() => filterPlansAccordingTo("sports")}
-              ></NordicWalking>{" "}
+            <button
+              className={`filter-btn ${
+                activeFilter === "Sports" ? "filter-btn-active" : ""
+              }`}
+              onClick={() => filterPlansAccordingTo("Sports")}
+            >
+              <NordicWalking style={{ fontSize: "20px" }} />
             </button>
             <div className="bg-gray-200 text-gray-200">|</div>
             <Rows></Rows>
@@ -138,25 +159,28 @@ function AllSession() {
           {/* Input Fields */}
           <div className="input-container">
             <div className="input-group">
-              <label className="input-label"></label>
-              <input
-                type="text"
-                className="input-field"
-                placeholder="Session name"
+              <TextField
+                fullWidth
+                label="Session name"
+                variant="outlined"
                 value={planName}
                 onChange={(e) => setPlanName(e.target.value)}
               />
             </div>
-            <div className="input-group">
-              <label className="input-label">Category</label>
-              <select
-                className="select-field"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value={category}>{category}</option>
-              </select>
-            </div>
+           
+              <FormControl fullWidth sx={{ width: "200px" }}>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  id="category-select"
+                  value={category}
+                  label="Category"
+                  onChange={(e) => setCategory(e.target.value)}
+                >
+                  <MenuItem value={category}>{category}</MenuItem>
+                </Select>
+              </FormControl>
+            
           </div>
 
           {/* Save Button */}

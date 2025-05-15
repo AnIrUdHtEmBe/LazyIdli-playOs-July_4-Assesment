@@ -60,7 +60,7 @@ function QuestionPaper() {
 
             <div className="user-det">
               <div className="flex space-x-2.5">
-                <span className="label-bhav">Taking For: </span>
+                <span className="label-bhav">Taking For : </span>
                 <div>
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
