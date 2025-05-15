@@ -68,7 +68,7 @@ function QuestionPaperSet() {
       {/* Header */}
       <div className="qp-header">
         <div className="qp-header-text">
-          <h1 className="qp-title">Assessment Name</h1>
+          <h1 className="qp-title-assesment">Assessment Name</h1>
           <p className="qp-description">Description</p>
         </div>
         <button className="qp-finish-btn">Finish</button>

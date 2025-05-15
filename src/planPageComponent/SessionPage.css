@@ -107,6 +107,7 @@
 
 .top-bar .button-group {
   display: flex;
+  /* justify-content:space-evenly; */
   align-items: center;
   gap: 1.25rem;
 }
@@ -176,6 +177,7 @@
 .inp-header{
   padding: 0.5rem;
   border: 0;
+<<<<<<< Updated upstream
   border-bottom: 1px solid #ddd; 
   border-top: 1px solid #ddd;
   text-align: left;
@@ -210,6 +212,12 @@
   border-top: 1px solid #ddd;
   text-align: left;
   vertical-align: middle;
+=======
+  border-bottom: 1px solid #ddd; /* Add a border to the bottom of header */
+  border-top: 1px solid #ddd; /* Add a border to the bottom of header */
+  text-align: center;
+   vertical-align: middle;
+>>>>>>> Stashed changes
   padding: 10px 15px;
   background-color:  #f9fafb;
 }
@@ -224,8 +232,14 @@
 }
 .plans-table td {
   padding: 0.5rem;
+<<<<<<< Updated upstream
   text-align: left;
   vertical-align: middle;
+=======
+  /* border: 1px solid #e5e7eb; */
+  text-align: center;
+   vertical-align: middle;
+>>>>>>> Stashed changes
   padding: 10px 15px;
   border: 0;
   /* border-bottom: 1px solid #ddd; */

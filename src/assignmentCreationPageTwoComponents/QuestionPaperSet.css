@@ -25,7 +25,7 @@
   gap: 0.5rem;
 }
 
-.qp-title {
+.qp-container .qp-header-text .qp-title-assesment {
   font-size: 43px;
   font-weight: 300;
   color: #2B3C4E;
@@ -75,8 +75,8 @@
 
 .qp-section-title {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #1d4ed8;
+  font-weight: 400;
+  color:#2563EB;
   margin-bottom: 1rem;
 }
 
@@ -89,13 +89,13 @@
 .qp-question-item {
   display: flex;
   gap: 0.75rem;
-  align-items: flex-start;
+  align-items:center;
 }
 
 .qp-checkbox {
   margin-top: 0.25rem;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 12.8px;
+  height: 12.8px;
 }
 
 .qp-label {
@@ -105,9 +105,9 @@
 }
 
 .qp-label-id {
-  font-weight: 500;
   margin-right: 0.5rem;
   font-weight: 400;
+  font-size: 13px;
 }
 
 .qp-move-btn-container {
@@ -168,8 +168,11 @@
 }
 
 .qp-delete-btn {
-  border: 1px solid grey;
-  padding: 0.5rem;
+  height:41px;
+  width:41px;
+  border: 1px solid #D0D5DD;
+  padding: 0;
+  padding-left: 8px;
   border-radius: 0.375rem;
   background-color:white;
   cursor: pointer;

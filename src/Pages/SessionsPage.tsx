@@ -9,6 +9,7 @@ function SessionsPage() {
     <Header />
     <div className="bg-gray-200 flex-1 flex p-5 activity-box" >
       <ActivityTable></ActivityTable>
+      
     </div>
   </div>
   )

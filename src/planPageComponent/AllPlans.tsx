@@ -13,14 +13,17 @@ import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent } = useContext(DataContext)!;
+  const { sessions, setSessions, setSelectComponent, plans } =
+    useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const [activePlan, setActivePlan] = useState(null);
-  const [gridAssignments, setGridAssignments] = useState<{ [key: number]: any }>({});
+  const [gridAssignments, setGridAssignments] = useState<{
+    [key: number]: any;
+  }>({});
   const filteredPlans = sessions.filter(
     (plan) =>
       plan.sessionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,9 +83,7 @@ function AllPlans() {
       <div className="flex flex-col md:flex-row flex-wrap gap-5 p-5">
         <div className="plan-section md">
           <div className="section-header">
-            <h2 className="section-title">
-              Plans 
-            </h2>
+            <h2 className="section-title">Plans</h2>
             <div className="section-buttons">
               <button className="icon-button">
                 <LucideTrash2 size={20} />
@@ -97,7 +98,9 @@ function AllPlans() {
             <table className="table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" disabled /></th>
+                  <th>
+                    <input type="checkbox" />
+                  </th>
                   <th>Session Name</th>
                   <th>TimePeriod</th>
                   <th>Preview</th>
@@ -105,6 +108,22 @@ function AllPlans() {
               </thead>
               <tbody>
                 {/* Fill rows if needed */}
+                {plans.map((plan, index) => (
+                  <tr key={plan.id}>
+                    <td>
+                      <input type="checkbox" />
+                    </td>
+                    <td>{plan.planName}</td>
+                    <td>{plan.category}</td>
+                    <td>
+                      <button
+                        onClick={() => filterPlansAccordingTo(plan.category)}
+                      >
+                        <EyeIcon />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -116,26 +135,23 @@ function AllPlans() {
               Sessions <span className="badge">All</span>
             </h2>
             <div className="filter-button-icons">
-            <button onClick={() => filterPlansAccordingTo("Fitness")}>
-              <Dumbbell size={19} />
-            </button>
-            <button onClick={() => filterPlansAccordingTo("Wellness")}>
-              <Mediation fontSize="small" />
-            </button>
-            <button onClick={() => filterPlansAccordingTo("Sports")}>
-              <NordicWalking fontSize="small" />
-            </button>
+              <button onClick={() => filterPlansAccordingTo("Fitness")}>
+                <Dumbbell size={19} />
+              </button>
+              <button onClick={() => filterPlansAccordingTo("Wellness")}>
+                <Mediation fontSize="small" />
+              </button>
+              <button onClick={() => filterPlansAccordingTo("Sports")}>
+                <NordicWalking fontSize="small" />
+              </button>
             </div>
-            <button
-              onClick={handleDelete}
-              disabled={selectedIds.length === 0}
-            >
+            <button onClick={handleDelete} disabled={selectedIds.length === 0}>
               <Trash2 size={20} className="text-red-500" />
             </button>
             <button className="primary-button">
-                <Plus size={20} />
-                <span>New Session</span>
-              </button>
+              <Plus size={20} />
+              <span>New Session</span>
+            </button>
           </div>
 
           <div className="table-wrapper">

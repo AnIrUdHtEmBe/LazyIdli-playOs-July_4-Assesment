@@ -10,7 +10,7 @@ import {
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
 import "./ActivityTable.css";
-import { FormControl, MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 function ActivityTable() {
   const context = useContext(DataContext);
@@ -91,30 +91,38 @@ function ActivityTable() {
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-5 border-b-2 border-gray-200 mb-5">
-        {/* Left Inputs */}
-        <div className="flex flex-col md:flex-row justify-between items-start space-x-50 w-full md:w-1/2">
+      <div className="flex justify-between items-center py-4">
+      <div className="flex w-2xl gap-23">
           <div className="flex flex-col w-full">
-            <label className="invisible text-sm mb-1">Session</label>
-            <input
-              type="text"
-              className="border-b-2 font-roberto text-lg md:text-xl text-black focus:outline-none focus:ring-0 "
-              placeholder="Session name"
-              value={planName}
-              onChange={(e) => setPlanName(e.target.value)}
-            />
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+              <TextField
+                label="Session Name"
+                variant="standard"
+                value={planName}
+                onChange={(e) => setPlanName(e.target.value)}
+                InputProps={{
+                  sx: { fontSize: "1.25rem", fontFamily: "Roboto" },
+                }}
+              />
+            </FormControl>
           </div>
-          <div className="flex flex-col  w-full">
-            <label className="font-light mb-1">Category</label>
-            <select
-              className="font-roberto border-b-2 text-lg md:text-xl focus:outline-none focus:ring-0 "
-              onChange={(e) => setCategory(e.target.value)}
-              value={category}
-            >
-              <option value="Fitness">Fitness</option>
-            </select>
+
+          <div className="flex flex-col w-full " style={{ paddingTop: "16px" }}>
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+              <Select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                displayEmpty
+                sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
+              >
+                <MenuItem value="Fitness">Fitness</MenuItem>
+                {/* You can add more categories here */}
+              </Select>
+            </FormControl>
           </div>
         </div>
+
+
 
         {/* Right Buttons */}
         <div className="flex flex-wrap gap-3">
@@ -136,7 +144,7 @@ function ActivityTable() {
             <span>Save</span>
           </button>
         </div>
-      </div>
+     </div>
 
       {/* Scrollable Table Container */}
       <div className="overflow-auto flex-1 w-full">
@@ -144,11 +152,11 @@ function ActivityTable() {
           <table className="w-full table-auto border-collapse">
             <thead className="sticky top-0 bg-white z-10">
               <tr className="text-left text-gray-700 text-sm md:text-base">
-                {["ID", "Activity", "Description", "Time/Reps", ""].map(
+                {["Sl No.", "Activity", "Description", "Time/Reps", ""].map(
                   (item, index) => (
                     <th
                       key={index}
-                      className="justify-center font-roberto px-4 py-3 md:py-6 border-b border-b-gray-300 text-center"
+                      className="justify-center font-roberto px-4 py-2 md:py-6 border-b border-b-gray-300 text-center"
                     >
                       {item}
                     </th>
@@ -241,10 +249,10 @@ function ActivityTable() {
               {/* Close Button */}
 
               <div className="flex justify-between items-center border-gray-200 border-b pb-2 mb-4">
-                <h2 className="text-xl font-semibold">Create New Activities</h2>
+                <h2 className="text-xl font-[500]">Create New Activities</h2>
                 <button
                   onClick={handleModalSave}
-                  className="activity-save-button mx-6 m flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
+                  className="activity-save-button mx-6 m flex items-center space-x-2 bg-[#0070FF] text-white px-4 py-2 rounded-xl"
                 >
                   <Save size={20} />
                   <span>Save</span>
@@ -310,13 +318,13 @@ function ActivityTable() {
                 </table>
               </div>
 
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-start">
                 <button
                   onClick={handleAddNewRow}
-                  className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
+                  className="flex items-center space-x-2 border bg-white text-[#0070FF] px-4 py-2 rounded-xl"
                 >
                   <Plus />
-                  <span>Add New</span>
+                  <span>Create another activity</span>
                 </button>
               </div>
             </div>
