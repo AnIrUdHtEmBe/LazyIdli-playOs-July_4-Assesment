@@ -30,6 +30,13 @@
   background-color: #F7FAFF
   
 }
+.save-changes-button{
+ 
+  background-color: #0070FF;
+  border-radius: 12%;
+  padding: 10px;
+  color: white
+}
 /* Sticky header */
 .sticky-header {
   position: sticky;

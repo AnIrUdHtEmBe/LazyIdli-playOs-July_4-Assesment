@@ -120,7 +120,7 @@ function ActivityTable() {
         <div className="flex flex-wrap gap-3">
           <button
             className="flex items-center space-x-2 text-blue-700 border-2 p-2 rounded-md  text-sm md:text-base btn1"
-            onClick={() => setShowModal(true)}
+            onClick={handleActivityAddition}
           >
             <Plus />
             <span>Create New Activity</span>
@@ -162,7 +162,7 @@ function ActivityTable() {
                   key={item.id}
                   className="text-sm text-gray-800 hover:bg-gray-50"
                 >
-                  <td className="px-4 py-7 border-b border-b-gray-200 font-bold text-center">
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     {item.id}
                   </td>
 
@@ -213,11 +213,11 @@ function ActivityTable() {
               <tr>
                 <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button
-                    className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl"
-                    onClick={handleActivityAddition}
+                    className="flex items-center space-x-2 text-blue-700 px-4 py-2 rounded-xl"
+                    onClick={() => setShowModal(true)}
                   >
                     <Plus />
-                    <span>Add Activity to Session</span>
+                    <span>Add Row</span>
                   </button>
                 </td>
               </tr>

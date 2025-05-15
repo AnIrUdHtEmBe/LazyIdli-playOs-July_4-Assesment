@@ -1,4 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
+
 import { DataContext } from "../store/DataContext";
 import {
   ArrowRight,
@@ -7,6 +15,7 @@ import {
   Dumbbell,
   EyeClosed,
   EyeIcon,
+  LucideCircleMinus,
   MinusCircle,
   Plus,
   Trash2,
@@ -17,7 +26,8 @@ import { ArrowRightAlt, Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
-  const { sessions, setSessions, setSelectComponent } = useContext(DataContext)!;
+  const { sessions, setSessions, setSelectComponent } =
+    useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
@@ -107,7 +117,7 @@ function SessionPage() {
     for (let i = 0; i < 7; i++) {
       delete updatedAssignments[weekIndex * 7 + i];
     }
-    
+
     setGridAssignments(updatedAssignments);
   };
 
@@ -121,19 +131,16 @@ function SessionPage() {
 
   return (
     <div className="responses-root">
-      
-        <Header />
-     
+      <Header />
 
       <div className="main-container ">
         {/* Left Panel: Plans Table */}
         <div className="left-panel">
           {/* Top Bar */}
           <div className="top-bar">
-
             <div className="flex items-center justify-center gap-1">
-            <span className="sessions-text-header">Sessions</span>
-            <span className="all-button"> All</span>
+              <span className="sessions-text-header">Sessions</span>
+              <span className="all-button"> All</span>
             </div>
 
             <div className="button-group">
@@ -184,7 +191,7 @@ function SessionPage() {
                       onChange={toggleSelectAll}
                     />
                   </th>
-                  
+
                   <th>Session Name</th>
                   <th>Category</th>
                   <th>Preview</th>
@@ -201,7 +208,7 @@ function SessionPage() {
                         onChange={() => toggleSelectOne(plan.id)}
                       />
                     </td>
-                   
+
                     <td>{plan.sessionName}</td>
                     <td>{plan.sessionType}</td>
                     <td>
@@ -241,7 +248,6 @@ function SessionPage() {
                   <React.Fragment key={weekIndex}>
                     <div className="week Label flex justify-between items-center">
                       <span>Week {weekIndex + 1}</span>
-                      
                     </div>
                     {Array.from({ length: 7 }, (_, dayIndex) => {
                       const index = weekIndex * 7 + dayIndex;
@@ -273,13 +279,12 @@ function SessionPage() {
                       );
                     })}
                     <button
-                        className="flex justify-center items-center"
-                        onClick={() => handleRemoveWeek(weekIndex)}
-                      >
+                      className="flex justify-center items-center"
+                      onClick={() => handleRemoveWeek(weekIndex)}
+                    >
                       <MinusCircle size={20} className="text-red-500" />
                     </button>
                   </React.Fragment>
-                  
                 ))}
               </div>
             </div>
@@ -312,79 +317,117 @@ function SessionPage() {
 
       {previewModalOpen && previewSession && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-50"
+          className=" fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-50"
           onClick={() => setPreviewModalOpen(false)}
         >
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-end mb-6">
-              <button
-                className="text-gray-500 hover:text-gray-800"
-                onClick={() => setPreviewModalOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
+          <div className="bg-transparent p-5 relative">
+            <button
+              className="text-gray-500 hover:text-gray-800 absolute top-2 right-2 bg-white rounded-2xl px-2 py-1 shadow-md z-1"
+              onClick={() => setPreviewModalOpen(false)}
+            >
+              ✕
+            </button>
+            <div
+              className="bg-white rounded-2xl shadow-2xl p-6 relative w-[800px] h-[600px] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Form Inputs */}
+              <div className="flex gap-4 mb-6 justify-between">
+                <div className="flex gap-6 ">
+                  <input
+                    type="text"
+                    className="w-full border-b border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Session name"
+                  />
+                  <select className="w-full border-b-1 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Fitness</option>
+                  </select>
+                </div>
+                <button className="save-changes-button">Save changes</button>
+              </div>
 
-            {/* Form Inputs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter session name"
-              />
-              <select className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Fitness</option>
-              </select>
-            </div>
+              {/* Activity Table */}
+              <div className="overflow-x-auto">
+                <table className="table-auto w-full border border-gray-200 rounded-md text-sm">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-2 text-center">Sl No</th>
+                      <th className="px-4 py-2 text-center">Activity</th>
+                      <th className="px-4 py-2 text-center">Description</th>
+                      <th className="px-4 py-2 text-center">Time/Reps</th>
+                      <th className="px-4 py-2 text-center"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previewSession.activities.map(
+                      (activity: any, idx: number) => (
+                        <tr key={idx} className="border-t border-gray-200">
+                          <td className="px-4 py-2 text-center">{idx + 1}</td>
+                          <td className="px-4 py-2 text-center">
+                            <FormControl fullWidth size="small">
+                              <InputLabel id={`activity-select-label-${idx}`}>
+                                Activity
+                              </InputLabel>
+                              <Select
+                                labelId={`activity-select-label-${idx}`}
+                                id={`activity-select-${idx}`}
+                                value={activity.selected || ""}
+                                label="Activity"
+                                onChange={(e: SelectChangeEvent) => {
+                                  const selectedValue = e.target.value;
+                                  setPreviewSession((prev: any) => {
+                                    const updatedActivities = [
+                                      ...prev.activities,
+                                    ];
+                                    updatedActivities[idx] = {
+                                      ...updatedActivities[idx],
+                                      selected: selectedValue,
+                                    };
+                                    return {
+                                      ...prev,
+                                      activities: updatedActivities,
+                                    };
+                                  });
+                                }}
+                              >
+                                {activity.activityType.map(
+                                  (item: any, index: number) => (
+                                    <MenuItem
+                                      key={index}
+                                      value={item.activityType}
+                                    >
+                                      {item.activityType}
+                                    </MenuItem>
+                                  )
+                                )}
+                              </Select>
+                            </FormControl>
+                          </td>
+                          <td className="px-4 py-2 text-center">
+                            {activity.description}
+                          </td>
+                          <td className="px-4 py-2 text-center">
+                            {activity.timeInMinutes}
+                          </td>
+                          <td className="px-4 py-7 border-b border-b-gray-200 text-center">
+                                              <button >
+                                                <LucideCircleMinus className="text-red-400" size={24} />
+                                              </button>
+                                            </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-            {/* Activity Table */}
-            <div className="overflow-x-auto">
-              <table className="table-auto w-full border border-gray-200 rounded-md text-sm">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="px-4 py-2 text-left">Sl No</th>
-                    <th className="px-4 py-2 text-left">Activity</th>
-                    <th className="px-4 py-2 text-left">Description</th>
-                    <th className="px-4 py-2 text-left">Time/Reps</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewSession.activities.map(
-                    (activity: any, idx: number) => (
-                      <tr key={idx} className="border-t border-gray-200">
-                        <td className="px-4 py-2">{idx + 1}</td>
-                        <td className="px-4 py-2">
-                          <select className="border border-gray-300 rounded-md px-2 py-1">
-                            {activity.activityType.map(
-                              (item: any, index: number) => (
-                                <option key={index} value={item}>
-                                  {item.activityType}
-                                </option>
-                              )
-                            )}
-                          </select>
-                        </td>
-                        <td className="px-4 py-2">{activity.description}</td>
-                        <td className="px-4 py-2">{activity.timeInMinutes}</td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Footer */}
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => setPreviewModalOpen(false)}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
-              >
-                Close
-              </button>
+              {/* Footer */}
+              <div className="flex pt-4 ">
+                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2">
+                  <Plus size={20} />
+                  Add Activity
+                </button>
+              </div>
             </div>
           </div>
         </div>
