@@ -11,12 +11,12 @@ function Header() {
   const { selectComponent } = context;
 
   return (
-    <div className="header-container">
-      <div className="header-top">
+    <div className="header-containerrr">
+      <div className="header-topper">
         <FileText size={35} />
-        <span className="header-title">{selectComponent === "/sessions" ? "Session Creation" : "All Sessions"}</span>
+        <span className="header-titler">{selectComponent === "/sessions" ? "Session Creation" : "All Sessions"}</span>
       </div>
-      <div className="header-tabs">
+      <div className="header-tabsss">
         <button
           className={`text-xl font-medium ${ selectComponent === "/sessions" ? "border-b-3 " : ""}`}
         >

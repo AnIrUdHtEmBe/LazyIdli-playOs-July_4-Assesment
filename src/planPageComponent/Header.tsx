@@ -20,14 +20,16 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="header">
       {/* Top Row */}
-      <div className="plan-header-top">
-        <FileText size={28} className="header-icon" />
-        <h1 className="header-title">Plan Creation {assignment?.id ?? ""}</h1>
+      <div className="header-topp">
+        <FileText size={25} className="header-icon" />
+        <h1 className="header-titleee">Plan Creation {assignment?.id ?? ""}</h1>
       </div>
 
       {/* Navigation Tabs */}
       <div className="nav-tabs">
-        {selectComponent === "/plans" || selectComponent === "AllPlans" ? (
+        {selectComponent === "/plans" ||
+        selectComponent === "AllPlans" ||
+        selectComponent === "dashboard" ? (
           <button
             className={`tab-button ${
               selectComponent === "/plans" ? "active" : ""
