@@ -36,7 +36,8 @@ import {
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
-  const { sessions, setSessions, setSelectComponent , selectComponent} =
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const { sessions, setSessions, setSelectComponent, selectComponent } =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +59,13 @@ function SessionPage() {
   );
 
   const filterPlansAccordingTo = (category: string) => {
-    setSearchTerm(category);
+    if (activeFilter === category) {
+      setActiveFilter(null); // Remove filter if clicked again
+      setSearchTerm(""); // Show all
+    } else {
+      setActiveFilter(category);
+      setSearchTerm(category);
+    }
   };
 
   const isAllSelected =
@@ -155,23 +162,29 @@ function SessionPage() {
             </div>
 
             <div className="button-group">
-              <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
-                <Dumbbell
-                  size={20}
-                  onClick={() => filterPlansAccordingTo("Fitness")}
-                />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Fitness" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Fitness")}
+              >
+                <Dumbbell size={20} />
               </button>
-              <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
-                <Mediation
-                  style={{ fontSize: "20px" }}
-                  onClick={() => filterPlansAccordingTo("Wellness")}
-                />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Wellness" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Wellness")}
+              >
+                <Mediation style={{ fontSize: "20px" }} />
               </button>
-              <button className="border-2 border-gray-300 px-2 py-1 rounded-md">
-                <NordicWalking
-                  style={{ fontSize: "20px" }}
-                  onClick={() => filterPlansAccordingTo("Sports")}
-                />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Sports" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Sports")}
+              >
+                <NordicWalking style={{ fontSize: "20px" }} />
               </button>
             </div>
 
@@ -250,34 +263,34 @@ function SessionPage() {
                 />
               </div>
 
-              {selectComponent=== "planCreation" ? <div className="right-panel-header-right-side-component">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Select a date"
-                    value={selectedDate}
-                    onChange={(newDate) => setSelectedDate(newDate)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        sx={{
-                          height: 50,
-                          "& .MuiInputBase-root": {
+              {selectComponent === "planCreation" ? (
+                <div className="right-panel-header-right-side-component">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Select a date"
+                      value={selectedDate}
+                      onChange={(newDate) => setSelectedDate(newDate)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          sx={{
                             height: 50,
-                            boxSizing: "border-box",
-                          },
-                        }}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
+                            "& .MuiInputBase-root": {
+                              height: 50,
+                              boxSizing: "border-box",
+                            },
+                          }}
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
 
-                <button className="holder-right-sode">
-                  <DashboardCustomize size={20} className="text-blue-500" />
-                  <span className="customise-text">Customize</span>{" "}
-                </button>
-              </div> : null}
-              
-              
+                  <button className="holder-right-sode">
+                    <DashboardCustomize size={20} className="text-blue-500" />
+                    <span className="customise-text">Customize</span>{" "}
+                  </button>
+                </div>
+              ) : null}
             </div>
             {/* Plan Name Input */}
 
