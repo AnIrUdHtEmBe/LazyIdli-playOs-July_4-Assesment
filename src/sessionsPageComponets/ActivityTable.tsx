@@ -10,6 +10,7 @@ import {
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
 import "./ActivityTable.css";
+import { FormControl, MenuItem, Select } from "@mui/material";
 
 function ActivityTable() {
   const context = useContext(DataContext);
@@ -84,6 +85,8 @@ function ActivityTable() {
     const updatedPlan = activityTypePlan.filter((item) => item.id !== id);
     setActivityTypePlan(updatedPlan);
   };
+
+  const [selectedActivity, setSelectedActivity] = useState("");
 
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
@@ -162,15 +165,38 @@ function ActivityTable() {
                   <td className="px-4 py-7 border-b border-b-gray-200 font-bold text-center">
                     {item.id}
                   </td>
+
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    <select className="border rounded px-2 py-2 w-full max-w-xs focus:outline-blue-500">
-                      {item.activityType.map((activity) => (
-                        <option key={activity.id} value={activity.activityType}>
-                          {activity.activityType}
-                        </option>
-                      ))}
-                    </select>
+                    <FormControl sx={{ width: 200 }} size="small">
+                      <Select
+                        value={selectedActivity}
+                        onChange={(e) => setSelectedActivity(e.target.value)}
+                        displayEmpty
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              width: 200, // 👈 fixed width for dropdown menu
+                            },
+                          },
+                        }}
+                        sx={{
+                          backgroundColor: "white",
+                          width: 200, // 👈 fixed width for select
+                        }}
+                      >
+                        {item.activityType.map((activity) => (
+                          <MenuItem
+                            key={activity.id}
+                            value={activity.activityType}
+                            sx={{ width: "100%" }} // optional, ensures full width of MenuItem
+                          >
+                            {activity.activityType}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </td>
+
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     {item.description}
                   </td>
@@ -239,7 +265,9 @@ function ActivityTable() {
                   <tbody>
                     {newActivities.map((activity, index) => (
                       <tr key={index}>
-                        <td className="px-4 py-2 text-center border-b-2 border-gray-200">{index + 1}</td>
+                        <td className="px-4 py-2 text-center border-b-2 border-gray-200">
+                          {index + 1}
+                        </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
                           <input
                             type="text"
