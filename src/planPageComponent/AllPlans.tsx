@@ -13,8 +13,9 @@ import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent, plans } =
+  const { sessions, setSessions, setSelectComponent , plans } =
     useContext(DataContext)!;
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
@@ -74,7 +75,13 @@ function AllPlans() {
   };
 
   const filterPlansAccordingTo = (category: string) => {
-    setSearchTerm(category);
+    if (activeFilter === category) {
+      setActiveFilter(null); // Remove filter if clicked again
+      setSearchTerm(""); // Show all
+    } else {
+      setActiveFilter(category);
+      setSearchTerm(category);
+    }
   };
 
   return (
@@ -135,14 +142,29 @@ function AllPlans() {
               Sessions <span className="badge">All</span>
             </h2>
             <div className="filter-button-icons">
-              <button onClick={() => filterPlansAccordingTo("Fitness")}>
-                <Dumbbell size={19} />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Fitness" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Fitness")}
+              >
+                <Dumbbell size={20} />
               </button>
-              <button onClick={() => filterPlansAccordingTo("Wellness")}>
-                <Mediation fontSize="small" />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Wellness" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Wellness")}
+              >
+                <Mediation style={{ fontSize: "20px" }} />
               </button>
-              <button onClick={() => filterPlansAccordingTo("Sports")}>
-                <NordicWalking fontSize="small" />
+              <button
+                className={`filter-btn ${
+                  activeFilter === "Sports" ? "filter-btn-active" : ""
+                }`}
+                onClick={() => filterPlansAccordingTo("Sports")}
+              >
+                <NordicWalking style={{ fontSize: "20px" }} />
               </button>
             </div>
             <button onClick={handleDelete} disabled={selectedIds.length === 0}>
