@@ -8,7 +8,7 @@ function Header() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { selectComponent } = context;
+  const { selectComponent, setSelectComponent } = context;
 
   return (
     <div className="header-containerrr">
@@ -19,10 +19,13 @@ function Header() {
       <div className="header-tabsss">
         <button
           className={`text-xl font-medium ${ selectComponent === "/sessions" ? "border-b-3 " : ""}`}
+          onClick={() => setSelectComponent("/sessions")}
         >
           Session Creator
         </button>
-        <button className={`text-xl font-medium ${ selectComponent === "AllSessions" ? "border-b-3 " : ""}`}>All Sessions</button>
+        <button className={`text-xl font-medium ${ selectComponent === "AllSessions" ? "border-b-3 " : ""}`}
+         onClick={() => setSelectComponent("AllSessions")}
+        >All Sessions</button>
       </div>
     </div>
   );

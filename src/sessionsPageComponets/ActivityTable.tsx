@@ -10,7 +10,13 @@ import {
 import React, { useContext, useState } from "react";
 import { DataContext } from "../store/DataContext";
 import "./ActivityTable.css";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 
 function ActivityTable() {
   const context = useContext(DataContext);
@@ -86,13 +92,19 @@ function ActivityTable() {
     setActivityTypePlan(updatedPlan);
   };
 
-  const [selectedActivity, setSelectedActivity] = useState("");
+  const [selectedActivities, setSelectedActivities] = useState<{
+    [id: number]: string;
+  }>({});
+
+  const handleActivitySelectChange = (id: number, value: string) => {
+    setSelectedActivities((prev) => ({ ...prev, [id]: value }));
+  };
 
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
       <div className="flex justify-between items-center py-4">
-      <div className="flex w-2xl gap-23">
+        <div className="flex w-2xl gap-23">
           <div className="flex flex-col w-full">
             <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
               <TextField
@@ -122,12 +134,10 @@ function ActivityTable() {
           </div>
         </div>
 
-
-
         {/* Right Buttons */}
         <div className="flex flex-wrap gap-3">
           <button
-            className="flex items-center space-x-2 text-blue-700 border-2 p-2 rounded-md  text-sm md:text-base btn1"
+            className="flex items-center space-x-2 p-2  text-sm md:text-base plus-new-actvity"
             onClick={handleActivityAddition}
           >
             <Plus />
@@ -137,14 +147,14 @@ function ActivityTable() {
             <ReplayOutlined></ReplayOutlined>
           </div>
           <button
-            className="flex items-center space-x-2 bg-blue-700 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2"
+            className="flex items-center space-x-2 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2 "
             onClick={handlePlanSaving}
           >
             <Save size={20} />
             <span>Save</span>
           </button>
         </div>
-     </div>
+      </div>
 
       {/* Scrollable Table Container */}
       <div className="overflow-auto flex-1 w-full">
@@ -177,8 +187,10 @@ function ActivityTable() {
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <FormControl sx={{ width: 200 }} size="small">
                       <Select
-                        value={selectedActivity}
-                        onChange={(e) => setSelectedActivity(e.target.value)}
+                        value={selectedActivities[item.id] || ""}
+                        onChange={(e) =>
+                          handleActivitySelectChange(item.id, e.target.value)
+                        }
                         displayEmpty
                         MenuProps={{
                           PaperProps: {
@@ -221,7 +233,7 @@ function ActivityTable() {
               <tr>
                 <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button
-                    className="flex items-center space-x-2 text-blue-700 px-4 py-2 rounded-xl"
+                    className="space-x-2 px-4 py-2 add-row"
                     onClick={() => setShowModal(true)}
                   >
                     <Plus />
@@ -321,7 +333,7 @@ function ActivityTable() {
               <div className="mt-4 flex justify-start">
                 <button
                   onClick={handleAddNewRow}
-                  className="flex items-center space-x-2 border bg-white text-[#0070FF] px-4 py-2 rounded-xl"
+                  className="flex items-center space-x-2 border bg-white text-[#0070FF] px-4 py-2 heya"
                 >
                   <Plus />
                   <span>Create another activity</span>

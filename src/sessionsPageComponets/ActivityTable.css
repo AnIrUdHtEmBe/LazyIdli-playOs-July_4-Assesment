@@ -1,5 +1,7 @@
 .btn1{
   text:#0070FF;
+  border: #0070FF 1px solid;
+  border-radius: 6px;
 }
 
 .btn2{
@@ -13,4 +15,26 @@
 
 .activity-save-button{
   margin-right: 20px;
+}
+
+.add-row{
+  color: #0070FF;
+  border: #0070FF 1px solid;
+  width: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+}
+
+.plus-new-actvity{
+  color: #0070FF;
+  font-size: 20px;
+  margin-right: 5px;
+  border: #0070FF 1px solid;
+  border-radius: 7.5px;
+}
+
+.heya{
+  border-radius: 2.1px;
 }
