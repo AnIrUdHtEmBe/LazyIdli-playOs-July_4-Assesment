@@ -17,16 +17,16 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="bg-white z-10 w-full">
       {/* Top row with icon and title */}
-      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 p-4 sm:px-10">
+      <div className="flex flex-col sm:flex-row items-center gap-2 ml-[50px] sm:gap-4 p-4 sm:px-10">
         <FileText size={48} className="text-gray-800 " />
-        <h1 className="text-xl sm:text-2xl md:text-[32px] font-normal text-gray-800 text-center sm:text-left">
+        <h1 className="text-xl sm:text-2xl md:text-[24px] font-normal text-gray-800 text-center sm:text-left">
           Assessment {assignment?.id ?? ""}
         </h1>
       </div>
 
       {selectComponent === "responses" && (
-        <div className="flex ml-12 gap-3">
-          <Calendar></Calendar>
+        <div className="flex text-[18px] gap-2 ml-[95px] flex items-center">
+          <Calendar size={20}></Calendar>
           <h2>Last Assessed : 15/24/35</h2>
         </div>
       )}
@@ -36,18 +36,18 @@ const Header: React.FC<HeaderProps> = () => {
         <span
           className={`cursor-pointer ${
             selectComponent === "Q&A" ? "border-b-4 border-black" : ""
-          } text-xl`}
+          } text-[24px]`}
         >
           Questions
         </span>
         <span
           className={`cursor-pointer ${
             selectComponent === "responses" ? "border-b-4 border-black" : ""
-          } text-xl`}
+          } text-[24px]`}
         >
           Responses
         </span>
-        <span className="cursor-pointer text-xl">Settings</span>
+        <span className="cursor-pointer text-[24px]">Settings</span>
       </div>
     </header>
   );

@@ -91,12 +91,12 @@ const Assessment: React.FC = () => {
                 <X size={24} className="" />
               </button>
               <div className="modal">
-                <h1 className="modal-title">{selectedAssessment}</h1>
+                <h1 className="modal-titlebhav">{selectedAssessment}</h1>
                 <table className="modal-table">
                   <thead>
                     <tr className="modal-table-header-row">
                       <th className="modal-th slno-header">Sl.No</th>
-                      <th className="modal-th question-header">Questions</th>
+                      <th className="modal-th question-headerrr">Questions</th>
                       <th className="modal-th mandatory-header">Mandatory</th>
                     </tr>
                   </thead>
@@ -104,10 +104,28 @@ const Assessment: React.FC = () => {
                     {mcqQuestions.map((ques, index) => (
                       <tr key={ques.questionId} className="modal-table-row">
                         <td className="modal-td slno-header">{index + 1}</td>
-                        <td className="modal-td question-header">
+                        <td className="modal-td question-headerrr">
                           {ques.questionText}
                         </td>
-                        <td className="modal-td mandatory-header">Yes</td>
+                        <td className="modal-td mandatory-header madat-option ml-[10px]">
+                          Yes
+                        </td>
+                      </tr>
+                    ))}
+
+                    {Array.from({
+                      length: Math.max(0, 15 - mcqQuestions.length),
+                    }).map((_, i) => (
+                      <tr key={`empty-${i}`} className="modal-table-row">
+                        <td className="modal-td slno-header">
+                          -
+                        </td>
+                        <td className="modal-td question-headerrr text-gray-400">
+                          
+                        </td>
+                        <td className="modal-td mandatory-header madat-option ml-[10px] text-gray-400">
+                          
+                        </td>
                       </tr>
                     ))}
                   </tbody>

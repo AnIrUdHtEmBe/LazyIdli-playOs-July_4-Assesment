@@ -133,7 +133,7 @@
 .preview-button {
   background: none;
   border: none;
-  color: #9ca3af; /* gray-400 */
+  color: #667085; /* gray-400 */
   cursor: pointer;
 }
 
@@ -200,7 +200,7 @@
 
 /* The actual modal card */
 .modal {
-  min-height: 800px;
+  min-height: 770px;
   background-color: #E8E8E8;
   width: 100%;
   border-radius: 0.5rem;
@@ -214,11 +214,12 @@
 }
 
 
-.modal-title {
+.modal-titlebhav {
   padding: 19px 22.5px;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 500;
   background-color: white;
+  border-bottom: 1px solid #EAECF0;
 }
 
 
@@ -239,14 +240,14 @@
 }
 
 .modal-table tbody {
-  max-height: 600px;   /* Adjust height as needed */
+  max-height: 650px;   /* Adjust height as needed */
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .modal-table tr {
   display: table;
-  height: 70px;
+  height: 40px;
   width: 100%;
   table-layout: auto;
 }
@@ -254,14 +255,14 @@
 .modal-table th,
 .modal-table td {
   padding: 0.5rem 1rem;
-  font-size: 15px;
+  font-size: 12px;
   border-bottom: 1px solid #d1d5db;
   box-sizing: border-box;
 }
 
 .modal-table td{
   font-size: 16px;
-  color: #344054; /* gray-900 */
+  color: #101011; /* gray-900 */
   font-weight: 400;
   padding: 0.5rem 1rem;
 }
@@ -286,14 +287,16 @@
   width: 10%; /* w-1/12 */
   text-align: center;
 }
-.question-header {
-  width: 60%; /* w-8/12 */
+.question-headerrr {
+  width: 50%; /* w-8/12 */
   text-align: left;
 }
 .mandatory-header {
-  width: 30%; /* w-3/12 */
-  text-align: center;
+  width: 40%; /* w-3/12 */
+  text-align: left;
 }
+
+.mandatory-header .madat-option{}
 
 /* Table body rows */
 .modal-table-row {

@@ -1,5 +1,5 @@
 .header-con {
-  height: 115px;
+  height: 125px;
   display: flex;
   font-family: 'roboto', sans-serif;
   flex-direction: column;
@@ -29,11 +29,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
   gap: 3rem; /* equivalent to space-x-15 */
 }
 
 .header-taab {
-  font-size: 18px; /* text-xl */
+  font-size: 20px; /* text-xl */
   font-weight: 500;
   border-bottom: 4px solid transparent;
   padding-bottom: 0.25rem;

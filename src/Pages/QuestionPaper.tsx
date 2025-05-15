@@ -53,7 +53,7 @@ function QuestionPaper() {
           {/* Top Info */}
           <div className="top-info">
             <div className="paper-info">
-              <div className="paper-title">{paperDetails.name}</div>
+              <div className="paper-titless">{paperDetails.name}</div>
               <div className="paper-subtitle">
                 For adults, optimizing strength, metabolism, and diet.{" "}
               </div>
@@ -61,7 +61,7 @@ function QuestionPaper() {
 
             <div className="user-det">
               <div className="flex space-x-2.5">
-                <span className="label">Taking For: </span>
+                <span className="label-bhav">Taking For: </span>
                 <div> 
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
@@ -116,7 +116,7 @@ function QuestionPaper() {
                           {mcqQuestions.length}
                         </span>
                       </div>
-                      <div className="font-normal mt-[5px] mb-[10px] text-[18px] font-[400]">{question.questionText}</div>
+                      <div className="font-normal mt-[5px] mb-[10px] text-[18px]">{question.questionText}</div>
                     </div>
                     <button
                       onClick={() => {
