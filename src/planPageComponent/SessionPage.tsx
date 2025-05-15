@@ -6,6 +6,11 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import { TextField } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 import { DataContext } from "../store/DataContext";
 import {
@@ -22,16 +27,22 @@ import {
 } from "lucide-react";
 import "./SessionPage.css"; // Import the CSS file
 
-import { ArrowRightAlt, Mediation, NordicWalking } from "@mui/icons-material";
+import {
+  ArrowRightAlt,
+  DashboardCustomize,
+  Mediation,
+  NordicWalking,
+} from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 
 function SessionPage() {
-  const { sessions, setSessions, setSelectComponent } =
+  const { sessions, setSessions, setSelectComponent , selectComponent} =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   console.log(sessions);
   // grid and checked cell interaction
@@ -173,7 +184,7 @@ function SessionPage() {
             </button>
             <button className="new-button">
               <Plus size={20} />
-              <span>NEW</span>
+              <span>New</span>
             </button>
           </div>
 
@@ -182,7 +193,7 @@ function SessionPage() {
             <table className="plans-table">
               <thead>
                 <tr>
-                  <th>
+                  <th className="inp-header">
                     <input
                       type="checkbox"
                       className="session-checkbox"
@@ -192,9 +203,9 @@ function SessionPage() {
                     />
                   </th>
 
-                  <th>Session Name</th>
-                  <th>Category</th>
-                  <th>Preview</th>
+                  <th className="session-header">Session Name</th>
+                  <th className="cat-header">Category</th>
+                  <th className="prev-header">Preview</th>
                 </tr>
               </thead>
               <tbody>
@@ -211,7 +222,7 @@ function SessionPage() {
 
                     <td>{plan.sessionName}</td>
                     <td>{plan.sessionType}</td>
-                    <td>
+                    <td className="p-icon">
                       <button onClick={() => handlePreviewClick(plan)}>
                         <EyeIcon />
                       </button>
@@ -226,17 +237,49 @@ function SessionPage() {
         {/* Right Panel: Plan Details & Calendar */}
         <div className="right-panel">
           <div className="plan-details">
-            {/* Plan Name Input */}
-            <div className="plan-name-input">
-              <label htmlFor="planName">Plan Name</label>
-              <input
-                type="text"
-                id="planName"
-                value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
-                placeholder="Enter plan name "
-              />
+            <div className=" right-panel-headerr">
+              <div className="plan-name-input">
+                {/* <label htmlFor="planName">Plan Name</label> */}
+                <input
+                  type="text"
+                  id="planName"
+                  value={planName}
+                  onChange={(e) => setPlanName(e.target.value)}
+                  placeholder="Plan name "
+                  className="placeholder:font-semibold placeholder:text-gray-950"
+                />
+              </div>
+
+              {selectComponent=== "planCreation" ? <div className="right-panel-header-right-side-component">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="Select a date"
+                    value={selectedDate}
+                    onChange={(newDate) => setSelectedDate(newDate)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        sx={{
+                          height: 50,
+                          "& .MuiInputBase-root": {
+                            height: 50,
+                            boxSizing: "border-box",
+                          },
+                        }}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+
+                <button className="holder-right-sode">
+                  <DashboardCustomize size={20} className="text-blue-500" />
+                  <span className="customise-text">Customize</span>{" "}
+                </button>
+              </div> : null}
+              
+              
             </div>
+            {/* Plan Name Input */}
 
             {/* Calendar */}
             <div className="calendar">
@@ -410,10 +453,13 @@ function SessionPage() {
                             {activity.timeInMinutes}
                           </td>
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                                              <button >
-                                                <LucideCircleMinus className="text-red-400" size={24} />
-                                              </button>
-                                            </td>
+                            <button>
+                              <LucideCircleMinus
+                                className="text-red-400"
+                                size={24}
+                              />
+                            </button>
+                          </td>
                         </tr>
                       )
                     )}

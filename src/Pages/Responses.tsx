@@ -1,6 +1,12 @@
 import { useContext, useState } from "react";
 import Header from "../questionPaperComponents/Header";
-import { ArrowRight, Dumbbell, CheckCircle, Calendar, Edit } from "lucide-react";
+import {
+  ArrowRight,
+  Dumbbell,
+  CheckCircle,
+  Calendar,
+  Edit,
+} from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import "./Responses.css";
 import { Comment, ReplayOutlined } from "@mui/icons-material";
@@ -42,7 +48,7 @@ function Responses() {
     <div className="responses-root">
       {/* Fixed Header */}
       {/* <div className="sticky-header"> */}
-        <Header />
+      <Header />
       {/* </div> */}
 
       <div className="main-containers">
@@ -56,8 +62,8 @@ function Responses() {
               </div>
             </div>
             <div className="user-actions">
-              <div className="user-info">
-                <span className="taking">Taking For: </span>
+              <div className="flex space-x-2.5">
+                <span className="label-bhav">Taking For: </span>
                 <div>
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
@@ -68,7 +74,7 @@ function Responses() {
                 className="retake-button"
               >
                 <ReplayOutlined></ReplayOutlined>
-                Retake Assessment
+                <span>Retake Assessment</span>
               </button>
             </div>
           </div>
@@ -99,7 +105,10 @@ function Responses() {
                 <div className="summary-title">Summary</div>
                 <button onClick={handleCommentModal}>
                   {" "}
-                  <StickyNote size={40} className="border p-2 rounded-md" />
+                  <StickyNote
+                    size={40}
+                    className="p-2 rounded-md stick-comment"
+                  />
                 </button>
               </div>
 
@@ -111,7 +120,9 @@ function Responses() {
                       <div className={`score-card score-${i}`}>
                         <div className={`score-icon icon-${i}`}>
                           <Dumbbell />
-                          <span className={`score-card-text-${i}`}>Fitness</span> 
+                          <span className={`score-card-text-${i}`}>
+                            Fitness
+                          </span>
                         </div>
                         <div>80 / 100</div>
                       </div>
@@ -121,7 +132,8 @@ function Responses() {
               </div>
 
               <div className="plan-text">
-              The Recommended Plan for this assessment is ready! Please refer the monthly plan below.
+                The Recommended Plan for this assessment is ready! Please refer
+                the monthly plan below.
               </div>
               <div className="plan-options">
                 {[

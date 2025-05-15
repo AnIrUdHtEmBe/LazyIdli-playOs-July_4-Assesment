@@ -44,8 +44,7 @@ function QuestionPaper() {
   return (
     <div className="dashboard-container">
       {/* Fixed Header */}
-        <Header />
-      
+      <Header />
 
       {/* Scrollable body area */}
       <div className="body-container">
@@ -62,7 +61,7 @@ function QuestionPaper() {
             <div className="user-det">
               <div className="flex space-x-2.5">
                 <span className="label-bhav">Taking For: </span>
-                <div> 
+                <div>
                   {userDetail.name} <br /> ID: {userDetail.id}
                 </div>
               </div>
@@ -116,7 +115,9 @@ function QuestionPaper() {
                           {mcqQuestions.length}
                         </span>
                       </div>
-                      <div className="font-normal mt-[5px] mb-[10px] text-[18px]">{question.questionText}</div>
+                      <div className="font-normal mt-[5px] mb-[10px] text-[18px]">
+                        {question.questionText}
+                      </div>
                     </div>
                     <button
                       onClick={() => {
@@ -129,36 +130,63 @@ function QuestionPaper() {
                       }}
                     >
                       <StickyNote
-                        className="border-1 p-2 rounded-md"
+                        className="py-1 px-2 rounded-md stick-comment"
                         size={40}
                       />
                     </button>
                   </div>
 
                   <div className="options-container">
-                    {question.options.map((option, optionIndex) => (
-                      <label
-                        key={optionIndex}
-                        className={`option-item ${
-                          answers[questionIndex] === optionIndex
-                            ? "selected-option"
-                            : "default-option"
-                        }`}
-                        onClick={() =>
-                          handleOptionSelect(questionIndex, optionIndex)
-                        }
-                      >
-                        <input
-                          type="radio"
-                          name={`question-${questionIndex}`}
-                          checked={answers[questionIndex] === optionIndex}
-                          onChange={() => {}}
-                          className="appearance-none h-4 w-4 border border-gray-400 rounded-none checked:bg-blue-600 checked:border-blue-600 cursor-pointer"
-                        />
+                    {question.options.map((option, optionIndex) => {
+                      const isSelected = answers[questionIndex] === optionIndex;
 
-                        <span className="option-text">{option.text}</span>
-                      </label>
-                    ))}
+                      return (
+                        <label
+                          key={optionIndex}
+                          className={`flex items-center gap-2 p-1 cursor-pointer transition-colors duration-200 ${
+                            isSelected ? "text-black" : "bg-white text-black"
+                          }`}
+                          onClick={() =>
+                            handleOptionSelect(questionIndex, optionIndex)
+                          }
+                        >
+                          <div
+                            className={`h-5 w-5 flex items-center justify-center border-2 rounded-sm ${
+                              isSelected
+                                ? "bg-blue-600 border-blue-600"
+                                : "border-gray-400"
+                            }`}
+                          >
+                            {isSelected && (
+                              <svg
+                                className="w-3.5 h-3.5 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  d="M5 13l4 4L19 7"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            )}
+                          </div>
+
+                          <input
+                            type="radio"
+                            name={`question-${questionIndex}`}
+                            checked={isSelected}
+                            onChange={() => {}}
+                            className="hidden"
+                          />
+                          <span className="flex-1 option-text">
+                            {option.text}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
