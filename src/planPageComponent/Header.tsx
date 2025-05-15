@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = () => {
     return <div>Loading...</div>;
   }
 
-  const { selectComponent } = context;
+  const { selectComponent , setSelectComponent } = context;
 
   return (
     <header className="header">
@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = () => {
             className={`tab-button ${
               selectComponent === "/plans" ? "active" : ""
             }`}
+            onClick={() => setSelectComponent("/plans")}
           >
             Plan Creator
           </button>
@@ -51,6 +52,7 @@ const Header: React.FC<HeaderProps> = () => {
           className={`tab-button ${
             selectComponent === "AllPlans" ? "active" : ""
           }`}
+          onClick={() => setSelectComponent("AllPlans")}
         >
           All Plans
         </button>

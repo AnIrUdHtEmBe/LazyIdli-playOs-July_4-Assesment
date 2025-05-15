@@ -12,16 +12,16 @@ import {
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
-
-
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent , plans , setPlans} =
+  const { sessions, setSessions, setSelectComponent, plans, setPlans } =
     useContext(DataContext)!;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const [selectedPlanIds, setSelectedPlanIds] = useState<number[]>([]);
+  const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
 
   const [activePlan, setActivePlan] = useState(null);
   const [gridAssignments, setGridAssignments] = useState<{
@@ -43,41 +43,38 @@ function AllPlans() {
     }
   }, [selectedIds, filteredPlans.length]);
 
-
   const handlePlanDelete = () => {
-    
-  setPlans((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
-  setSelectedIds([]);
-
-};
-
-  const toggleSelectAll = () => {
-    if (isAllSelected) {
-      setSelectedIds([]);
-      setActivePlan(null);
-    } else {
-      setSelectedIds(filteredPlans.map((p) => p.id));
-    }
+    setPlans((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+    setSelectedIds([]);
   };
 
-  const toggleSelectOne = (id: number) => {
-    setSelectedIds((prev) => {
-      const newSelected = prev.includes(id)
-        ? prev.filter((i) => i !== id)
-        : [...prev, id];
-      if (newSelected.length === 1) {
-        const plan = sessions.find((p) => p.id === newSelected[0]);
-        setActivePlan(plan || null);
-      } else {
-        setActivePlan(null);
-      }
-      return newSelected;
-    });
+  const toggleSelectAllPlans = () => {
+    setSelectedPlanIds((prev) =>
+      prev.length === plans.length ? [] : plans.map((p) => p.id)
+    );
+  };
+
+  const toggleSelectOnePlan = (id: number) => {
+    setSelectedPlanIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAllSessions = () => {
+    setSelectedSessionIds((prev) =>
+      prev.length === filteredPlans.length ? [] : filteredPlans.map((p) => p.id)
+    );
+  };
+
+  const toggleSelectOneSession = (id: number) => {
+    setSelectedSessionIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
   const handleDelete = () => {
-    setSessions((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
-    setSelectedIds([]);
+    setSessions((prev) => prev.filter((p) => !selectedSessionIds.includes(p.id)));
+    setSelectedSessionIds([]);
   };
 
   const handlePreviewClick = (session: any) => {
@@ -103,13 +100,12 @@ function AllPlans() {
             <h2 className="section-title">Plans</h2>
             <div className="section-buttons">
               <button
-  className="icon-button"
-  onClick={handlePlanDelete}
-  disabled={selectedIds.length === 0}
->
-  <LucideTrash2 size={20} />
-</button>
-
+                className="icon-button"
+                onClick={handlePlanDelete}
+                disabled={selectedPlanIds.length === 0}
+              >
+                <LucideTrash2 size={20} />
+              </button>
               <button className="primary-button">
                 <Plus size={20} />
                 <span>New Plan</span>
@@ -121,7 +117,14 @@ function AllPlans() {
               <thead>
                 <tr>
                   <th>
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={
+                        plans.length > 0 &&
+                        selectedPlanIds.length === plans.length
+                      }
+                      onChange={toggleSelectAllPlans}
+                    />
                   </th>
                   <th>Session Name</th>
                   <th>TimePeriod</th>
@@ -129,17 +132,19 @@ function AllPlans() {
                 </tr>
               </thead>
               <tbody>
-                {/* Fill rows if needed */}
-                {plans.map((plan, index) => (
+                {plans.map((plan) => (
                   <tr key={plan.id}>
                     <td>
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={selectedPlanIds.includes(plan.id)}
+                        onChange={() => toggleSelectOnePlan(plan.id)}
+                      />
                     </td>
                     <td>{plan.planName}</td>
                     <td>{plan.category}</td>
                     <td>
-                      <button
-                      >
+                      <button>
                         <EyeIcon />
                       </button>
                     </td>
@@ -181,7 +186,7 @@ function AllPlans() {
                 <NordicWalking style={{ fontSize: "20px" }} />
               </button>
             </div>
-            <button onClick={handleDelete} disabled={selectedIds.length === 0}>
+            <button onClick={handleDelete} disabled={selectedSessionIds.length === 0}>
               <Trash2 size={20} className="text-red-500" />
             </button>
             <button className="primary-button">
@@ -197,9 +202,11 @@ function AllPlans() {
                   <th>
                     <input
                       type="checkbox"
-                      ref={checkboxRef}
-                      onChange={toggleSelectAll}
-                      checked={isAllSelected}
+                      checked={
+                        filteredPlans.length > 0 &&
+                        selectedSessionIds.length === filteredPlans.length
+                      }
+                      onChange={toggleSelectAllSessions}
                     />
                   </th>
                   <th>Sl No</th>
@@ -209,13 +216,13 @@ function AllPlans() {
                 </tr>
               </thead>
               <tbody>
-                {filteredPlans.map((plan, idx) => (
+                {filteredPlans.map((plan) => (
                   <tr key={plan.id}>
                     <td>
                       <input
                         type="checkbox"
-                        checked={selectedIds.includes(plan.id)}
-                        onChange={() => toggleSelectOne(plan.id)}
+                        checked={selectedSessionIds.includes(plan.id)}
+                        onChange={() => toggleSelectOneSession(plan.id)}
                       />
                     </td>
                     <td>{idx + 1}</td>
