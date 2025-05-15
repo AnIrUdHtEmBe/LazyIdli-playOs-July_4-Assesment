@@ -421,7 +421,10 @@ function SessionPage() {
                           <td className="px-4 py-2 text-center">{idx + 1}</td>
                           <td className="px-4 py-2 text-center">
                             <FormControl fullWidth size="small">
-                              <InputLabel id={`activity-select-label-${idx}`}>
+                              <InputLabel
+                                sx={{ width: "200px", display: "inline-block" }}
+                                id={`activity-select-label-${idx}`}
+                              >
                                 Activity
                               </InputLabel>
                               <Select
@@ -466,9 +469,22 @@ function SessionPage() {
                             {activity.timeInMinutes}
                           </td>
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                            <button>
+                            <button
+                              onClick={() => {
+                                setPreviewSession((prev: any) => {
+                                  const updatedActivities =
+                                    prev.activities.filter(
+                                      (_: any, i: number) => i !== idx
+                                    );
+                                  return {
+                                    ...prev,
+                                    activities: updatedActivities,
+                                  };
+                                });
+                              }}
+                            >
                               <LucideCircleMinus
-                                className="text-red-400"
+                                className="text-red-400 hover:text-red-600"
                                 size={24}
                               />
                             </button>

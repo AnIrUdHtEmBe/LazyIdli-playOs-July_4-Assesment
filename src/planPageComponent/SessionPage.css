@@ -33,7 +33,7 @@
 .save-changes-button{
  
   background-color: #0070FF;
-  border-radius: 12%;
+  border-radius: 10px;
   padding: 10px;
   color: white
 }
@@ -177,10 +177,9 @@
 .inp-header{
   padding: 0.5rem;
   border: 0;
-<<<<<<< Updated upstream
   border-bottom: 1px solid #ddd; 
   border-top: 1px solid #ddd;
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
   padding: 10px 15px;
   background-color:  #f9fafb;
@@ -190,7 +189,7 @@
   border: 0;
   border-bottom: 1px solid #ddd; 
   border-top: 1px solid #ddd;
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
   padding: 10px 15px;
   background-color:  #f9fafb;
@@ -210,14 +209,8 @@
   border: 0;
   border-bottom: 1px solid #ddd; 
   border-top: 1px solid #ddd;
-  text-align: left;
-  vertical-align: middle;
-=======
-  border-bottom: 1px solid #ddd; /* Add a border to the bottom of header */
-  border-top: 1px solid #ddd; /* Add a border to the bottom of header */
   text-align: center;
-   vertical-align: middle;
->>>>>>> Stashed changes
+  vertical-align: middle;
   padding: 10px 15px;
   background-color:  #f9fafb;
 }
@@ -232,14 +225,9 @@
 }
 .plans-table td {
   padding: 0.5rem;
-<<<<<<< Updated upstream
-  text-align: left;
-  vertical-align: middle;
-=======
   /* border: 1px solid #e5e7eb; */
   text-align: center;
    vertical-align: middle;
->>>>>>> Stashed changes
   padding: 10px 15px;
   border: 0;
   /* border-bottom: 1px solid #ddd; */

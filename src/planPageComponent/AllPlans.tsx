@@ -12,8 +12,10 @@ import {
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
+
+
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent , plans } =
+  const { sessions, setSessions, setSelectComponent , plans , setPlans} =
     useContext(DataContext)!;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [planName, setPlanName] = useState("");
@@ -40,6 +42,14 @@ function AllPlans() {
         selectedIds.length > 0 && selectedIds.length < filteredPlans.length;
     }
   }, [selectedIds, filteredPlans.length]);
+
+
+  const handlePlanDelete = () => {
+    
+  setPlans((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+  setSelectedIds([]);
+
+};
 
   const toggleSelectAll = () => {
     if (isAllSelected) {
@@ -92,9 +102,14 @@ function AllPlans() {
           <div className="section-header">
             <h2 className="section-title">Plans</h2>
             <div className="section-buttons">
-              <button className="icon-button">
-                <LucideTrash2 size={20} />
-              </button>
+              <button
+  className="icon-button"
+  onClick={handlePlanDelete}
+  disabled={selectedIds.length === 0}
+>
+  <LucideTrash2 size={20} />
+</button>
+
               <button className="primary-button">
                 <Plus size={20} />
                 <span>New Plan</span>
@@ -124,7 +139,6 @@ function AllPlans() {
                     <td>{plan.category}</td>
                     <td>
                       <button
-                        onClick={() => filterPlansAccordingTo(plan.category)}
                       >
                         <EyeIcon />
                       </button>

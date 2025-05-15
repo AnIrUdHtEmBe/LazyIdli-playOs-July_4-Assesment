@@ -260,8 +260,11 @@
   gap: 1.25rem;
 }
 
-.qp-question-number {
-  font-size: 1.25rem;
+.qp-question-header .qp-question-number {
+  font-size: 16px;
+  font-weight: 700;
+  color:#2563EB;
+
 }
 
 .qp-question-count {
