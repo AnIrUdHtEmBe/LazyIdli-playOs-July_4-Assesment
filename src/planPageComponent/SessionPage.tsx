@@ -133,7 +133,7 @@ function SessionPage() {
 
             <div className="flex items-center justify-center gap-1">
             <span className="sessions-text-header">Sessions</span>
-            <span className="all-button">All</span>
+            <span className="all-button"> All</span>
             </div>
 
             <div className="button-group">

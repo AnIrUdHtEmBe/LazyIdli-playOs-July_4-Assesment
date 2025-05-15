@@ -81,7 +81,7 @@ function AllPlans() {
         <div className="plan-section md">
           <div className="section-header">
             <h2 className="section-title">
-              Plans <span className="badge">All</span>
+              Plans 
             </h2>
             <div className="section-buttons">
               <button className="icon-button">
@@ -115,8 +115,9 @@ function AllPlans() {
             <h2 className="section-title">
               Sessions <span className="badge">All</span>
             </h2>
+            <div className="filter-button-icons">
             <button onClick={() => filterPlansAccordingTo("Fitness")}>
-              <Dumbbell size={20} />
+              <Dumbbell size={19} />
             </button>
             <button onClick={() => filterPlansAccordingTo("Wellness")}>
               <Mediation fontSize="small" />
@@ -124,6 +125,7 @@ function AllPlans() {
             <button onClick={() => filterPlansAccordingTo("Sports")}>
               <NordicWalking fontSize="small" />
             </button>
+            </div>
             <button
               onClick={handleDelete}
               disabled={selectedIds.length === 0}

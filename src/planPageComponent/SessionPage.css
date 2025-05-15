@@ -45,8 +45,8 @@
   display: flex;
   flex-direction: row;
   flex: 1;
-  padding: 2rem;
-  border-radius: 0.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
   /* allow vertical scrolling when content overflows */
   overflow-y: auto;
 }

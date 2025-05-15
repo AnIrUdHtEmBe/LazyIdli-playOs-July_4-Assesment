@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="header">
       {/* Top Row */}
-      <div className="header-top">
+      <div className="plan-header-top">
         <FileText size={28} className="header-icon" />
         <h1 className="header-title">Plan Creation {assignment?.id ?? ""}</h1>
       </div>
