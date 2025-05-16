@@ -87,6 +87,7 @@
 
 /* Top bar */
 .top-bar {
+  height: 94px;
   display: flex;
   padding: 0 20px 0 20px;
   align-items: center;

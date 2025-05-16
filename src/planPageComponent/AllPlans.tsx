@@ -18,7 +18,8 @@ function AllPlans() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const checkboxRef = useRef<HTMLInputElement>(null);
+  const planCheckboxRef = useRef<HTMLInputElement>(null);
+  const sessionCheckboxRef = useRef<HTMLInputElement>(null);
 
   const [selectedPlanIds, setSelectedPlanIds] = useState<number[]>([]);
   const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
@@ -27,25 +28,43 @@ function AllPlans() {
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
+
+  // Filter sessions based on search term
   const filteredPlans = sessions.filter(
     (plan) =>
       plan.sessionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plan.sessionType.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const isAllSelected =
-    filteredPlans.length > 0 && selectedIds.length === filteredPlans.length;
+  // Remove or fix this if not needed
+  // const isAllSelected =
+  //   filteredPlans.length > 0 && selectedSessionIds.length === filteredPlans.length;
 
   useEffect(() => {
-    if (checkboxRef.current) {
-      checkboxRef.current.indeterminate =
-        selectedIds.length > 0 && selectedIds.length < filteredPlans.length;
+    if (planCheckboxRef.current) {
+      planCheckboxRef.current.indeterminate =
+        selectedPlanIds.length > 0 && selectedPlanIds.length < plans.length;
     }
-  }, [selectedIds, filteredPlans.length]);
+  }, [selectedPlanIds, plans.length]);
+
+  useEffect(() => {
+    if (sessionCheckboxRef.current) {
+      sessionCheckboxRef.current.indeterminate =
+        selectedSessionIds.length > 0 &&
+        selectedSessionIds.length < filteredPlans.length;
+    }
+  }, [selectedSessionIds, filteredPlans.length]);
 
   const handlePlanDelete = () => {
-    setPlans((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
-    setSelectedIds([]);
+    setPlans((prev) => prev.filter((p) => !selectedPlanIds.includes(p.id)));
+    setSelectedPlanIds([]);
+  };
+
+  const handleDelete = () => {
+    setSessions((prev) =>
+      prev.filter((p) => !selectedSessionIds.includes(p.id))
+    );
+    setSelectedSessionIds([]);
   };
 
   const toggleSelectAllPlans = () => {
@@ -72,13 +91,10 @@ function AllPlans() {
     );
   };
 
-  const handleDelete = () => {
-    setSessions((prev) => prev.filter((p) => !selectedSessionIds.includes(p.id)));
-    setSelectedSessionIds([]);
-  };
-
   const handlePreviewClick = (session: any) => {
-    setSelectedIds([session.id]);
+    setSelectedSessionIds([session.id]);
+    // Optionally clear plan selection if you want strict exclusivity:
+    // setSelectedPlanIds([]);
   };
 
   const filterPlansAccordingTo = (category: string) => {
@@ -124,10 +140,11 @@ function AllPlans() {
                         selectedPlanIds.length === plans.length
                       }
                       onChange={toggleSelectAllPlans}
+                      ref={planCheckboxRef}
                     />
                   </th>
-                  <th>Session Name</th>
-                  <th>TimePeriod</th>
+                  <th>Plan Name</th>
+                  <th>Category</th>
                   <th>Preview</th>
                 </tr>
               </thead>
@@ -138,7 +155,11 @@ function AllPlans() {
                       <input
                         type="checkbox"
                         checked={selectedPlanIds.includes(plan.id)}
-                        onChange={() => toggleSelectOnePlan(plan.id)}
+                        onChange={() => {
+                          toggleSelectOnePlan(plan.id);
+                          // Optionally clear session selection if you want strict exclusivity:
+                          // setSelectedSessionIds([]);
+                        }}
                       />
                     </td>
                     <td>{plan.planName}</td>
@@ -186,7 +207,10 @@ function AllPlans() {
                 <NordicWalking style={{ fontSize: "20px" }} />
               </button>
             </div>
-            <button onClick={handleDelete} disabled={selectedSessionIds.length === 0}>
+            <button
+              onClick={handleDelete}
+              disabled={selectedSessionIds.length === 0}
+            >
               <Trash2 size={20} className="text-red-500" />
             </button>
             <button className="primary-button">
@@ -207,22 +231,27 @@ function AllPlans() {
                         selectedSessionIds.length === filteredPlans.length
                       }
                       onChange={toggleSelectAllSessions}
+                      ref={sessionCheckboxRef}
                     />
                   </th>
                   <th>Sl No</th>
-                  <th>Plan Name</th>
+                  <th>Session Name</th>
                   <th>Category</th>
                   <th>Preview</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredPlans.map((plan) => (
+                {filteredPlans.map((plan, idx) => (
                   <tr key={plan.id}>
                     <td>
                       <input
                         type="checkbox"
                         checked={selectedSessionIds.includes(plan.id)}
-                        onChange={() => toggleSelectOneSession(plan.id)}
+                        onChange={() => {
+                          toggleSelectOneSession(plan.id);
+                          // Optionally clear plan selection if you want strict exclusivity:
+                          // setSelectedPlanIds([]);
+                        }}
                       />
                     </td>
                     <td>{idx + 1}</td>
