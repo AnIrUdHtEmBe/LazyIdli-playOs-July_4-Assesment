@@ -32,6 +32,15 @@ type MCQQuestion = {
   questionText: string;
   options: MCQOption[];
 };
+type Question_APICALL = {
+  created_on: string;
+  questionId: string;
+  mainText: string;
+  answerType: string;
+  options: string[];
+}
+
+
 
 type MCQOption = {
   text: string;
@@ -54,6 +63,7 @@ type ActivityType = {
   id: number;
   activityType: string;
 };
+
 
 type Activity = {
   id: number;
@@ -90,6 +100,8 @@ type DataContextType = {
   setActivityTypePlan: Dispatch<SetStateAction<Activity[]>>;
   sessions: Session[];
   setSessions: Dispatch<SetStateAction<Session[]>>;
+  questionsForAPICall: Question_APICALL[];
+  setQuestionsForAPICall: Dispatch<SetStateAction<Question_APICALL[]>>
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -99,6 +111,7 @@ export const DataContext = createContext<DataContextType | undefined>(
 type DataProviderProps = {
   children: ReactNode;
 };
+
 
 // ----------------- DUMMY DATA -----------------
 
