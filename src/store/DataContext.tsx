@@ -21,6 +21,20 @@ export type Customer = {
   plan: string;
 };
 
+export type Customers_Api_call ={
+  userId: string;
+  name: string;
+  age: number;
+  gender: string;
+  phone?: string;
+  createdOn :string;
+  membershipType: string;
+  plansAllocated?: String[];
+  assessments?: String[];
+}
+
+
+
 type Assessment = {
   id: number;
   name: string;
@@ -80,8 +94,14 @@ type Session = {
 }
 
 type DataContextType = {
+  // customers 
   customers: Customer[];
   setCustomers: Dispatch<SetStateAction<Customer[]>>;
+
+  customers_Api_call: Customers_Api_call[];
+  setCustomers_Api_call: Dispatch<SetStateAction<Customers_Api_call[]>>;
+
+
   assessments: Assessment[];
   setAssessments: Dispatch<SetStateAction<Assessment[]>>;
   header: string;
@@ -884,7 +904,12 @@ const dummySessions: Session[] = [
 // ----------------- PROVIDER -----------------
 
 export const DataProvider = ({ children }: DataProviderProps) => {
+  // customers
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
+  const [customers_Api_call , setCustomers_Api_call] = useState<Customers_Api_call[]>([]);
+  
+
+
   const [assessments, setAssessments] =
     useState<Assessment[]>(initialAssessments);
   const [header, setHeader] = useState<string>("Customer Dashboard");
@@ -905,8 +930,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   return (
     <DataContext.Provider
       value={{
+        // customers ---
         customers,
         setCustomers,
+        customers_Api_call,
+        setCustomers_Api_call,
+        // customers ---
+
         assessments,
         setAssessments,
         header,

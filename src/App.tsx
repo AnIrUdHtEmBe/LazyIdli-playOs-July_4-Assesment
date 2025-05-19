@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Layout from "./components/Layout";
 import Dashboard from "./Pages/Dashboard";
 import { DataContext } from "./store/DataContext";
@@ -18,6 +18,8 @@ import QuestionBank from './QuestionBank/QuestionBank'
 
 function App() {
   const { selectComponent } = useContext(DataContext);
+
+
   console.log(selectComponent);
   return (
     <Router>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import CustomerTable from "../dashboardComponents/CustomerTable";
 import { DataContext } from "../store/DataContext";
 import Header from "../dashboardComponents/Header";
@@ -13,6 +13,9 @@ const Dashboard: React.FC = () => {
   }
 
   const { customers } = context;
+
+
+
 
   // const assessmentDue = customers.filter((c) => c.lastAssessed === "-").length;
   // const totalCustomers = customers.length;
