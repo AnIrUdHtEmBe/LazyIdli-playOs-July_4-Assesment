@@ -10,7 +10,12 @@ export const useApiCalls = () => {
   if (!context) {
     throw new Error("useApiCalls must be used within a DataProvider");
   }
-  const { setCustomers_Api_call , setAssessments_Api_call , setQuestionsForAPICall} = context;
+  const {
+    setCustomers_Api_call,
+    setAssessments_Api_call,
+    setQuestionsForAPICall,
+    setAssessmentInstance_expanded_Api_call,
+  } = context;
 
   const customers_fetching = async () => {
     try {
@@ -27,17 +32,16 @@ export const useApiCalls = () => {
   };
 
   const assessments_fetching = async () => {
-    try{
-        const res= await axios.get(`${API_BASE_URL}/asssessmenttemplates/full`);
-        const data = res.data;
-        setAssessments_Api_call(data);
-        // console.log("✅ Assessments fetched successfully:", data);
-        console.log("Status:", res.status);
+    try {
+      const res = await axios.get(`${API_BASE_URL}/asssessmenttemplates/full`);
+      const data = res.data;
+      setAssessments_Api_call(data);
+      // console.log("✅ Assessments fetched successfully:", data);
+      console.log("Status:", res.status);
+    } catch (error) {
+      console.error("❌ Error fetching assessments:", error);
     }
-    catch(error){
-        console.error("❌ Error fetching assessments:", error);
-      }
-  }
+  };
 
   const questions = async () => {
     try {
@@ -45,21 +49,50 @@ export const useApiCalls = () => {
       const data = res.data;
       setQuestionsForAPICall(data);
       console.log("✅ Questions fetched successfully:", data);
-    }
-    catch (error) {
+    } catch (error) {
       console.error("❌ Error fetching questions:", error);
     }
-  };     
+  };
 
-  const submitAssesment = async(assesment : createAssessmentTemplate) => {
+  const submitAssesment = async (assesment: createAssessmentTemplate) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/asssessmenttemplates`, assesment);
+      const res = await axios.post(
+        `${API_BASE_URL}/asssessmenttemplates`,
+        assesment
+      );
       console.log("✅ Assessment submitted successfully:", res.data);
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
     }
-  }
-  
+  };
 
-  return { customers_fetching , assessments_fetching , questions , submitAssesment};
+  const assessments_intsnce_fetching = async (
+    assessmentInstanceIdArray: string[]
+  ) => {
+    try {
+      const requests = assessmentInstanceIdArray.map((id) =>
+        axios.get(`${API_BASE_URL}/asssessmentinstances/${id}/expanded`)
+      );
+
+      // Wait for all requests to complete
+      const responses = await Promise.all(requests);
+      // Extract data from each response
+      const allData = responses.map((res) => res.data);
+
+      // Update the state with the array of all fetched data
+      setAssessmentInstance_expanded_Api_call(allData);
+
+      console.log("✅ Assessment instances fetched successfully:", allData);
+    } catch (error) {
+      console.error("❌ Error fetching assessment instances:", error);
+    }
+  };
+
+  return {
+    customers_fetching,
+    assessments_fetching,
+    assessments_intsnce_fetching,
+    questions,
+    submitAssesment,
+  };
 };

@@ -93,9 +93,11 @@ const CustomerTable = () => {
 
   // console.log(customers_Api_call);
 
-  const assessmentHandler = () => {
-    setSelectComponent("assessment");
-  };
+	const assessmentHandler = (customer: Customers_Api_call) => {
+		localStorage.setItem("user", JSON.stringify(customer));
+		setSelectComponent("assessment");
+	};
+	
 
   const generateColumns = () => {
     const columns: GridColDef[] = [
@@ -108,37 +110,36 @@ const CustomerTable = () => {
       { field: "memberShip", headerName: "Membership" },
       { field: "lastAssessedOn", headerName: "Last Assessed On" },
       { field: "planAllocated", headerName: "Plan Allocated" },
-      {
-        field: "action",
-        headerName: "",
-        renderCell: () => (
-          <ActionsContainer takeAssessment={assessmentHandler} />
-        ),
-      },
+			{
+				field: "action",
+				headerName: "",
+				renderCell: (params: any) => (
+					<ActionsContainer
+						takeAssessment={() => assessmentHandler(params.row.customerData)}
+					/>
+				),
+			}
+			
     ];
     return columns;
   };
 
-  const generateRows = () => {
-    const rows = customers_Api_call.map(
-      (customer: Customers_Api_call, i: number) => {
-        return {
-          no: i + 1,
-          id: customer.userId,
-          name: customer.name,
-          age: customer.age,
-					mobile: customer.mobile || "-",
-          joinedOn: customer.created_on,
-          phoneNumber: customer.mobile || "-",
-          memberShip: customer.membershipType,
-          lastAssessedOn: customer.lastAssessed || "-",
-          planAllocated: customer.plansAllocated[0] || "-",
-        };
-      }
-    );
-    return rows;
-  };
-
+	const generateRows = () => {
+		return customers_Api_call.map((customer: Customers_Api_call, i: number) => ({
+			no: i + 1,
+			id: customer.userId,
+			name: customer.name,
+			age: customer.age,
+			mobile: customer.mobile || "-",
+			joinedOn: customer.created_on,
+			phoneNumber: customer.mobile || "-",
+			memberShip: customer.membershipType,
+			lastAssessedOn: customer.lastAssessed || "-",
+			planAllocated: customer.plansAllocated?.[0] || "-",
+			customerData: customer, // <-- Add the full customer object here
+		}));
+	};
+	
   const formatColumns = (columns: GridColDef[]) => {
     const col = columns.map((column) => {
       const width = ref.current!.clientWidth;

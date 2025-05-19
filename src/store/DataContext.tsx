@@ -59,12 +59,25 @@ type Assessment = {
 };
 
 export type Assessment_Api_call = {
+  tempelateId: string;
   name: string;
   created_on: string;
-  tempelateId: string;
   questions: object[];
 }
 
+
+//  assessmentInstance for each user 
+export type Assessment_instance_expanded_Api_call = {
+  assessmentInstanceId: string;
+  tempelateId: string;
+  userId: string;
+  answers: Object[];
+  startedOn: string;
+  submittedOn: string;
+  nextAssessmentOn: string;
+  totalScore: number;
+  template: object[];
+}
 
 
 type MCQQuestion = {
@@ -131,6 +144,10 @@ type DataContextType = {
   // Assessments -> Dashboard page
   assessments_Api_call: Assessment_Api_call[];
   setAssessments_Api_call: Dispatch<SetStateAction<Assessment_Api_call[]>>;
+
+  // Assessment instance for each user
+  assessmentInstance_expanded_Api_call: Assessment_instance_expanded_Api_call[];
+  setAssessmentInstance_expanded_Api_call: Dispatch<SetStateAction<Assessment_instance_expanded_Api_call[]>>;
 
 
   assessments: Assessment[];
@@ -677,6 +694,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   //questions
   const [questionsForAPICall, setQuestionsForAPICall] = useState<Question_Api_call[]>([]);
+  // Assessment instance for each user
+  const [assessmentInstance_expanded_Api_call , setAssessmentInstance_expanded_Api_call] = useState<Assessment_instance_expanded_Api_call[]>([]);
+  
 
 
   const [assessments, setAssessments] =
@@ -715,6 +735,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         assessments_Api_call,
         setAssessments_Api_call,
         // Assessments (dashboard page)
+
+        // Assessment instance for each user
+        assessmentInstance_expanded_Api_call,
+        setAssessmentInstance_expanded_Api_call,
 
         assessments,
         setAssessments,
