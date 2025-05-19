@@ -29,6 +29,20 @@
   font-family: 'roboto', sans-serif;
   font-weight: 500;
   color: #101828; /* gray-800 */
+
+}
+
+.assess-right-panel{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+}
+
+.assess-right-panel-left{
+  font-size: 18px;
+  font-family: 'roboto', sans-serif;
+  font-weight: 500;
 }
 
 .start-button {

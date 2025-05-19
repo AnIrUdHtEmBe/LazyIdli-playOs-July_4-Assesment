@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useRef, useState } from "react";
-import { Customer , Customers_Api_call, DataContext } from "../store/DataContext";
+import {
+  Customer,
+  Customers_Api_call,
+  DataContext,
+} from "../store/DataContext";
 import "./CustomerTable.css";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -69,18 +73,25 @@ const ActionsContainer = (props: ActionsContainerProps) => {
 };
 
 const CustomerTable = () => {
-  const { customers, setSelectComponent ,customers_Api_call } = useContext(DataContext);
+  const { customers, setSelectComponent, customers_Api_call } =
+    useContext(DataContext);
   const [columns, setColumns] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const ref = useRef<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-	const { customers_fetching } = useApiCalls();
+  const { customers_fetching } = useApiCalls();
 
   useEffect(() => {
-    customers_fetching(); // <-- Call on initial mount (site reload)
+    const fetchData = async () => {
+      setIsLoading(true);
+      await customers_fetching();
+      setIsLoading(false);
+    };
+    fetchData();
   }, []);
 
-	console.log(customers_Api_call);
+  // console.log(customers_Api_call);
 
   const assessmentHandler = () => {
     setSelectComponent("assessment");
@@ -91,6 +102,7 @@ const CustomerTable = () => {
       { field: "no", headerName: "SI.No" },
       { field: "name", headerName: "Name" },
       { field: "age", headerName: "Age" },
+			{ field: "mobile", headerName: "Mobile" },
       { field: "joinedOn", headerName: "Joined On" },
       { field: "phoneNumber", headerName: "Phone Number" },
       { field: "memberShip", headerName: "Membership" },
@@ -108,19 +120,22 @@ const CustomerTable = () => {
   };
 
   const generateRows = () => {
-    const rows = customers_Api_call.map((customer: Customers_Api_call, i: number) => {
-      return {
-        no: i + 1,
-        id: customer.userId,
-        name: customer.name,
-        age: customer.age,
-        joinedOn: customer.created_on,
-        phoneNumber: customer.phone,
-        memberShip: customer.membershipType,
-        // lastAssessedOn: customer.lastAssessed,
-        planAllocated: customer.plansAllocated,
-      };
-    });
+    const rows = customers_Api_call.map(
+      (customer: Customers_Api_call, i: number) => {
+        return {
+          no: i + 1,
+          id: customer.userId,
+          name: customer.name,
+          age: customer.age,
+					mobile: customer.mobile || "-",
+          joinedOn: customer.created_on,
+          phoneNumber: customer.mobile || "-",
+          memberShip: customer.membershipType,
+          lastAssessedOn: customer.lastAssessed || "-",
+          planAllocated: customer.plansAllocated[0] || "-",
+        };
+      }
+    );
     return rows;
   };
 
@@ -139,7 +154,7 @@ const CustomerTable = () => {
       } else {
         return {
           ...column,
-          width: width / 8.5,
+          width: width / 9.7,
           headerAlign: "center",
           align: "center",
         };
@@ -155,7 +170,11 @@ const CustomerTable = () => {
     const formattedColumns = formatColumns(columns);
     setColumns(formattedColumns);
     setRows(rows);
-  }, []);
+  }, [customers_Api_call]);
+
+  if (isLoading) {
+    return <div>Loading customers...</div>;
+  }
 
   return (
     <div className="customer-dashboard-outlay-container">

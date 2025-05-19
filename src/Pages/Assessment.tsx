@@ -3,6 +3,7 @@ import { Eye, ArrowRight, X } from "lucide-react";
 import { DataContext } from "../store/DataContext";
 import Header from "../assessmentComponents/Header";
 import "./Assessment.css"; // ⬅️ Link to the custom CSS
+import { Switch } from "@mui/material";
 
 const Assessment: React.FC = () => {
   const context = useContext(DataContext);
@@ -28,14 +29,21 @@ const Assessment: React.FC = () => {
         <div className="assessment-content">
           <div className="assessment-header">
             <h1 className="assessment-title">Assessments</h1>
-            <button
-              className={`${selectedRow ? "start-button" : "disable-button"}`}
-              disabled={!selectedRow}
-              onClick={handleStartAssignment}
-            >
-              <span>Start</span>
-              <ArrowRight size={20} />
-            </button>
+            <div className="assess-right-panel">
+              <div className="assess-right-panel-left">
+                <span>Show Taken</span>
+                <Switch></Switch>
+                <span>To Take</span>
+              </div>
+              <button
+                className={`${selectedRow ? "start-button" : "disable-button"}`}
+                disabled={!selectedRow}
+                onClick={handleStartAssignment}
+              >
+                <span>Start</span>
+                <ArrowRight size={20} />
+              </button>
+            </div>
           </div>
 
           <div className="assessment-table-wrapper">
@@ -117,15 +125,9 @@ const Assessment: React.FC = () => {
                       length: Math.max(0, 15 - mcqQuestions.length),
                     }).map((_, i) => (
                       <tr key={`empty-${i}`} className="modal-table-row">
-                        <td className="modal-td slno-header">
-                          -
-                        </td>
-                        <td className="modal-td question-headerrr text-gray-400">
-                          
-                        </td>
-                        <td className="modal-td mandatory-header madat-option ml-[10px] text-gray-400">
-                          
-                        </td>
+                        <td className="modal-td slno-header">-</td>
+                        <td className="modal-td question-headerrr text-gray-400"></td>
+                        <td className="modal-td mandatory-header madat-option ml-[10px] text-gray-400"></td>
                       </tr>
                     ))}
                   </tbody>
