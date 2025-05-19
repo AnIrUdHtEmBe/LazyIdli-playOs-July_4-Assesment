@@ -1,15 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { DataContext } from "../store/DataContext";
-import { ChevronRight, CrossIcon, ToggleLeft, ToggleRight, X } from "lucide-react";
+import {
+  ChevronRight,
+  CrossIcon,
+  ToggleLeft,
+  ToggleRight,
+  X,
+} from "lucide-react";
+import { useApiCalls } from "../store/axios";
 import "./QuestionPaperSet.css"; // Import the CSS
 import { Switch, ToggleButtonGroup } from "@mui/material";
-type Question = {
-  questionId: number;
-  questionText: string;
-  options: { text: string }[];
-  required?: boolean;  // Make required optional since it's not present in MCQQuestion
-};
+
+import {
+  Question_Api_call,
+  createAssessmentTemplate,
+} from "../store/DataContext";
+
 function QuestionPaperSet() {
+
+  const { questions, submitAssesment } = useApiCalls();
+  useEffect(() => {
+    questions();
+  }, []);
   const context = useContext(DataContext);
 
   if (!context) return <div>Loading...</div>;
@@ -17,16 +29,55 @@ function QuestionPaperSet() {
   const {
     setSelectComponent,
     selectComponent,
-    questionsForQuestionBank,
-    setQuestionsForQuestionBank,
+    setQuestionsForAPICall,
+    questionsForAPICall,
   } = context;
-
+  const [assesmentName, setAssesmentName] = useState<string>("");
+  const [assesmentTemplate, setAssesmentTemplate] =
+    useState<createAssessmentTemplate>({
+      name: assesmentName,
+      questions: [],
+    });
   const [showOptions, setShowoptions] = useState(true);
 
-  const [selectedQuestion, setSelectedQuestions] = useState<Question[]>([]);
-  const [finalQuestion, setFinalQuestion] = useState<Question[]>([]);
+  const [required, setRequired] = useState(false);
 
-  const handleSelect = (question: Question) => {
+  const [selectedQuestion, setSelectedQuestions] = useState<
+    Question_Api_call[]
+  >([]);
+  const [finalQuestion, setFinalQuestion] = useState<Question_Api_call[]>([]);
+
+  const formSubmission = async () => {
+  try {
+    const updatedTemplate = (() => {
+      const existingIds = new Set(assesmentTemplate.questions.map((q) => q.questionId));
+
+      const newQuestions = finalQuestion
+        .filter((question) => !existingIds.has(question.questionId))
+        .map((question) => ({
+          questionId: question.questionId,
+          isRequired: false,
+        }));
+
+      return {
+        name: assesmentName,
+        questions: [...assesmentTemplate.questions, ...newQuestions],
+      };
+    })();
+
+    // Optional: Update state if you still want to reflect it in the component
+    setAssesmentTemplate(updatedTemplate);
+
+    console.log("Assessment Template to submit:", updatedTemplate);
+
+    await submitAssesment(updatedTemplate);
+  } catch (error) {
+    console.error("❌ Error submitting assessment:", error);
+  }
+};
+
+
+  const handleSelect = (question: Question_Api_call) => {
     if (selectedQuestion.includes(question)) {
       setSelectedQuestions(
         selectedQuestion.filter((item) => item !== question)
@@ -42,21 +93,38 @@ function QuestionPaperSet() {
         (question) =>
           !finalQuestion.some((q) => q.questionId === question.questionId)
       )
-      .map((q) => ({ ...q, required: false })); // Add required field
+      .map((q) => ({ ...q })); // Add required field
 
     setFinalQuestion([...finalQuestion, ...newQuestions]);
     setSelectedQuestions([]);
   };
 
-  const toggleRequired = (id: number) => {
-    setFinalQuestion((prev) =>
-      prev.map((q) =>
-        q.questionId === id ? { ...q, required: !q.required } : q
-      )
-    );
-  };
+const toggleRequired = (id: string) => {
+  setAssesmentTemplate((prev) => {
+    const exists = prev.questions.find((q) => q.questionId === id);
 
-  const handleDelete = (question: Question) => {
+    const updatedQuestions = exists
+      ? prev.questions.map((question) =>
+          question.questionId === id
+            ? { ...question, isRequired: !question.isRequired }
+            : question
+        )
+      : [...prev.questions, { questionId: id, isRequired: true }];
+
+    return {
+      ...prev,
+      questions: updatedQuestions,
+    };
+  });
+};
+
+const isQuestionRequired = (id: string) => {
+  const found = assesmentTemplate.questions.find(q => q.questionId === id);
+  return found?.isRequired || false;
+};
+
+  let questionIdNumber = 1;
+  const handleDelete = (question: Question_Api_call) => {
     const deletedSet = finalQuestion.filter(
       (item) => item.questionId !== question.questionId
     );
@@ -68,10 +136,15 @@ function QuestionPaperSet() {
       {/* Header */}
       <div className="qp-header">
         <div className="qp-header-text">
-          <h1 className="qp-title-assesment">Assessment Name</h1>
+          <input
+            className="qp-title-assesment"
+            placeholder="Assignement Name"
+            value={assesmentName}
+            onChange={(e) => setAssesmentName(e.target.value)}
+          ></input>
           <p className="qp-description">Description</p>
         </div>
-        <button className="qp-finish-btn">Finish</button>
+        <button onClick={formSubmission} className="qp-finish-btn">Finish</button>
       </div>
 
       {/* Main Content */}
@@ -80,7 +153,7 @@ function QuestionPaperSet() {
         <div className="qp-question-bank">
           <h2 className="qp-section-title">Questions</h2>
           <div className="qp-question-list">
-            {questionsForQuestionBank.map((question) => (
+            {questionsForAPICall.map((question) => (
               <div key={question.questionId} className="qp-question-item">
                 <input
                   type="checkbox"
@@ -91,8 +164,8 @@ function QuestionPaperSet() {
                   className="qp-checkbox"
                 />
                 <label className="qp-label">
-                  <span className="qp-label-id">{question.questionId})</span>
-                  {question.questionText}
+                  <span className="qp-label-id">{questionIdNumber++})</span>
+                  {question.mainText}
                 </label>
               </div>
             ))}
@@ -120,7 +193,7 @@ function QuestionPaperSet() {
                 <ToggleRight className="text-blue-500" size={50}></ToggleRight>
               )} */}
 
-            <Switch  defaultChecked ></Switch>
+              <Switch defaultChecked></Switch>
             </button>
             <span className="qp-toggle-text">Q & A</span>
           </div>
@@ -143,21 +216,15 @@ function QuestionPaperSet() {
                     </span>
                     <button
                       className="qp-required-toggle"
-                      onClick={() => toggleRequired(question.questionId)}
+                      // onClick={() => toggleRequired(question.questionId)}
                     >
-                      {/* {question.required ? (
-                        <ToggleLeft />
-                      ) : (
-                        <ToggleRight className="text-blue-500" />
-                      )} */}
                       <Switch
-                          checked={question.required}
-                          onCheckedChange={() => toggleRequired(question.questionId)}
-                        />
-
-                      <span className="qp-required-text">
-                        {question.required ? "Required" : "Not-Required"}
-                      </span>
+          checked={isQuestionRequired(question.questionId)}
+          onChange={() => toggleRequired(question.questionId)}
+        />
+        <span className="qp-required-text">
+          {isQuestionRequired(question.questionId) ? "Required" : "Not-Required"}
+        </span>
                     </button>
                   </div>
 
@@ -169,14 +236,14 @@ function QuestionPaperSet() {
                   </button>
                 </div>
 
-                <p className="qp-question-text">{question.questionText}</p>
+                <p className="qp-question-text">{question.mainText}</p>
 
                 {showOptions && (
                   <div className="qp-options">
-                    {question.options.map((item, i) => (
+                    {question.options?.map((item, i) => (
                       <div key={i} className="qp-option">
                         <input className="qp-checkbox" type="checkbox" />
-                        <span>{item.text}</span>
+                        <span>{item}</span>
                       </div>
                     ))}
                   </div>

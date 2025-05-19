@@ -21,6 +21,14 @@ import React, {
 //   plan: string;
 // };
 
+export type createAssessmentTemplate = {
+  name: string;
+  questions: {
+    questionId: string;
+    isRequired: boolean;
+  }[];
+}
+
 export type Customers_Api_call ={
   userId: string;
   name: string;
@@ -37,6 +45,8 @@ export type Customers_Api_call ={
   plansAllocated: string[];
   assessments?: string[];
 }
+
+
 
 
 
@@ -62,12 +72,12 @@ type MCQQuestion = {
   questionText: string;
   options: MCQOption[];
 };
-type Question_APICALL = {
+export type Question_Api_call = {
   created_on: string;
   questionId: string;
   mainText: string;
   answerType: string;
-  options: string[];
+  options?: string[];
 }
 
 
@@ -141,8 +151,10 @@ type DataContextType = {
   setActivityTypePlan: Dispatch<SetStateAction<Activity[]>>;
   sessions: Session[];
   setSessions: Dispatch<SetStateAction<Session[]>>;
-  questionsForAPICall: Question_APICALL[];
-  setQuestionsForAPICall: Dispatch<SetStateAction<Question_APICALL[]>>
+
+  //questions for api call
+  questionsForAPICall: Question_Api_call[];
+  setQuestionsForAPICall: Dispatch<SetStateAction<Question_Api_call[]>>
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -157,275 +169,6 @@ type DataProviderProps = {
 // ----------------- DUMMY DATA -----------------
 
 
-
-// const initialCustomers: Customer[] = [
-//   {
-//     id: 1,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 2,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 3,
-//     name: "Talen",
-//     age: 21,
-//     gender: "male",
-//     joinedOn: "2025-03-22",
-//     phone: "5674321890",
-//     membership: "Union Classic",
-//     lastAssessed: "2025-03-28",
-//     plan: "Prime Health",
-//   },
-//   {
-//     id: 4,
-//     name: "Martin",
-//     age: 22,
-//     gender: "male",
-//     joinedOn: "2025-03-23",
-//     phone: "1209348567",
-//     membership: "Union Plus",
-//     lastAssessed: "-",
-//     plan: "-",
-//   },
-//   {
-//     id: 5,
-//     name: "Ahmad",
-//     age: 28,
-//     gender: "male",
-//     joinedOn: "2025-03-24",
-//     phone: "5643782190",
-//     membership: "Union Prime",
-//     lastAssessed: "-",
-//     plan: "-",
-//   },
-//   {
-//     id: 6,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-03-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 7,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 8,
-//     name: "Talen",
-//     age: 21,
-//     gender: "male",
-//     joinedOn: "2025-03-22",
-//     phone: "5674321890",
-//     membership: "Union Classic",
-//     lastAssessed: "2025-03-28",
-//     plan: "Prime Health",
-//   },
-//   {
-//     id: 9,
-//     name: "Martin",
-//     age: 22,
-//     gender: "male",
-//     joinedOn: "2025-03-23",
-//     phone: "1209348567",
-//     membership: "Union Plus",
-//     lastAssessed: "-",
-//     plan: "-",
-//   },
-//   {
-//     id: 10,
-//     name: "Ahmad",
-//     age: 28,
-//     gender: "male",
-//     joinedOn: "2025-03-24",
-//     phone: "5643782190",
-//     membership: "Union Prime",
-//     lastAssessed: "-",
-//     plan: "-",
-//   },
-//   {
-//     id: 11,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 12,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 13,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 14,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 15,
-//     name: "Brandon",
-//     age: 18,
-//     gender: "male",
-//     joinedOn: "2025-05-20", // YYYY-MM-DD
-//     phone: "1234567890",
-//     membership: "Union Select",
-//     lastAssessed: "2025-03-27",
-//     plan: "Golden Health",
-//   },
-//   {
-//     id: 16,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 17,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 18,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 19,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 20,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 27,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 37,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-
-//   {
-//     id: 47,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-//   {
-//     id: 57,
-//     name: "Davis",
-//     age: 20,
-//     gender: "male",
-//     joinedOn: "2025-03-21",
-//     phone: "0987654321",
-//     membership: "Union Standard",
-//     lastAssessed: "2025-03-28",
-//     plan: "Young Champs",
-//   },
-// ];
 
 const initialAssessments: Assessment[] = [
   { id: 1, name: "Prime Health", questionCount: "30 Q" },
@@ -931,7 +674,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   // Assessments -> dashboard page
   const [assessments_Api_call , setAssessments_Api_call] = useState<Assessment_Api_call[]>([]);
-  
+
+  //questions
+  const [questionsForAPICall, setQuestionsForAPICall] = useState<Question_Api_call[]>([]);
 
 
   const [assessments, setAssessments] =
@@ -961,6 +706,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setCustomers_Api_call,
         // customers ---
 
+        // questions for api call
+        questionsForAPICall,
+        setQuestionsForAPICall,
+
 
         // Assessments (dashboard page)
         assessments_Api_call,
@@ -985,6 +734,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setActivityTypePlan,
         sessions,
         setSessions,
+       
       }}
     >
       {children}
