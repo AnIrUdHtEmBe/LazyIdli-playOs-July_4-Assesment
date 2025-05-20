@@ -72,6 +72,7 @@ type MCQQuestion = {
   questionText: string;
   options: MCQOption[];
 };
+
 export type Question_Api_call = {
   created_on: string;
   questionId: string;
@@ -120,8 +121,6 @@ type Session = {
 
 type DataContextType = {
   // customers 
-  // customers: Customer[];
-  // setCustomers: Dispatch<SetStateAction<Customer[]>>;
 
   customers_Api_call: Customers_Api_call[];
   setCustomers_Api_call: Dispatch<SetStateAction<Customers_Api_call[]>>;
@@ -139,8 +138,7 @@ type DataContextType = {
   setHeader: Dispatch<SetStateAction<string>>;
   selectComponent: string;
   setSelectComponent: Dispatch<SetStateAction<string>>;
-  mcqQuestions: MCQQuestion[];
-  setMcqQuestions: Dispatch<SetStateAction<MCQQuestion[]>>;
+
   mcqAnswers: MCQAnswer[];
   setMcqAnswers: Dispatch<SetStateAction<MCQAnswer[]>>;
   plans: Plan[];
@@ -172,267 +170,6 @@ type DataProviderProps = {
 
 // ----------------- DUMMY DATA -----------------
 
-const QuestionForQuestionBank: MCQQuestion[] = [
-  {
-    questionId: 1,
-    questionText: "What is the capital of France?",
-    options: [
-      { text: "Paris", selected: false },
-      { text: "Berlin", selected: false },
-      { text: "Madrid", selected: false },
-      { text: "Rome", selected: false },
-    ],
-  },
-  {
-    questionId: 2,
-    questionText: "Which planet is known as the Red Planet?",
-    options: [
-      { text: "Earth", selected: false },
-      { text: "Mars", selected: false },
-      { text: "Jupiter", selected: false },
-      { text: "Venus", selected: false },
-    ],
-  },
-  {
-    questionId: 3,
-    questionText: "What is the largest ocean on Earth?",
-    options: [
-      { text: "Atlantic Ocean", selected: false },
-      { text: "Indian Ocean", selected: false },
-      { text: "Pacific Ocean", selected: false },
-      { text: "Arctic Ocean", selected: false },
-    ],
-  },
-  {
-    questionId: 4,
-    questionText:
-      "Which language is primarily used for Android app development?",
-    options: [
-      { text: "Swift", selected: false },
-      { text: "Kotlin", selected: false },
-      { text: "JavaScript", selected: false },
-      { text: "Python", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-  {
-    questionId: 6,
-    questionText: "Who developed the theory of relativity?",
-    options: [
-      { text: "Isaac Newton", selected: false },
-      { text: "Albert Einstein", selected: false },
-      { text: "Nikola Tesla", selected: false },
-      { text: "Galileo Galilei", selected: false },
-    ],
-  },
-  {
-    questionId: 7,
-    questionText: "Which data structure uses LIFO (Last In First Out)?",
-    options: [
-      { text: "Queue", selected: false },
-      { text: "Linked List", selected: false },
-      { text: "Stack", selected: false },
-      { text: "Tree", selected: false },
-    ],
-  },
-  {
-    questionId: 8,
-    questionText: "What does HTML stand for?",
-    options: [
-      { text: "HyperText Markup Language", selected: false },
-      { text: "HighText Machine Language", selected: false },
-      { text: "Hyperlinking and Text Marking Language", selected: false },
-      { text: "Hyper Transfer Markup Language", selected: false },
-    ],
-  },
-  {
-    questionId: 9,
-    questionText: "Which one is a NoSQL database?",
-    options: [
-      { text: "MySQL", selected: false },
-      { text: "PostgreSQL", selected: false },
-      { text: "MongoDB", selected: false },
-      { text: "SQLite", selected: false },
-    ],
-  },
-  {
-    questionId: 10,
-    questionText: "In which year did World War II end?",
-    options: [
-      { text: "1942", selected: false },
-      { text: "1945", selected: false },
-      { text: "1939", selected: false },
-      { text: "1950", selected: false },
-    ],
-  },
-  {
-    questionId: 11,
-    questionText: "Which company developed the TypeScript language?",
-    options: [
-      { text: "Google", selected: false },
-      { text: "Facebook", selected: false },
-      { text: "Microsoft", selected: false },
-      { text: "Amazon", selected: false },
-    ],
-  },
-  {
-    questionId: 12,
-    questionText: "Which method is used to fetch data in React?",
-    options: [
-      { text: "getData()", selected: false },
-      { text: "useFetch()", selected: false },
-      { text: "useEffect()", selected: false },
-      { text: "fetch()", selected: false },
-    ],
-  },
-  {
-    questionId: 13,
-    questionText: "CSS stands for?",
-    options: [
-      { text: "Cascading Style Sheets", selected: false },
-      { text: "Colorful Style Sheets", selected: false },
-      { text: "Computer Style Sheets", selected: false },
-      { text: "Creative Style Sheets", selected: false },
-    ],
-  },
-  {
-    questionId: 14,
-    questionText: "What is the square root of 144?",
-    options: [
-      { text: "10", selected: false },
-      { text: "11", selected: false },
-      { text: "12", selected: false },
-      { text: "13", selected: false },
-    ],
-  },
-  {
-    questionId: 15,
-    questionText: "Which planet has the most moons?",
-    options: [
-      { text: "Earth", selected: false },
-      { text: "Jupiter", selected: false },
-      { text: "Mars", selected: false },
-      { text: "Saturn", selected: false },
-    ],
-  },
-];
-
-const initialMCQQuestions: MCQQuestion[] = [
-  {
-    questionId: 1,
-    questionText: "What is the capital of France?",
-    options: [
-      { text: "Paris", selected: false },
-      { text: "Berlin", selected: false },
-      { text: "Madrid", selected: false },
-      { text: "Rome", selected: false },
-    ],
-  },
-  {
-    questionId: 2,
-    questionText: "Which planet is known as the Red Planet?",
-    options: [
-      { text: "Earth", selected: false },
-      { text: "Mars", selected: false },
-      { text: "Jupiter", selected: false },
-      { text: "Venus", selected: false },
-    ],
-  },
-  {
-    questionId: 3,
-    questionText: "What is the largest ocean on Earth?",
-    options: [
-      { text: "Atlantic Ocean", selected: false },
-      { text: "Indian Ocean", selected: false },
-      { text: "Pacific Ocean", selected: false },
-      { text: "Arctic Ocean", selected: false },
-    ],
-  },
-  {
-    questionId: 4,
-    questionText:
-      "Which language is primarily used for Android app development?",
-    options: [
-      { text: "Swift", selected: false },
-      { text: "Kotlin", selected: false },
-      { text: "JavaScript", selected: false },
-      { text: "Python", selected: false },
-    ],
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    options: [
-      { text: "Laravel", selected: false },
-      { text: "Django", selected: false },
-      { text: "React", selected: false },
-      { text: "Spring", selected: false },
-    ],
-  },
-];
-
-const initialMCQAnswers: MCQAnswer[] = [
-  {
-    questionId: 1,
-    questionText: "What is the capital of France?",
-    correctOption: "Paris",
-  },
-  {
-    questionId: 2,
-    questionText: "Which planet is known as the Red Planet?",
-    correctOption: "Mars",
-  },
-  {
-    questionId: 3,
-    questionText: "What is the largest ocean on Earth?",
-    correctOption: "Pacific Ocean",
-  },
-  {
-    questionId: 4,
-    questionText:
-      "Which language is primarily used for Android app development?",
-    correctOption: "Kotlin",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-  {
-    questionId: 5,
-    questionText: "Which of the following is a JavaScript framework?",
-    correctOption: "React",
-  },
-];
 
 const initialPlans: Plan[] = [
   { id: 1, planName: "Prime Fitness", category: "Fitness" },
@@ -678,14 +415,9 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   //   useState<Assessment[]>(initialAssessments);
   const [header, setHeader] = useState<string>("Customer Dashboard");
   const [selectComponent, setSelectComponent] = useState<string>("dashboard");
-  const [mcqQuestions, setMcqQuestions] =
-    useState<MCQQuestion[]>(initialMCQQuestions);
-  const [mcqAnswers, setMcqAnswers] = useState<MCQAnswer[]>(initialMCQAnswers);
+
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
 
-  const [questionsForQuestionBank, setQuestionsForQuestionBank] = useState<
-    MCQQuestion[]
-  >(QuestionForQuestionBank);
   const [activityTypePlan, setActivityTypePlan] =
     useState<Activity[]>(activityTablePlam);
 
@@ -727,14 +459,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setHeader,
         selectComponent,
         setSelectComponent,
-        mcqQuestions,
-        setMcqQuestions,
-        mcqAnswers,
-        setMcqAnswers,
+
         plans,
         setPlans,
-        questionsForQuestionBank,
-        setQuestionsForQuestionBank,
+
         activityTypePlan,
         setActivityTypePlan,
         sessions,
