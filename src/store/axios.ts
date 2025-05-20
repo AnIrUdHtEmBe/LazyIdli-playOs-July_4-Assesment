@@ -92,6 +92,8 @@ export const useApiCalls = () => {
     try{
       const res = axios.post(`${API_BASE_URL}/asssessmentinstances/start/${user_id}/${template_id}`)
       console.log("Assessment started successfully:", (await res).status);
+      // console.log("Assessment started successfully:", (await res).data);
+      localStorage.setItem("latestAssessmentTemplate", JSON.stringify((await res).data.assessmentInstanceId));
     }
     catch(error){
       console.error("❌ Error starting assessment:", error);
@@ -99,14 +101,28 @@ export const useApiCalls = () => {
   }
 
 
-  const assessmet_submission = async (instanceId : string) => {
+  const assessmet_submission = async (instanceId : string , answers : object[] ) => {
     try{
-      const res = axios.post(`${API_BASE_URL}/assessmentinstances/${instanceId}/submit`)
+      const res = axios.patch(`${API_BASE_URL}/asssessmentinstances/${instanceId}/submit` , {
+        answers : answers
+      })
       console.log("Assessment submitted successfully:", (await res).status);
+      // console.log("Assessment submitted successfully:", (await res).data);
     }catch(error){
       console.error("❌ Error submitting assessment:", error);
     }
   }
+
+  // const getQuestionById = async (questionId: string) => {
+  //   try{
+  //     const res = await axios.get(`${API_BASE_URL}/questions/${questionId}`);
+  //     const data = res.data;
+  //     console.log("✅ Question fetched successfully:", data);
+  //   } 
+  //   catch(error){
+  //     console.error("❌ Error fetching question:", error);
+  //   }
+  // }
 
   return {
     customers_fetching,

@@ -73,14 +73,6 @@ export type Question_Api_call = {
 }
 
 
-// Assessment submission
-export type Assessment_submission_Api_call = {
-  questionId: string;
-  answer: string;
-}
-
-
-
 type MCQOption = {
   text: string;
   selected: boolean;
@@ -134,11 +126,6 @@ type DataContextType = {
   // Assessment instance for each user
   assessmentInstance_expanded_Api_call: Assessment_instance_expanded_Api_call[];
   setAssessmentInstance_expanded_Api_call: Dispatch<SetStateAction<Assessment_instance_expanded_Api_call[]>>;
-
-  // Assessment submission
-  assessmentSubmission_Api_call: Assessment_submission_Api_call[];
-  setAssessmentSubmission_Api_call: Dispatch<SetStateAction<Assessment_submission_Api_call[]>>;
-
 
   header: string;
   setHeader: Dispatch<SetStateAction<string>>;
@@ -673,8 +660,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   // Assessment instance for each user
   const [assessmentInstance_expanded_Api_call , setAssessmentInstance_expanded_Api_call] = useState<Assessment_instance_expanded_Api_call[]>([]);
   
-// assessment submission
-  const [assessmentSubmission_Api_call , setAssessmentSubmission_Api_call] = useState<Assessment_submission_Api_call[]>([]);
   const [header, setHeader] = useState<string>("Customer Dashboard");
   const [selectComponent, setSelectComponent] = useState<string>("dashboard");
   const [mcqQuestions, setMcqQuestions] =
@@ -713,11 +698,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         // Assessment instance for each user
         assessmentInstance_expanded_Api_call,
         setAssessmentInstance_expanded_Api_call,
-
-        // Assessment submission
-        assessmentSubmission_Api_call,
-        setAssessmentSubmission_Api_call,
-        // Assessment submission
 
 
         header,

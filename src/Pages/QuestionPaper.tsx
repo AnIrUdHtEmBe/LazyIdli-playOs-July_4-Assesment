@@ -3,6 +3,7 @@ import { CheckCircle, Circle, StickyNote } from "lucide-react";
 import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
 import "./QuestionPaper.css";
+import { useApiCalls } from "../store/axios";
 
 type Notes = {
   questionId: number;
@@ -10,7 +11,6 @@ type Notes = {
 };
 
 function QuestionPaper() {
-  const [questionType, setQuestionType] = useState<string>("");
 
   const paperDetails = JSON.parse(
     localStorage.getItem("assessmentDetails") || "{}"
@@ -18,7 +18,7 @@ function QuestionPaper() {
 
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
-  // console.log(userDetail);
+  console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
   const context = useContext(DataContext);
@@ -28,6 +28,7 @@ function QuestionPaper() {
   }
 
   const { setSelectComponent } = context;
+  const { assessmet_submission} = useApiCalls();
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -42,6 +43,7 @@ function QuestionPaper() {
     }));
   };
 
+
   console.log("answers", answers);
 
   const allAnswered =
@@ -50,6 +52,17 @@ function QuestionPaper() {
       (_: any, index: any) => answers[index] !== undefined
     );
 
+    const handleSubmit = () => {
+      const instanceId = JSON.parse(localStorage.getItem("latestAssessmentTemplate"));
+      const ans = paperDetails.questions.map((question: any, index: number) => ({
+        questionId: question.questionId,
+        value: answers[index] || "", 
+      }));
+      console.log("ans", ans);
+      assessmet_submission(instanceId, ans);
+      setSelectComponent("responses");
+    };
+    
   return (
     <div className="dashboard-container">
       {/* Fixed Header */}
@@ -76,7 +89,7 @@ function QuestionPaper() {
               </div>
               <button
                 disabled={!allAnswered}
-                onClick={() => setSelectComponent("responses")}
+                onClick={handleSubmit}
                 className={`submit-btn ${allAnswered ? "active" : "disabled"}`}
               >
                 Submit
@@ -123,6 +136,11 @@ function QuestionPaper() {
                         <span className="question-count">
                           {paperDetails.questions.length}
                         </span>
+                        {question.isRequired ? (
+                          <span className="text-red-600"> * </span>
+                        ) : (
+                          ""
+                        )}
                       </div>
                       <div className="font-normal mt-[5px] mb-[10px] text-[18px]">
                         {question.mainText}
@@ -246,6 +264,17 @@ function QuestionPaper() {
                           handleOptionSelect(questionIndex, e.target.value)
                         }
                         placeholder="Type your answer here..."
+                        className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
+                      />
+                    </div>
+                  ) : question.answerType === "date" ? (
+                    <div className="options-container">
+                      <input
+                        type="date"
+                        value={answers[questionIndex] || ""}
+                        onChange={(e) =>
+                          handleOptionSelect(questionIndex, e.target.value)
+                        }
                         className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
                       />
                     </div>

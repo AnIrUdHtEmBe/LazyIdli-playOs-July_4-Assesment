@@ -25,7 +25,8 @@ const Assessment: React.FC = () => {
     localStorage.setItem("assessmentDetails", JSON.stringify(selectedRow));
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.userId;
-    const templateId = selectedRow?.templateId || selectedRow?.tempelateId; // handle both spellings
+    const templateId = selectedRow?.templateId; // handle both spellings
+    // localStorage.setItem("latestAssessmentTemplate", JSON.stringify(selectedRow?.templateId));
   
     if (userId && templateId) {
       starting_assessment_by_user(userId, templateId);

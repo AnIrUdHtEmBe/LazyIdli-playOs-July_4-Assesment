@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Header from "../questionPaperComponents/Header";
 import {
   ArrowRight,
@@ -11,11 +11,15 @@ import { DataContext } from "../store/DataContext";
 import "./Responses.css";
 import { Comment, ReplayOutlined } from "@mui/icons-material";
 import { StickyNote } from "lucide-react";
+import { useApiCalls } from "../store/axios";
 
 function Responses() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
-  // console.log(paperDetails);
+  console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user"));
+  console.log(userDetail);
+
+  const { starting_assessment_by_user , assessments_intsnce_fetching } = useApiCalls();
 
   const context = useContext(DataContext);
   if (!context) {
@@ -27,7 +31,7 @@ function Responses() {
   const [commentModal, setCommentModal] = useState(false);
   const [tempComment, setTempComment] = useState<string>(summaryNote);
 
-  const { mcqAnswers, setSelectComponent } = context;
+  const { mcqAnswers, setSelectComponent , assessmentInstance_expanded_Api_call } = context;
 
   const [comment, setComment] = useState<string>("");
   const handleCommentModal = () => {
@@ -41,9 +45,38 @@ function Responses() {
     setCommentModal(false);
   };
 
-  // const handleComment = () => {
-  //   setComment(comment);
-  // };
+  const handleStartAssignment = () => {
+    const templateId = paperDetails.templateId;
+    const userId = userDetail.userId;
+    if (userId && templateId) {
+      starting_assessment_by_user(userId, templateId);
+    } else {
+      console.error("User ID or Template ID missing", { userId, templateId });
+    }
+
+    setSelectComponent("Q&A")
+  };
+
+  const latestAssessmentInstanceId = [JSON.parse(localStorage.getItem("latestAssessmentTemplate"))];
+  useEffect(() => {
+    const fetchData = async () => {
+      if (latestAssessmentInstanceId) {
+        await assessments_intsnce_fetching(latestAssessmentInstanceId);
+      }
+    };
+
+    setTimeout(() => {  
+      fetchData();
+    }
+    , 1000); // Delay of 1 second
+  }, []);
+
+  console.log(
+    "Assessment Instance Expanded API Call Data:",
+    assessmentInstance_expanded_Api_call
+  );
+
+  
 
   return (
     <div className="responses-root">
@@ -66,12 +99,12 @@ function Responses() {
               <div className="flex space-x-2.5">
                 <span className="label-bhav">Taking For: </span>
                 <div>
-                  {userDetail.name} <br /> ID: {userDetail.id}
+                  {userDetail.name} <br /> ID:  {userDetail.userId}
                 </div>
               </div>
 
               <button
-                onClick={() => setSelectComponent("Q&A")}
+                onClick={handleStartAssignment}
                 className="retake-button"
               >
                 <ReplayOutlined></ReplayOutlined>
@@ -86,15 +119,15 @@ function Responses() {
             <div className="question-list">
               <div className="question-title">Responses</div>
               <div className="question-items">
-                {mcqAnswers.map((q, index) => (
+                {assessmentInstance_expanded_Api_call[0].answers?.map((q, index) => (
                   <div key={q.questionId} className="question-box">
                     <div className="question-row">
                       <CheckCircle className="icon-success" />
                       <span className="question-text">
-                        {index + 1}. {q.questionText}
+                        {index + 1}. {q.mainText}
                       </span>
                     </div>
-                    <div className="question-answer">A) {q.correctOption}</div>
+                    <div className="question-answer">ans- <span className="font-normal"> {q.value}</span> </div>
                   </div>
                 ))}
               </div>
