@@ -8,6 +8,10 @@ import { useApiCalls } from "../store/axios";
 
 const Assessment: React.FC = () => {
   const context = useContext(DataContext);
+  if (!context) return <div>Loading...</div>;
+  const { setSelectComponent ,assessments_Api_call ,  assessmentInstance_expanded_Api_call } = context;
+  const { assessments_fetching , assessments_intsnce_fetching , starting_assessment_by_user } = useApiCalls();
+
   const [selectedRow, setSelectedRow] = useState<Object | null>(null);
   const [selectedAssessment, setSelectedAssessment] = useState<Object | null>(
     null
@@ -15,14 +19,23 @@ const Assessment: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showTaken ,setShowTaken] = useState(false);
 
-  if (!context) return <div>Loading...</div>;
-  const { setSelectComponent ,assessments_Api_call ,  assessmentInstance_expanded_Api_call } = context;
-  const { assessments_fetching , assessments_intsnce_fetching } = useApiCalls();
 
   const handleStartAssignment = () => {
     setSelectComponent("Q&A");
     localStorage.setItem("assessmentDetails", JSON.stringify(selectedRow));
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.userId;
+    const templateId = selectedRow?.templateId || selectedRow?.tempelateId; // handle both spellings
+  
+    if (userId && templateId) {
+      starting_assessment_by_user(userId, templateId);
+    } else {
+      console.error("User ID or Template ID missing", { userId, templateId });
+    }
   };
+  
+
+  console.log(selectedRow)
   
 
   useEffect(() => {
@@ -40,8 +53,8 @@ const Assessment: React.FC = () => {
   , []);
 
   console.log(assessmentInstance_expanded_Api_call);
-  // console.log(JSON.parse(localStorage.getItem("user")));
-  console.log("assessments_Api_call", assessments_Api_call);
+
+  // console.log("assessments_Api_call", assessments_Api_call);
   return (
     <div>
       <Header />

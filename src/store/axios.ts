@@ -23,8 +23,6 @@ export const useApiCalls = () => {
       const data = res.data;
 
       setCustomers_Api_call(data);
-      //   console.log("✅ Customers fetched successfully:", data);
-      //   console.log("✅ Customers fetched successfully:", data);
       console.log("Status:", res.status);
     } catch (error) {
       console.error("❌ Error fetching customers:", error);
@@ -88,11 +86,35 @@ export const useApiCalls = () => {
     }
   };
 
+  const starting_assessment_by_user = async (user_id : string , template_id : string)=> {
+    console.log("Starting assessment for user:", user_id);
+    console.log("Template ID:", template_id);
+    try{
+      const res = axios.post(`${API_BASE_URL}/asssessmentinstances/start/${user_id}/${template_id}`)
+      console.log("Assessment started successfully:", (await res).status);
+    }
+    catch(error){
+      console.error("❌ Error starting assessment:", error);
+    }
+  }
+
+
+  const assessmet_submission = async (instanceId : string) => {
+    try{
+      const res = axios.post(`${API_BASE_URL}/assessmentinstances/${instanceId}/submit`)
+      console.log("Assessment submitted successfully:", (await res).status);
+    }catch(error){
+      console.error("❌ Error submitting assessment:", error);
+    }
+  }
+
   return {
     customers_fetching,
     assessments_fetching,
     assessments_intsnce_fetching,
     questions,
     submitAssesment,
+    starting_assessment_by_user,
+    assessmet_submission
   };
 };

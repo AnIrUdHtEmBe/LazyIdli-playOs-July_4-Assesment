@@ -10,10 +10,15 @@ type Notes = {
 };
 
 function QuestionPaper() {
+  const [questionType, setQuestionType] = useState<string>("");
+
   const paperDetails = JSON.parse(
     localStorage.getItem("assessmentDetails") || "{}"
   );
+
+  console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
+  // console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
   const context = useContext(DataContext);
@@ -22,24 +27,28 @@ function QuestionPaper() {
     return <div>Loading...</div>;
   }
 
-  const { mcqQuestions, setSelectComponent } = context;
+  const { setSelectComponent } = context;
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [commentModal, setCommentModal] = useState(false);
   const [comment, setComment] = useState<string>("");
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
 
-  const handleOptionSelect = (questionIndex: number, optionIndex: number) => {
+  const handleOptionSelect = (questionIndex: number, optionValue: string) => {
     setAnswers((prev) => ({
       ...prev,
-      [questionIndex]: optionIndex,
+      [questionIndex]: optionValue,
     }));
   };
 
+  console.log("answers", answers);
+
   const allAnswered =
-    mcqQuestions.length > 0 &&
-    mcqQuestions.every((_, index) => answers[index] !== undefined);
+    paperDetails.questions.length > 0 &&
+    paperDetails.questions?.every(
+      (_: any, index: any) => answers[index] !== undefined
+    );
 
   return (
     <div className="dashboard-container">
@@ -62,7 +71,7 @@ function QuestionPaper() {
               <div className="flex space-x-2.5">
                 <span className="label-bhav">Taking For : </span>
                 <div>
-                  {userDetail.name} <br /> ID: {userDetail.id}
+                  {userDetail.name} <br /> ID: {userDetail.userId}
                 </div>
               </div>
               <button
@@ -81,7 +90,7 @@ function QuestionPaper() {
             <div className="questions-list">
               <div className="questions-title">Questions</div>
               <div className="questions-container">
-                {mcqQuestions.map((q, index) => (
+                {paperDetails.questions.map((q, index) => (
                   <div
                     key={q.questionId}
                     onClick={() => setSelectedQuestionIndex(index)}
@@ -96,7 +105,7 @@ function QuestionPaper() {
                     )}
                     <span className="question-text">
                       <div>{index + 1})</div>
-                      <div>{q.questionText}</div>
+                      <div>{q.mainText}</div>
                     </span>
                   </div>
                 ))}
@@ -105,18 +114,18 @@ function QuestionPaper() {
 
             {/* Right Scrollable All Questions Display */}
             <div className="questions-display">
-              {mcqQuestions.map((question, questionIndex) => (
+              {paperDetails.questions.map((question, questionIndex: number) => (
                 <div key={question.questionId} className="question-header">
                   <div className="question-subheader">
                     <div>
                       <div className="question-number">
                         Question {questionIndex + 1} /{" "}
                         <span className="question-count">
-                          {mcqQuestions.length}
+                          {paperDetails.questions.length}
                         </span>
                       </div>
                       <div className="font-normal mt-[5px] mb-[10px] text-[18px]">
-                        {question.questionText}
+                        {question.mainText}
                       </div>
                     </div>
                     <button
@@ -136,58 +145,113 @@ function QuestionPaper() {
                     </button>
                   </div>
 
-                  <div className="options-container">
-                    {question.options.map((option, optionIndex) => {
-                      const isSelected = answers[questionIndex] === optionIndex;
+                  {question.answerType === "choose_one" ? (
+                    <div className="options-container">
+                      {question.options?.map((option, optionIndex) => {
+                        const isSelected = answers[questionIndex] === option;
 
-                      return (
-                        <label
-                          key={optionIndex}
-                          className={`flex items-center gap-2 p-1 cursor-pointer transition-colors duration-200 ${
-                            isSelected ? "text-black" : "bg-white text-black"
-                          }`}
-                          onClick={() =>
-                            handleOptionSelect(questionIndex, optionIndex)
-                          }
-                        >
-                          <div
-                            className={`h-5 w-5 flex items-center justify-center border-2 rounded-sm ${
-                              isSelected
-                                ? "bg-blue-600 border-blue-600"
-                                : "border-gray-400"
+                        return (
+                          <label
+                            key={optionIndex}
+                            className={`flex items-center gap-2 p-1 cursor-pointer transition-colors duration-200 ${
+                              isSelected ? "text-black" : "bg-white text-black"
                             }`}
+                            onClick={() =>
+                              handleOptionSelect(questionIndex, option)
+                            }
                           >
-                            {isSelected && (
-                              <svg
-                                className="w-3.5 h-3.5 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  d="M5 13l4 4L19 7"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            )}
-                          </div>
+                            <div
+                              className={`h-5 w-5 flex items-center justify-center border-2 rounded-sm ${
+                                isSelected
+                                  ? "bg-blue-600 border-blue-600"
+                                  : "border-gray-400"
+                              }`}
+                            >
+                              {isSelected && (
+                                <svg
+                                  className="w-3.5 h-3.5 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="3"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    d="M5 13l4 4L19 7"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+                              )}
+                            </div>
 
+                            <input
+                              type="radio"
+                              name={`question-${questionIndex}`}
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="hidden"
+                            />
+                            <span className="flex-1 option-text">{option}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : question.answerType === "yesno" ? (
+                    <div className="options-container">
+                      <div className="flex items-center gap-5 p-1">
+                        <label className="flex items-center">
                           <input
                             type="radio"
                             name={`question-${questionIndex}`}
-                            checked={isSelected}
-                            onChange={() => {}}
-                            className="hidden"
+                            checked={answers[questionIndex] === "yes"}
+                            onChange={() =>
+                              handleOptionSelect(questionIndex, "yes")
+                            }
+                            className="scale-150"
                           />
-                          <span className="flex-1 option-text">
-                            {option.text}
-                          </span>
+                          <span className="option-text">Yes</span>
                         </label>
-                      );
-                    })}
-                  </div>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name={`question-${questionIndex}`}
+                            checked={answers[questionIndex] === "no"}
+                            onChange={() =>
+                              handleOptionSelect(questionIndex, "no")
+                            }
+                            className="scale-150"
+                          />
+                          <span className="option-text">No</span>
+                        </label>
+                      </div>
+                    </div>
+                  ) : question.answerType === "text" ? (
+                    <div className="options-container">
+                      <textarea
+                        value={answers[questionIndex] || ""}
+                        onChange={(e) =>
+                          handleOptionSelect(questionIndex, e.target.value)
+                        }
+                        rows={2}
+                        placeholder="Type your answer here..."
+                        className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
+                      />
+                    </div>
+                  ) : question.answerType === "number" ? (
+                    <div className="options-container">
+                      <input
+                        type="number"
+                        value={answers[questionIndex] || ""}
+                        onChange={(e) =>
+                          handleOptionSelect(questionIndex, e.target.value)
+                        }
+                        placeholder="Type your answer here..."
+                        className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               ))}
             </div>

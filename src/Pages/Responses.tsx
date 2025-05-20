@@ -14,6 +14,7 @@ import { StickyNote } from "lucide-react";
 
 function Responses() {
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
+  // console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user"));
 
   const context = useContext(DataContext);

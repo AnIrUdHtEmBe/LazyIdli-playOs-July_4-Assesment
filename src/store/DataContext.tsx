@@ -9,17 +9,6 @@ import React, {
 
 
 // ----------------- TYPES ----------------- //
-// export type Customer = {
-//   id: number;
-//   name: string;
-//   age: number;
-//   gender : string,
-//   joinedOn: string;
-//   phone: string;
-//   membership: string;
-//   lastAssessed: string;
-//   plan: string;
-// };
 
 export type createAssessmentTemplate = {
   name: string;
@@ -47,17 +36,7 @@ export type Customers_Api_call ={
 }
 
 
-
-
-
 // Assessments (dashboard page)
-
-type Assessment = {
-  id: number;
-  name: string;
-  questionCount: string;
-};
-
 export type Assessment_Api_call = {
   tempelateId: string;
   name: string;
@@ -91,6 +70,13 @@ export type Question_Api_call = {
   mainText: string;
   answerType: string;
   options?: string[];
+}
+
+
+// Assessment submission
+export type Assessment_submission_Api_call = {
+  questionId: string;
+  answer: string;
 }
 
 
@@ -149,9 +135,11 @@ type DataContextType = {
   assessmentInstance_expanded_Api_call: Assessment_instance_expanded_Api_call[];
   setAssessmentInstance_expanded_Api_call: Dispatch<SetStateAction<Assessment_instance_expanded_Api_call[]>>;
 
+  // Assessment submission
+  assessmentSubmission_Api_call: Assessment_submission_Api_call[];
+  setAssessmentSubmission_Api_call: Dispatch<SetStateAction<Assessment_submission_Api_call[]>>;
 
-  assessments: Assessment[];
-  setAssessments: Dispatch<SetStateAction<Assessment[]>>;
+
   header: string;
   setHeader: Dispatch<SetStateAction<string>>;
   selectComponent: string;
@@ -184,18 +172,6 @@ type DataProviderProps = {
 
 
 // ----------------- DUMMY DATA -----------------
-
-
-
-const initialAssessments: Assessment[] = [
-  { id: 1, name: "Prime Health", questionCount: "30 Q" },
-  { id: 2, name: "Golden Health", questionCount: "50 Q" },
-  { id: 3, name: "Young Champs", questionCount: "20 Q" },
-  { id: 4, name: "Assessment 4", questionCount: "" },
-  { id: 5, name: "Assessment 5", questionCount: "" },
-  { id: 6, name: "Assessment 6", questionCount: "" },
-  { id: 7, name: "Assessment 7", questionCount: "" },
-];
 
 const QuestionForQuestionBank: MCQQuestion[] = [
   {
@@ -697,10 +673,8 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   // Assessment instance for each user
   const [assessmentInstance_expanded_Api_call , setAssessmentInstance_expanded_Api_call] = useState<Assessment_instance_expanded_Api_call[]>([]);
   
-
-
-  const [assessments, setAssessments] =
-    useState<Assessment[]>(initialAssessments);
+// assessment submission
+  const [assessmentSubmission_Api_call , setAssessmentSubmission_Api_call] = useState<Assessment_submission_Api_call[]>([]);
   const [header, setHeader] = useState<string>("Customer Dashboard");
   const [selectComponent, setSelectComponent] = useState<string>("dashboard");
   const [mcqQuestions, setMcqQuestions] =
@@ -740,8 +714,12 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         assessmentInstance_expanded_Api_call,
         setAssessmentInstance_expanded_Api_call,
 
-        assessments,
-        setAssessments,
+        // Assessment submission
+        assessmentSubmission_Api_call,
+        setAssessmentSubmission_Api_call,
+        // Assessment submission
+
+
         header,
         setHeader,
         selectComponent,
