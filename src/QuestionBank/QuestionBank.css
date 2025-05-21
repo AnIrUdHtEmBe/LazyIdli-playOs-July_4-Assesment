@@ -40,9 +40,9 @@
 .header-tab {
   font-size: 18px;
   font-weight: 500;
-  border-bottom: 4px solid transparent;
+  /* border-bottom: 4px solid transparent; */
   background: none;
-  border: none;
+  /* border: none; */
   cursor: pointer;
 }
 

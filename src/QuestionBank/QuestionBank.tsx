@@ -16,13 +16,18 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import NumbersIcon from "@mui/icons-material/LooksOne";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "./QuestionBank.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
-import { useApiCalls} from "../store/axios";
+import { useApiCalls } from "../store/axios";
+import { DataContext } from "../store/DataContext";
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
-  { label: "Single Choice", value: "choose_one", icon: <RadioButtonCheckedIcon /> },
+  {
+    label: "Single Choice",
+    value: "choose_one",
+    icon: <RadioButtonCheckedIcon />,
+  },
   { label: "Multiple Choice", value: "choose_many", icon: <CheckBoxIcon /> },
   { label: "Number Input", value: "number", icon: <NumbersIcon /> },
   { label: "Yes No", value: "yesno", icon: <RadioButtonCheckedIcon /> },
@@ -31,21 +36,20 @@ const questionTypes = [
 
 const QuestionBank = () => {
   const { Question_creation_Api_call } = useApiCalls();
+
+  const { selectComponent } = useContext(DataContext);
   const [question, setQuestion] = useState([]);
   const [type, setType] = useState("");
   const [value, setValue] = useState("");
   const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState([]);
 
-  console.log(type);
-  console.log(value);
-  console.log(options);
-  console.log(question);
+  console.log(selectComponent)
 
   const handleApiCall = async () => {
     console.log("API call initiated");
     try {
-      if(!question.length) {
+      if (!question.length) {
         alert("Please add a question before making the API call.");
         return;
       }
@@ -64,15 +68,15 @@ const QuestionBank = () => {
     }
 
     const filteredOptions =
-    type === "choose_one" || type === "choose_many"
-      ? options
-          .map((opt) =>
-            typeof opt === "string"
-              ? opt.trim()
-              : typeof opt === "object" && opt.value
-          ).filter((opt) => opt !== "")
-      : [];
-
+      type === "choose_one" || type === "choose_many"
+        ? options
+            .map((opt) =>
+              typeof opt === "string"
+                ? opt.trim()
+                : typeof opt === "object" && opt.value
+            )
+            .filter((opt) => opt !== "")
+        : [];
 
     const newQuestion = {
       checked: checked,
@@ -90,7 +94,6 @@ const QuestionBank = () => {
     setChecked(false);
   };
 
-
   return (
     <div className="question-bank-container">
       {/* header */}
@@ -100,8 +103,19 @@ const QuestionBank = () => {
           <span className="header-title">Questionnaire Creation</span>
         </div>
         <div className="header-tabs">
-          <button className="header-tab">Questions</button>
-          <button className="header-tab">Settings</button>
+          <button
+            className={`header-tab pb-2 ${
+              selectComponent === "/question-bank" ||
+              selectComponent === "dashboard"
+                ? "border-b-4 border-black"
+                : "border-b-4 border-transparent"
+            }`}
+          >
+            Questions
+          </button>
+          <button className="header-tab border-b-4 border-transparent pb-2">
+            Settings
+          </button>
         </div>
       </div>
 
@@ -113,8 +127,10 @@ const QuestionBank = () => {
             <span className="question-bank-main-header-title">
               Create Question Bank
             </span>
-            <button className="question-bank-main-header-button"
-            onClick={handleApiCall}>
+            <button
+              className="question-bank-main-header-button"
+              onClick={handleApiCall}
+            >
               <Save></Save>
               <span>Save</span>
             </button>
@@ -128,8 +144,11 @@ const QuestionBank = () => {
                 <span className="question-bank-main-body-left-header-title">
                   Questions
                 </span>
-                <button className="question-bank-main-body-left-header-button"
-                  onClick={() => {setQuestion([])}}
+                <button
+                  className="question-bank-main-body-left-header-button"
+                  onClick={() => {
+                    setQuestion([]);
+                  }}
                 >
                   <Trash2 size={20}></Trash2>
                 </button>
