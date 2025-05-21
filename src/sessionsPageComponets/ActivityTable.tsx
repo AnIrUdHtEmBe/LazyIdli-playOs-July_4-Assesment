@@ -7,8 +7,8 @@ import {
   Save,
   X,
 } from "lucide-react";
-import React, { useContext, useState } from "react";
-import { DataContext } from "../store/DataContext";
+import React, { useContext, useEffect, useState } from "react";
+import { Activity_Api_call, DataContext } from "../store/DataContext";
 import "./ActivityTable.css";
 import {
   FormControl,
@@ -17,18 +17,22 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-
+import { useApiCalls } from "../store/axios";
 function ActivityTable() {
   const context = useContext(DataContext);
   if (!context) {
     return <div>Loading...</div>;
   }
+  const { getActivities } = useApiCalls();
+  useEffect(() => {
+    getActivities();
+  },  []);
 
-  const { setSelectComponent, activityTypePlan, setActivityTypePlan } = context;
+  const { setSelectComponent, activityTypePlan, setActivityTypePlan ,activities_api_call, setActivities_api_call } = context;
 
   const [planName, setPlanName] = useState<string>("");
   const [category, setCategory] = useState<string>("Fitness");
-
+  const [activityForTable , setActivityForTable] = useState<Activity_Api_call>();
   const [showModal, setShowModal] = useState(false);
   const [newActivities, setNewActivities] = useState([
     {
@@ -175,22 +179,25 @@ function ActivityTable() {
               </tr>
             </thead>
             <tbody>
-              {activityTypePlan.map((item) => (
+
+              
+              {/* {activities_api_call.map((activity) => (
                 <tr
-                  key={item.id}
+                  key={activity.activityId}
                   className="text-sm text-gray-800 hover:bg-gray-50"
                 >
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {item.id}
+                    {activity.activityId}
                   </td>
 
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <FormControl sx={{ width: 200 }} size="small">
                       <Select
-                        value={selectedActivities[item.id] || ""}
-                        onChange={(e) =>
-                          handleActivitySelectChange(item.id, e.target.value)
-                        }
+                        value={selectedActivities[activity.activityId ] || ""}
+                        onChange={(e) =>{
+                          handleActivitySelectChange(activity.activityId, e.target.value)
+                          setActivityForTable(activity)
+                        }}
                         displayEmpty
                         MenuProps={{
                           PaperProps: {
@@ -204,13 +211,14 @@ function ActivityTable() {
                           width: 200, // 👈 fixed width for select
                         }}
                       >
-                        {item.activityType.map((activity) => (
+                        {activities_api_call.map((activity) => (
                           <MenuItem
-                            key={activity.id}
-                            value={activity.activityType}
+                            key={activity.activityId}
+                            value={activity.name}
                             sx={{ width: "100%" }} // optional, ensures full width of MenuItem
+                            // onChange={setActivityForTable(activity)}
                           >
-                            {activity.activityType}
+                            {activity.name}
                           </MenuItem>
                         ))}
                       </Select>
@@ -218,18 +226,18 @@ function ActivityTable() {
                   </td>
 
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {item.description}
+                    {activity.description}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {item.timeInMinutes}
+                    {activity.reps}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    <button onClick={() => handleDelete(item.id)}>
+                    <button onClick={() => handleDelete(activity.activityId)}>
                       <LucideCircleMinus className="text-red-400" size={24} />
                     </button>
                   </td>
                 </tr>
-              ))}
+              ))} */}
               <tr>
                 <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button

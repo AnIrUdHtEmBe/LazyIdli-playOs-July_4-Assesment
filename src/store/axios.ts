@@ -15,6 +15,7 @@ export const useApiCalls = () => {
     setAssessments_Api_call,
     setQuestionsForAPICall,
     setAssessmentInstance_expanded_Api_call,
+    setActivities_api_call
   } = context;
 
   const customers_fetching = async () => {
@@ -62,7 +63,18 @@ export const useApiCalls = () => {
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
     }
-  };
+  }
+  
+  const getActivities = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/activity-templates`);
+      const data = res.data;
+      setActivities_api_call(res.data);
+      console.log("✅ Activities fetched successfully:", data);
+    } catch (error) {
+      console.error("❌ Error fetching activities:", error);
+    }
+  }
 
   const assessments_intsnce_fetching = async (
     assessmentInstanceIdArray: string[]
@@ -131,6 +143,7 @@ export const useApiCalls = () => {
     questions,
     submitAssesment,
     starting_assessment_by_user,
-    assessmet_submission
+    assessmet_submission,
+    getActivities
   };
 };

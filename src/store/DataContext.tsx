@@ -1,4 +1,4 @@
-import { Male } from "@mui/icons-material";
+
 import React, {
   createContext,
   useState,
@@ -16,6 +16,14 @@ export type createAssessmentTemplate = {
     questionId: string;
     isRequired: boolean;
   }[];
+}
+
+export type Activity_Api_call = {
+  "activityId": string
+  "name": string,
+  "description": string,
+  "reps": string,
+  "icon": string
 }
 
 export type Customers_Api_call ={
@@ -105,7 +113,7 @@ type Activity = {
 
 type Session = {
   id?: number;
-  sessionName : String,
+  sessionName : string,
   sessionType: string ,
   activities : Activity[],
 }
@@ -143,6 +151,10 @@ type DataContextType = {
   setActivityTypePlan: Dispatch<SetStateAction<Activity[]>>;
   sessions: Session[];
   setSessions: Dispatch<SetStateAction<Session[]>>;
+
+  // activity type for plan creation
+  activities_api_call : Activity_Api_call[];
+  setActivities_api_call: Dispatch<SetStateAction<Activity_Api_call[]>>;
 
   //questions for api call
   questionsForAPICall: Question_Api_call[];
@@ -660,6 +672,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   // Assessment instance for each user
   const [assessmentInstance_expanded_Api_call , setAssessmentInstance_expanded_Api_call] = useState<Assessment_instance_expanded_Api_call[]>([]);
   
+
+  const [activities_api_call, setActivities_api_call] = useState<Activity_Api_call[]>([]);
+  // const [assessments, setAssessments] =
+  //   useState<Assessment[]>(initialAssessments);
   const [header, setHeader] = useState<string>("Customer Dashboard");
   const [selectComponent, setSelectComponent] = useState<string>("dashboard");
   const [mcqQuestions, setMcqQuestions] =
@@ -700,6 +716,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setAssessmentInstance_expanded_Api_call,
 
 
+        //activities 
+        activities_api_call,
+        setActivities_api_call,
+
+        
+        // assessments,  
+        // setAssessments,
         header,
         setHeader,
         selectComponent,
