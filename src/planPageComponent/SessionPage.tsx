@@ -357,7 +357,7 @@ function SessionPage() {
             </div>
 
             {/* Confirm Button */}
-            <div className="flex justify-between">
+            <div className="flex px-6 justify-between">
               <button
                 className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
                 onClick={() =>

@@ -306,8 +306,9 @@
 .calendar-grid {
   display: grid;
   grid-template-columns: 1fr repeat(7, 1fr) 1fr;
-  gap: 0.25rem;
-  max-height: 60vh; /* Adjust this value as needed */
+  /* gap: 0.25rem; */
+  /* min-height: 40vh; */
+  max-height: 40vh; /* Adjust this value as needed */
   overflow-y: auto;  /* Enables vertical scrolling */
 }
 
