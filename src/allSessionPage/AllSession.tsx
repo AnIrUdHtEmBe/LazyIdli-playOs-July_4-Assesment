@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { DataContext } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
+import { useApiCalls } from "../store/axios";
 import {
   Calendar,
   Columns,
@@ -38,28 +39,30 @@ interface Session {
 
 function AllSession() {
   const context = useContext(DataContext);
-
+  const { getSessions } = useApiCalls();
   if (!context) {
     return <div>Loading...</div>;
   }
 
-  const { sessions, setSessions } = context;
+  const { sessions, setSessions , sessions_api_call } = context;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selecteddPlan, setSelectedPlan] = useState<Session | null>(null);
+  const [selecteddPlan, setSelectedPlan] = useState<Session_Api_call | null>(null);
   const [planName, setPlanName] = useState<string>(
-    selecteddPlan?.sessionName || ""
+    selecteddPlan?.title || ""
   );
   const [category, setCategory] = useState<string>(
-    selecteddPlan?.sessionType || "Fitness"
+    selecteddPlan?.category || "Fitness"
   );
 
   console.log(sessions);
-
+  useEffect(() => {
+    getSessions();
+  }, []);
   useEffect(() => {
     if (selecteddPlan) {
-      setPlanName(selecteddPlan.sessionName || "");
-      setCategory(selecteddPlan.sessionType || "Fitness");
+      setPlanName(selecteddPlan.title || "");
+      setCategory(selecteddPlan.category || "Fitness");
     }
   }, [selecteddPlan]);
 
@@ -136,15 +139,15 @@ function AllSession() {
               </tr>
             </thead>
             <tbody>
-              {filteredPlans.map((session, index) => (
+              {sessions_api_call.map((session, index) => (
                 <tr
                   key={index}
                   onClick={() => setSelectedPlan(session)}
                   className="table-row"
                 >
                   <td className="table-cell-one">{index + 1}</td>
-                  <td className="table-cell-two">{session.sessionName}</td>
-                  <td className="table-cell-three">{session.sessionType}</td>
+                  <td className="table-cell-two">{session.title}</td>
+                  <td className="table-cell-three">{session.category}</td>
                 </tr>
               ))}
             </tbody>
@@ -201,28 +204,23 @@ function AllSession() {
               </thead>
               <tbody className="activities-table-header">
                 {selecteddPlan?.activities?.map(
-                  (item: Activity, index: number) => (
-                    <tr key={item.id} className="activity-row">
-                      <td className="activity-cell font-bold">{item.id}</td>
+                  (item: Activity_Api_call, index: number) => (
+                    <tr key={item.activityId} className="activity-row">
+                      <td className="activity-cell font-bold">{item.activityId}</td>
                       <td className="activity-cell">
                         <select className="activity-select">
-                          {item.activityType.map(
-                            (activity: {
-                              id: string;
-                              activityType: string;
-                            }) => (
+                          {item.name}
                               <option
-                                key={activity.id}
-                                value={activity.activityType}
+                                key={item.activityId}
+                                value={item.name}
                               >
-                                {activity.activityType}
+                                {item.name}
                               </option>
-                            )
-                          )}
+                            
                         </select>
                       </td>
                       <td className="activity-cell">{item.description}</td>
-                      <td className="activity-cell">{item.timeInMinutes}</td>
+                      <td className="activity-cell">{item.reps}</td>
                     </tr>
                   )
                 )}

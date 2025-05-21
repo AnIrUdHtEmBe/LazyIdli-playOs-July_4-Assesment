@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext } from "react";
-import { DataContext } from "./DataContext";
+import { Activity_Api_call, DataContext, Session_Api_call } from "./DataContext";
 // import { Dispatch, SetStateAction } from 'react';
 import { createAssessmentTemplate } from "./DataContext";
 const API_BASE_URL = "http://3.111.32.88:8080";
@@ -15,7 +15,8 @@ export const useApiCalls = () => {
     setAssessments_Api_call,
     setQuestionsForAPICall,
     setAssessmentInstance_expanded_Api_call,
-    setActivities_api_call
+    setActivities_api_call,
+    setSessions_api_call
   } = context;
 
   const customers_fetching = async () => {
@@ -29,6 +30,27 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching customers:", error);
     }
   };
+
+  const getSessions = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/session-templates/full`);
+      const data = res.data;
+      setSessions_api_call(data);
+      console.log("✅ Sessions fetched successfully:", data);
+      
+    }
+    catch(error){
+      console.error("❌ Error fetching sessions:", error);
+    }
+  }
+  const createSession = async (session: Session_Api_call) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/session-templates`, session);
+      console.log("Session created successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error creating session:", error); 
+    }
+  }
 
   const assessments_fetching = async () => {
     try {
@@ -138,6 +160,24 @@ export const useApiCalls = () => {
   };
   
 
+const createActivity = async (activity: Activity_Api_call) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/activity-templates`, activity);
+    console.log("Activity created successfully:", res.data);
+  } catch (error) {
+    console.error("❌ Error creating activity:", error);
+  }
+}
+const getActivityById = async (activityId: string) => {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/activity-templates/${activityId}`);
+    const data = res.data;
+    console.log("✅ Activity fetched successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Error fetching activity:", error);
+  }
+}
   return {
     customers_fetching,
     assessments_fetching,
@@ -148,5 +188,9 @@ export const useApiCalls = () => {
     assessmet_submission,
     getActivities,
     Question_creation_Api_call,
+    createActivity,
+    getActivityById,
+    createSession,
+    getSessions
   };
 };

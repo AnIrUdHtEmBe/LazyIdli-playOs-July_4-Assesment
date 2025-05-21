@@ -19,13 +19,21 @@ export type createAssessmentTemplate = {
 }
 
 export type Activity_Api_call = {
-  "activityId": string
-  "name": string,
-  "description": string,
-  "reps": string,
-  "icon": string
+  activityId?: string;
+  name: string,
+  description: string,
+  reps: string,
+  icon?: string
 }
 
+export type Session_Api_call = {
+  sessionId?: string;
+  title: string;
+  description: string;
+  category: string;
+  activitiyIds?: string[];
+  activities?: Activity_Api_call[];
+}
 export type Customers_Api_call ={
   userId: string;
   name: string;
@@ -157,6 +165,10 @@ type DataContextType = {
   //questions for api call
   questionsForAPICall: Question_Api_call[];
   setQuestionsForAPICall: Dispatch<SetStateAction<Question_Api_call[]>>
+
+  // sessions for api call
+  sessions_api_call: Session_Api_call[];
+  setSessions_api_call: Dispatch<SetStateAction<Session_Api_call[]>>;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(
@@ -421,7 +433,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     useState<Activity[]>(activityTablePlam);
 
   const [sessions , setSessions] = useState<Session[]>(dummySessions);
-
+  const [sessions_api_call , setSessions_api_call] = useState<Session_Api_call[]>([]);
   return (
     <DataContext.Provider
       value={{
@@ -466,7 +478,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setActivityTypePlan,
         sessions,
         setSessions,
-       
+
+        // sessions for api call
+        sessions_api_call,
+        setSessions_api_call,
       }}
     >
       {children}

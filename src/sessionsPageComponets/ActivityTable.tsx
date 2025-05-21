@@ -1,5 +1,7 @@
 import { Refresh, ReplayOutlined } from "@mui/icons-material";
+
 import {
+  Activity,
   Cross,
   LucideCircleMinus,
   Plus,
@@ -7,8 +9,9 @@ import {
   Save,
   X,
 } from "lucide-react";
-import React, { useContext, useEffect, useState } from "react";
-import { Activity_Api_call, DataContext } from "../store/DataContext";
+import React, { act, useContext, useEffect, useState } from "react";
+import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
+
 import "./ActivityTable.css";
 import {
   FormControl,
@@ -23,44 +26,82 @@ function ActivityTable() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { getActivities } = useApiCalls();
+  const { getActivities, createActivity , getActivityById , createSession } = useApiCalls();
   useEffect(() => {
     getActivities();
-  },  []);
+    
+  }, []);
 
-  const { setSelectComponent, activityTypePlan, setActivityTypePlan ,activities_api_call, setActivities_api_call } = context;
+
+
+  const {
+    setSelectComponent,
+    activityTypePlan,
+    setActivityTypePlan,
+    activities_api_call,
+    setActivities_api_call,
+    
+  } = context;
 
   const [planName, setPlanName] = useState<string>("");
   const [category, setCategory] = useState<string>("Fitness");
-  const [activityForTable , setActivityForTable] = useState<Activity_Api_call>();
+  const [activityForTable, setActivityForTable] = useState<Activity_Api_call>();
   const [showModal, setShowModal] = useState(false);
-  const [newActivities, setNewActivities] = useState([
-    {
-      activityType: "",
-      description: "",
-      timeInMinutes: "",
-    },
-  ]);
+  const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([]);
+    const [emptyArr, setEmptyArr] = useState<Activity_Api_call[]>([
+  {
+    name: "",
+    description: "",
+    reps: "",
+    icon: ""
+  }
+]);
 
+
+    useEffect(() => {
+    console.log(emptyArr);
+    
+  }, [emptyArr]);
   const handlePlanSaving = () => {
     setSelectComponent("AllSessions");
   };
+  
+const handleSessionCreation = async () => {
+  const sessionToBeCreated : Session_Api_call = {
+    title: planName,
+    description: "",
+    category: category,
+    activitiyIds: emptyArr
+      .filter((activity): activity is Activity_Api_call & { activityId: string } => 
+        activity.activityId !== undefined)
+      .map(activity => activity.activityId),
+  }
+  await createSession(sessionToBeCreated);
+  console.log("Session created successfully");
+}
 
-  const handleActivityAddition = () => {};
 
   const handleAddNewRow = () => {
     setNewActivities((prev) => [
       ...prev,
-      { activityType: "", description: "", timeInMinutes: "" },
+      { activityId: Date.now().toString(), name: "", description: "", reps: "" },
     ]);
   };
+
+
+const addNewRow = () => {
+  setEmptyArr((prev) => [
+    ...prev,
+    { id: Date.now().toString(), name: "", description: "", reps: "" },
+  ]);
+};
 
   const handleModalSave = () => {
     const validActivities = newActivities.filter(
       (activity) =>
-        activity.activityType.trim() !== "" &&
+        activity.name.trim() !== "" &&
         activity.description.trim() !== "" &&
-        activity.timeInMinutes.trim() !== ""
+        activity.reps.trim() !== ""
     );
 
     if (validActivities.length === 0) {
@@ -68,40 +109,76 @@ function ActivityTable() {
       return;
     }
 
-    const newItems = validActivities.map((activity, index) => ({
-      id: activityTypePlan.length + index + 1,
-      activityType: [
-        {
-          id: Date.now() + index,
-          activityType: activity.activityType,
-        },
-      ],
+    const newItems = validActivities.map((activity) => ({
+      name: activity.name,
       description: activity.description,
-      timeInMinutes: activity.timeInMinutes,
+      reps: activity.reps,
     }));
 
-    setActivityTypePlan((prev) => [...prev, ...newItems]);
+     
+
+    const postEachActivity = async () => {
+      try {
+        await Promise.all(
+          newItems.map((item) =>
+            createActivity(item)
+          )
+        );
+        console.log("All activities posted successfully.");
+      } catch (error) {
+        console.error("Error posting some activities:", error);
+      }
+    };
+
+    postEachActivity();
+
+    setActivities_api_call((prev) => [...prev, ...newItems]);
+
     setNewActivities([
       {
-        activityType: "",
+        name: "",
         description: "",
-        timeInMinutes: "",
+        reps: "",
       },
     ]);
     setShowModal(false);
   };
 
-  const handleDelete = (id: number) => {
-    const updatedPlan = activityTypePlan.filter((item) => item.id !== id);
-    setActivityTypePlan(updatedPlan);
+  const handleDelete = (index: number) => {
+    const updatedPlan = emptyArr.filter((_, i) => i !== index);
+    setEmptyArr(updatedPlan);
+    setSelectedActivities((prev) => {
+      const newSelectedActivities = { ...prev };
+      delete newSelectedActivities[index];
+      // Shift all indices after the deleted one
+      const shiftedActivities: { [key: number]: string } = {};
+      Object.keys(newSelectedActivities).forEach((key) => {
+        const numKey = parseInt(key);
+        if (numKey > index) {
+          shiftedActivities[numKey - 1] = newSelectedActivities[numKey];
+        } else if (numKey < index) {
+          shiftedActivities[numKey] = newSelectedActivities[numKey];
+        }
+      });
+      return shiftedActivities;
+    });
   };
-
+  const updateTheActivitityById = async (activityId: string,index:number) => {
+    const activity =await getActivityById(activityId);
+    if (activity) {
+      emptyArr[index] = activity;
+      setEmptyArr([...emptyArr]);
+    } else {
+      console.error("Activity not found");
+    }
+}
   const [selectedActivities, setSelectedActivities] = useState<{
     [id: number]: string;
   }>({});
 
   const handleActivitySelectChange = (id: number, value: string) => {
     setSelectedActivities((prev) => ({ ...prev, [id]: value }));
+    updateTheActivitityById(value,id);
   };
 
   return (
@@ -142,7 +219,7 @@ function ActivityTable() {
         <div className="flex flex-wrap gap-3">
           <button
             className="flex items-center space-x-2 p-2  text-sm md:text-base plus-new-actvity"
-            onClick={handleActivityAddition}
+             onClick={() => setShowModal(true)}
           >
             <Plus />
             <span>Create New Activity</span>
@@ -152,7 +229,7 @@ function ActivityTable() {
           </div>
           <button
             className="flex items-center space-x-2 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2 "
-            onClick={handlePlanSaving}
+            onClick={handleSessionCreation}
           >
             <Save size={20} />
             <span>Save</span>
@@ -179,23 +256,23 @@ function ActivityTable() {
               </tr>
             </thead>
             <tbody>
-
-              
-              {/* {activities_api_call.map((activity) => (
+              {emptyArr.map((activity , index) => (
                 <tr
-                  key={activity.activityId}
+                  key={index}
                   className="text-sm text-gray-800 hover:bg-gray-50"
                 >
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {activity.activityId}
+                    {index + 1}
                   </td>
 
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <FormControl sx={{ width: 200 }} size="small">
                       <Select
-                        value={selectedActivities[activity.activityId ] || ""}
+                        value={selectedActivities[index] || ""}
                         onChange={(e) =>{
-                          handleActivitySelectChange(activity.activityId, e.target.value)
+                          handleActivitySelectChange(index, e.target.value)
+                          console.log("Selected activity:", e.target.value);
+                          
                           setActivityForTable(activity)
                         }}
                         displayEmpty
@@ -213,8 +290,8 @@ function ActivityTable() {
                       >
                         {activities_api_call.map((activity) => (
                           <MenuItem
-                            key={activity.activityId}
-                            value={activity.name}
+                            key={activity.icon}
+                            value={activity.activityId}
                             sx={{ width: "100%" }} // optional, ensures full width of MenuItem
                             // onChange={setActivityForTable(activity)}
                           >
@@ -232,17 +309,17 @@ function ActivityTable() {
                     {activity.reps}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    <button onClick={() => handleDelete(activity.activityId)}>
+                    <button onClick={() => handleDelete(index)}>
                       <LucideCircleMinus className="text-red-400" size={24} />
                     </button>
                   </td>
                 </tr>
-              ))} */}
+              ))}
               <tr>
                 <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button
                     className="space-x-2 px-4 py-2 add-row"
-                    onClick={() => setShowModal(true)}
+                   onClick={addNewRow}
                   >
                     <Plus />
                     <span>Add Row</span>
@@ -299,10 +376,10 @@ function ActivityTable() {
                         <td className="px-4 py-2 border-b-2 border-gray-200">
                           <input
                             type="text"
-                            value={activity.activityType}
+                            value={activity.name}
                             onChange={(e) => {
                               const updated = [...newActivities];
-                              updated[index].activityType = e.target.value;
+                              updated[index].name = e.target.value;
                               setNewActivities(updated);
                             }}
                             className="w-full border rounded p-2 border border-gray-400"
@@ -323,10 +400,10 @@ function ActivityTable() {
                         <td className="px-4 py-2 border-b-2 border-gray-200">
                           <input
                             type="number"
-                            value={activity.timeInMinutes}
+                            value={activity.reps}
                             onChange={(e) => {
                               const updated = [...newActivities];
-                              updated[index].timeInMinutes = e.target.value;
+                              updated[index].reps = e.target.value;
                               setNewActivities(updated);
                             }}
                             className="w-full border border-gray-400 rounded p-2"
@@ -354,5 +431,6 @@ function ActivityTable() {
     </div>
   );
 }
+
 
 export default ActivityTable;

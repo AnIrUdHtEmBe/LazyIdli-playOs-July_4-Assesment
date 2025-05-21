@@ -126,18 +126,53 @@ function SessionPage() {
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewSession, setPreviewSession] = useState<any>(null);
   const [selectedSession, setSelectedSession] = useState<any>(null);
-  const handleRemoveWeek = (weekIndex: number) => {
-    // Remove week from UI
-    setWeeks((prev) => prev.filter((w) => w !== weekIndex));
 
-    // Remove related gridAssignments
-    const updatedAssignments = { ...gridAssignments };
+ const handleRemoveWeek = (weekNumberToRemove: number) => {
+  // Step 1: Remove the actual week number
+  setWeeks((prevWeeks) => {
+    const filtered = prevWeeks.filter((w) => w !== weekNumberToRemove);
+    // Also reindex all week numbers after the removed one (to shift them down)
+    const updatedWeeks = filtered.map((w) => (w > weekNumberToRemove ? w - 1 : w));
+    return updatedWeeks;
+  });
+
+  // Step 2: Rebuild gridAssignments
+  setGridAssignments((prevAssignments) => {
+    const updatedAssignments: typeof gridAssignments = {};
+
+    Object.entries(prevAssignments).forEach(([keyStr, value]) => {
+      const key = parseInt(keyStr, 10);
+      const currentWeek = Math.floor(key / 7);
+      const day = key % 7;
+
+      if (currentWeek < weekNumberToRemove) {
+        // Keep entries before the deleted week
+        updatedAssignments[key] = value;
+      } else if (currentWeek > weekNumberToRemove) {
+        // Shift down week index by 1 for entries after the deleted week
+        const newKey = (currentWeek - 1) * 7 + day;
+        updatedAssignments[newKey] = value;
+      }
+      // Entries of the deleted week are skipped
+    });
+
+    return updatedAssignments;
+  });
+};
+
+const handleClearWeek = (weekNumberToClear: number) => {
+  setGridAssignments((prevAssignments) => {
+    const updatedAssignments: typeof gridAssignments = { ...prevAssignments };
+
+    // A week has 7 days, so delete keys from weekNumberToClear * 7 to weekNumberToClear * 7 + 6
     for (let i = 0; i < 7; i++) {
-      delete updatedAssignments[weekIndex * 7 + i];
+      const key = weekNumberToClear * 7 + i;
+      delete updatedAssignments[key];
     }
 
-    setGridAssignments(updatedAssignments);
-  };
+    return updatedAssignments;
+  });
+};
 
   const handlePreviewClick = (session: any) => {
     setPreviewSession(session);
@@ -311,7 +346,7 @@ function SessionPage() {
                 <h2>My Personalised Plan</h2>
               </div>
               <div className="calendar-grid">
-                {weeks.map((weekIndex) => (
+                {weeks.map(( weekIndex) => (
                   <React.Fragment key={weekIndex}>
                     <div className="week Label flex justify-between items-center">
                       <span>Week {weekIndex + 1}</span>
@@ -351,6 +386,7 @@ function SessionPage() {
                     >
                       <MinusCircle size={20} className="text-red-500" />
                     </button>
+                    <button onClick={() => handleClearWeek(weekIndex)}>Clear Week</button>
                   </React.Fragment>
                 ))}
               </div>
