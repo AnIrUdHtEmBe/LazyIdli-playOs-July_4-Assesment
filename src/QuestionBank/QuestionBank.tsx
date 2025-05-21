@@ -45,11 +45,22 @@ const QuestionBank = () => {
       return;
     }
 
+    const filteredOptions =
+    type === "single" || type === "multiple"
+      ? options
+          .map((opt) =>
+            typeof opt === "string"
+              ? opt.trim()
+              : typeof opt === "object" && opt.value
+          ).filter((opt) => opt !== "")
+      : [];
+
+
     const newQuestion = {
       checked: checked,
       mainText: value,
       answerType: type,
-      options: options, // this can be an empty array, it's fine
+      options: filteredOptions, // this can be an empty array, it's fine
     };
 
     setQuestion((prev) => [...prev, newQuestion]);
@@ -60,6 +71,7 @@ const QuestionBank = () => {
     setOptions([]);
     setChecked(false);
   };
+
 
   return (
     <div className="question-bank-container">
@@ -219,7 +231,7 @@ const QuestionBank = () => {
                     }}
                   />
 
-                  {type === "single" ? (
+                  {type === "single" || type === "multiple" ? (
                     <div className="question-option-container">
                       {options.map((option, index) => (
                         <div key={index} className="question-option">
@@ -229,7 +241,7 @@ const QuestionBank = () => {
                             variant="standard"
                             onChange={(e) => {
                               const newOptions = [...options];
-                              newOptions[index].label = e.target.value;
+                              newOptions[index] = e.target.value;
                               setOptions(newOptions);
                             }}
                             InputProps={{

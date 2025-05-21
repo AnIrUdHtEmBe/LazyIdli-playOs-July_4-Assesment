@@ -190,6 +190,13 @@
   height: 10%;
 }
 
+.question-bank-main-body-right-header-title{
+  font-size: 17px;
+  font-weight: 600;
+  color: #2563EB;
+  font-family: 'roboto', sans-serif;
+}
+
 .question-option-container{
   max-height: 250px;
   overflow: auto;
