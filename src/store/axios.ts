@@ -124,17 +124,19 @@ export const useApiCalls = () => {
       console.error("❌ Error submitting assessment:", error);
     }
   }
-
-  // const getQuestionById = async (questionId: string) => {
-  //   try{
-  //     const res = await axios.get(`${API_BASE_URL}/questions/${questionId}`);
-  //     const data = res.data;
-  //     console.log("✅ Question fetched successfully:", data);
-  //   } 
-  //   catch(error){
-  //     console.error("❌ Error fetching question:", error);
-  //   }
-  // }
+  const Question_creation_Api_call = async (questions: object[]) => {
+    try {
+      for (const question of questions) {
+        if (question.checked) {
+          const res = await axios.post(`${API_BASE_URL}/questions`, question);
+          console.log("✅ Question created successfully:", res.data);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error creating question:", error);
+    }
+  };
+  
 
   return {
     customers_fetching,
@@ -144,6 +146,7 @@ export const useApiCalls = () => {
     submitAssesment,
     starting_assessment_by_user,
     assessmet_submission,
-    getActivities
+    getActivities,
+    Question_creation_Api_call,
   };
 };

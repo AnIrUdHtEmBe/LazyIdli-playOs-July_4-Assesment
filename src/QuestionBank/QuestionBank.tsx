@@ -18,16 +18,19 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "./QuestionBank.css";
 import { useState } from "react";
 
+import { useApiCalls} from "../store/axios";
+
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
-  { label: "Single Choice", value: "single", icon: <RadioButtonCheckedIcon /> },
-  { label: "Multiple Choice", value: "multiple", icon: <CheckBoxIcon /> },
+  { label: "Single Choice", value: "choose_one", icon: <RadioButtonCheckedIcon /> },
+  { label: "Multiple Choice", value: "choose_many", icon: <CheckBoxIcon /> },
   { label: "Number Input", value: "number", icon: <NumbersIcon /> },
   { label: "Yes No", value: "yesno", icon: <RadioButtonCheckedIcon /> },
   { label: "Date Selector", value: "date", icon: <CalendarTodayIcon /> },
 ];
 
 const QuestionBank = () => {
+  const { Question_creation_Api_call } = useApiCalls();
   const [question, setQuestion] = useState([]);
   const [type, setType] = useState("");
   const [value, setValue] = useState("");
@@ -39,6 +42,21 @@ const QuestionBank = () => {
   console.log(options);
   console.log(question);
 
+  const handleApiCall = async () => {
+    console.log("API call initiated");
+    try {
+      if(!question.length) {
+        alert("Please add a question before making the API call.");
+        return;
+      }
+
+      const response = await Question_creation_Api_call(question);
+      console.log("API call successful:", response);
+    } catch (error) {
+      console.error("API call failed:", error);
+    }
+  };
+
   const handleAddQuestion = () => {
     if (!value.trim() || !type.trim()) {
       alert("Please enter a question and select a question type.");
@@ -46,7 +64,7 @@ const QuestionBank = () => {
     }
 
     const filteredOptions =
-    type === "single" || type === "multiple"
+    type === "choose_one" || type === "choose_many"
       ? options
           .map((opt) =>
             typeof opt === "string"
@@ -95,7 +113,8 @@ const QuestionBank = () => {
             <span className="question-bank-main-header-title">
               Create Question Bank
             </span>
-            <button className="question-bank-main-header-button">
+            <button className="question-bank-main-header-button"
+            onClick={handleApiCall}>
               <Save></Save>
               <span>Save</span>
             </button>
@@ -231,7 +250,7 @@ const QuestionBank = () => {
                     }}
                   />
 
-                  {type === "single" || type === "multiple" ? (
+                  {type === "choose_one" || type === "choose_many" ? (
                     <div className="question-option-container">
                       {options.map((option, index) => (
                         <div key={index} className="question-option">

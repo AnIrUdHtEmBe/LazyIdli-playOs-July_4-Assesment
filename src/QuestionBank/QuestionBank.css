@@ -57,7 +57,6 @@
 
 .question-bank-body-container{
   height: calc(100% - 124px);
-  background-color: gray;
   padding: 1rem 1.5rem;
 }
 .question-bank-main-container{
@@ -180,7 +179,7 @@
   padding: 1rem 3rem;
   border: 2px solid #D2D5DA;
   border-radius: 1rem;
-  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .question-bank-main-body-right-header{

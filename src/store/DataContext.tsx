@@ -398,7 +398,6 @@ const dummySessions: Session[] = [
 
 export const DataProvider = ({ children }: DataProviderProps) => {
   // customers
-  // const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
   const [customers_Api_call , setCustomers_Api_call] = useState<Customers_Api_call[]>([]);
 
   // Assessments -> dashboard page
