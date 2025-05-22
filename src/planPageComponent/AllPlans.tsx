@@ -19,6 +19,9 @@ function AllPlans() {
   const [plans, setPlans] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
 
+  const [previewSession, setPreviewSession] = useState<any | null>(null);
+  const [showSessionModal, setShowSessionModal] = useState(false);
+
   useEffect(() => {
     const fetchPlans = async () => {
       await getPlansFull();
@@ -114,7 +117,8 @@ function AllPlans() {
   };
 
   const handlePreviewClick = (session: any) => {
-    setSelectedSessionIds([session.id]);
+    setPreviewSession(session);
+    setShowSessionModal(true);
   };
 
   const filterPlansAccordingTo = (category: string) => {
@@ -196,7 +200,6 @@ function AllPlans() {
             </table>
           </div>
         </div>
-
 
         <div className="plan-section md">
           <div className="controls">
@@ -294,6 +297,45 @@ function AllPlans() {
           </div>
         </div>
       </div>
+
+      {showSessionModal && previewSession && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button
+              className="close-button"
+              onClick={() => setShowSessionModal(false)}
+            >
+              Close
+            </button>
+            <h2>{previewSession.title} - Activities</h2>
+            {previewSession.activities &&
+            previewSession.activities.length > 0 ? (
+              <table className="modal-table">
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Activity Name</th>
+                    <th>Description</th>
+                    <th>Reps</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewSession.activities.map((act: any, idx: number) => (
+                    <tr key={act.activityId}>
+                      <td>{idx + 1}</td>
+                      <td>{act.name}</td>
+                      <td>{act.description}</td>
+                      <td>{act.reps}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No activities found for this session.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
