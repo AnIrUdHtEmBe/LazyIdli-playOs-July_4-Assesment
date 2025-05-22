@@ -14,6 +14,12 @@ const Header: React.FC<HeaderProps> = () => {
 
   const { selectComponent } = context;
 
+  const today = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
   return (
     <header className="bg-white z-10 w-full">
       {/* Top row with icon and title */}
@@ -27,7 +33,7 @@ const Header: React.FC<HeaderProps> = () => {
       {selectComponent === "responses" && (
         <div className="flex text-[18px] gap-2 ml-[95px] flex items-center">
           <Calendar size={20}></Calendar>
-          <h2>Last Assessed : 15/24/35</h2>
+          <h2>{today}</h2>
         </div>
       )}
 

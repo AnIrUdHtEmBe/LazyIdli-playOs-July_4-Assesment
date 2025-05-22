@@ -18,6 +18,8 @@ function Responses() {
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user"));
   console.log(userDetail);
+  const [loading, setLoading] = useState(true);
+
 
   const { starting_assessment_by_user , assessments_intsnce_fetching } = useApiCalls();
 
@@ -60,22 +62,34 @@ function Responses() {
   const latestAssessmentInstanceId = [JSON.parse(localStorage.getItem("latestAssessmentTemplate"))];
   useEffect(() => {
     const fetchData = async () => {
-      if (latestAssessmentInstanceId) {
-        await assessments_intsnce_fetching(latestAssessmentInstanceId);
+      try {
+        setLoading(true);
+        if (latestAssessmentInstanceId) {
+          await assessments_intsnce_fetching(latestAssessmentInstanceId);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
-    setTimeout(() => {  
-      fetchData();
-    }
-    , 1000); // Delay of 1 second
+  
+    setTimeout(fetchData, 1000); // 1 second delay
   }, []);
+  
 
   console.log(
     "Assessment Instance Expanded API Call Data:",
     assessmentInstance_expanded_Api_call
   );
 
+  if (!context || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+      </div>
+    );
+  }
   
 
   return (

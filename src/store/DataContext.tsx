@@ -90,6 +90,11 @@ export type Question_Api_call = {
 }
 
 
+export type plans_full_api_call = {
+  
+}
+
+
 type MCQOption = {
   text: string;
   selected: boolean;
