@@ -50,9 +50,11 @@ function SessionPage() {
     getSessions();
     getActivities();
   }, []);
+
+  
   console.log(sessions_api_call);
   // grid and checked cell interaction
-  const [activePlan, setActivePlan] = useState(null);
+  const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
@@ -94,6 +96,10 @@ function SessionPage() {
     }
   };
 
+  useEffect(() => {
+    console.log("gridAssignments", gridAssignments);
+  }, [gridAssignments])
+
   const toggleSelectOne = (id: string) => {
     setSelectedIds((prev) => {
       const newSelected = prev.includes(id)
@@ -103,6 +109,7 @@ function SessionPage() {
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
         const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
+        console.log(plan);
         setActivePlan(plan || null);
       } else {
         setActivePlan(null);
@@ -372,14 +379,15 @@ const handleClearWeek = (weekNumberToClear: number) => {
                           onClick={() => {
                             if (!(selectedIds.length > 1)) {
                               handleGridCellClick(index);
+                              console.log("assignedPlan", assignedPlan);
                             }
                           }}
                         >
                           {assignedPlan ? (
                             <div className="assigned-plan">
-                              <strong>{assignedPlan.sessionName}</strong>
+                              <strong>{assignedPlan.title}</strong>
                               <div className="small">
-                                {assignedPlan.sessionType}
+                                {assignedPlan.category}
                               </div>
                             </div>
                           ) : null}
