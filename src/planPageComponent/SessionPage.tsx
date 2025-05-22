@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { DataContext } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
 import {
   ArrowRight,
   ChevronRight,
@@ -37,17 +37,18 @@ import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
 function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call } =
+  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions} = useApiCalls();
+  const {getSessions, getActivities} = useApiCalls();
   useEffect(() => {
     getSessions();
+    getActivities();
   }, []);
   console.log(sessions_api_call);
   // grid and checked cell interaction
@@ -59,7 +60,7 @@ function SessionPage() {
   const filteredPlans = sessions_api_call.filter(
     (plan) =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.category.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filterPlansAccordingTo = (category: string) => {
@@ -89,11 +90,11 @@ function SessionPage() {
       setSelectedIds([]);
       setActivePlan(null);
     } else {
-      setSelectedIds(filteredPlans.map((p) => p.id));
+      setSelectedIds(filteredPlans.map((p) => p.sessionId));
     }
   };
 
-  const toggleSelectOne = (id: number) => {
+  const toggleSelectOne = (id: string) => {
     setSelectedIds((prev) => {
       const newSelected = prev.includes(id)
         ? prev.filter((i) => i !== id)
@@ -101,7 +102,7 @@ function SessionPage() {
       console.log(newSelected);
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
-        const plan = sessions.find((p) => p.id === newSelected[0]);
+        const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
         setActivePlan(plan || null);
       } else {
         setActivePlan(null);
@@ -120,7 +121,7 @@ function SessionPage() {
   };
 
   const handleDelete = () => {
-    setSessions((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+    setSessions_api_call((prev) => prev.filter((p) => !selectedIds.includes(p.sessionId)));
     setSelectedIds([]);
   };
 
@@ -178,7 +179,8 @@ const handleClearWeek = (weekNumberToClear: number) => {
   });
 };
 
-  const handlePreviewClick = (session: any) => {
+  const handlePreviewClick = (session: Session_Api_call) => {
+    
     setPreviewSession(session);
     setPreviewModalOpen(true);
     setSelectedSession(session);
@@ -278,8 +280,8 @@ const handleClearWeek = (weekNumberToClear: number) => {
                       <input
                         type="checkbox"
                         className="session-checkbox"
-                        checked={selectedIds.includes(parseInt(plan.sessionId))}
-                        onChange={() => toggleSelectOne(parseInt(plan.sessionId))}
+                        checked={selectedIds.includes(plan.sessionId)}
+                        onChange={() => toggleSelectOne(plan.sessionId)}
                       />
                     </td>
 
@@ -467,7 +469,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                   </thead>
                   <tbody>
                     {previewSession.activities.map(
-                      (activity: any, idx: number) => (
+                      (activity: Activity_Api_call, idx: number) => (
                         <tr key={idx} className="border-t border-gray-200">
                           <td className="px-4 py-2 text-center">{idx + 1}</td>
                           <td className="px-4 py-2 text-center">
@@ -481,7 +483,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.selected || ""}
+                                value={activity.name|| ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
                                   const selectedValue = e.target.value;
@@ -500,16 +502,11 @@ const handleClearWeek = (weekNumberToClear: number) => {
                                   });
                                 }}
                               >
-                                {activity.activityType.map(
-                                  (item: any, index: number) => (
-                                    <MenuItem
-                                      key={index}
-                                      value={item.activityType}
-                                    >
-                                      {item.activityType}
-                                    </MenuItem>
-                                  )
-                                )}
+                                {activities_api_call.map((item: Activity_Api_call) => (
+                                  <MenuItem key={item.activityId} value={item.name}>
+                                    {item.name}
+                                  </MenuItem>
+                                ))}
                               </Select>
                             </FormControl>
                           </td>
@@ -517,7 +514,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                             {activity.description}
                           </td>
                           <td className="px-4 py-2 text-center">
-                            {activity.timeInMinutes}
+                            {activity.reps}
                           </td>
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
