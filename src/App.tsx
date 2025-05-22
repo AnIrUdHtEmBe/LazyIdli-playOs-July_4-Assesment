@@ -1,20 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext} from "react";
 import Layout from "./components/Layout";
 import Dashboard from "./Pages/Dashboard";
 import { DataContext } from "./store/DataContext";
 import Assessment from "./Pages/Assessment";
 import QuestionPaper from "./Pages/QuestionPaper";
 import Responses from "./Pages/Responses";
-import PlanCreation from "./Pages/PlanCreation";
+// import PlanCreation from "./Pages/PlanCreation";
 import AssessmentPage from "./Pages/AssessmentPage";
-import QuestionBankPage from "./Pages/QuestionBankPage";
+// import QuestionBankPage from "./Pages/QuestionBankPage";
 import PlansPage from "./Pages/PlansPage";
 import AssignmetnCreationPageTwo from "./Pages/AssignmetnCreationPageTwo";
 import SessionsPage from "./Pages/SessionsPage";
 import AllSessionsPage from "./Pages/AllSessionsPage";
 import AllPlans from "./planPageComponent/AllPlans";
 import QuestionBank from "./QuestionBank/QuestionBank";
+import UserPersonlaisedPlan from "./Pages/UserPersonalisedPlan"
+import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
 
 function App() {
   const { selectComponent } = useContext(DataContext);
@@ -34,7 +36,8 @@ function App() {
               ) : selectComponent === "responses" ? (
                 <Responses />
               ) : selectComponent === "planCreation" ? (
-                <PlansPage />
+                // <PlansPage />
+                <UserPersonalisedPlan></UserPersonalisedPlan>
               ) : (
                 <Dashboard />
               )

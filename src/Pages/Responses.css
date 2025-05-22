@@ -346,3 +346,12 @@
   color: rgba(0, 0, 0, 0.8);
   
 }
+
+
+.active-pr{
+  background-color: #FF55551A;
+}
+
+.disabled-pr{
+  background-color: gray;
+}

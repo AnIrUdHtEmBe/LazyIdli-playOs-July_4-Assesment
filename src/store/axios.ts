@@ -38,12 +38,15 @@ export const useApiCalls = () => {
   };
   const patchSession = async (sessionId: string, session: Session_Api_call) => {
     try {
-      const res = await axios.patch(`${API_BASE_URL}/session-templates/${sessionId}`, session);
+      const res = await axios.patch(
+        `${API_BASE_URL}/session-templates/${sessionId}`,
+        session
+      );
       console.log("Session updated successfully:", res.data);
     } catch (error) {
-      console.error("❌ Error updating session:", error); 
+      console.error("❌ Error updating session:", error);
     }
-  }
+  };
 
   const getSessions = async () => {
     try {
@@ -231,8 +234,21 @@ export const useApiCalls = () => {
     }
   };
 
+  const patchPlans = async (templateIds: string[]) => {
+    const updatePromises = templateIds.map((templateId) =>
+      axios
+        .patch(`${API_BASE_URL}/plan-templates/${templateId}`, { status: "INACTIVE" })
+        .then((res) => res.data)
+        .catch((err) => {
+          console.error(`Failed to patch ${templateId}`, err);
+          return null;
+        })
+    );
 
-
+    const results = await Promise.all(updatePromises);
+    getPlansFull(); // Refresh the plans after patching
+    return results;
+  };
 
   return {
     customers_fetching,
@@ -250,6 +266,7 @@ export const useApiCalls = () => {
     getSessions,
     getPlansFull,
     patchSession,
-    createPlan
+    createPlan,
+    patchPlans,
   };
 };

@@ -20,8 +20,11 @@ function Responses() {
   console.log(userDetail);
   const [loading, setLoading] = useState(true);
 
-
-  const { starting_assessment_by_user , assessments_intsnce_fetching , getPlansFull } = useApiCalls();
+  const {
+    starting_assessment_by_user,
+    assessments_intsnce_fetching,
+    getPlansFull,
+  } = useApiCalls();
 
   const context = useContext(DataContext);
   if (!context) {
@@ -33,9 +36,14 @@ function Responses() {
   const [commentModal, setCommentModal] = useState(false);
   const [tempComment, setTempComment] = useState<string>(summaryNote);
 
-  const[plann , setPlan] = useState<any>([]);
+  const [plann, setPlan] = useState<any>(null);
+  console.log(plann);
 
-  const {   plans_full_api_call, setSelectComponent , assessmentInstance_expanded_Api_call } = context;
+  const {
+    plans_full_api_call,
+    setSelectComponent,
+    assessmentInstance_expanded_Api_call,
+  } = context;
 
   const [comment, setComment] = useState<string>("");
   const handleCommentModal = () => {
@@ -58,17 +66,19 @@ function Responses() {
       console.error("User ID or Template ID missing", { userId, templateId });
     }
 
-    setSelectComponent("Q&A")
+    setSelectComponent("Q&A");
   };
 
-  const latestAssessmentInstanceId = [JSON.parse(localStorage.getItem("latestAssessmentTemplate"))];
+  const latestAssessmentInstanceId = [
+    JSON.parse(localStorage.getItem("latestAssessmentTemplate")),
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         if (latestAssessmentInstanceId) {
           await assessments_intsnce_fetching(latestAssessmentInstanceId);
-          await getPlansFull(); 
+          await getPlansFull();
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -76,10 +86,9 @@ function Responses() {
         setLoading(false);
       }
     };
-  
+
     setTimeout(fetchData, 1000); // 1 second delay
   }, []);
-  
 
   console.log(
     "Assessment Instance Expanded API Call Data:",
@@ -88,7 +97,7 @@ function Responses() {
 
   console.log("Plans Full API Call Data:", plans_full_api_call);
 
-  const handlePlanSelection = (plan :any) => {
+  const handlePlanSelection = (plan: any) => {
     console.log("Selected Plan:", plan);
     setPlan(plan);
     localStorage.setItem("selectedPlan", JSON.stringify(plan));
@@ -101,7 +110,6 @@ function Responses() {
       </div>
     );
   }
-  
 
   return (
     <div className="responses-root">
@@ -124,14 +132,11 @@ function Responses() {
               <div className="flex space-x-2.5">
                 <span className="label-bhav">Taking For: </span>
                 <div>
-                  {userDetail.name} <br /> ID:  {userDetail.userId}
+                  {userDetail.name} <br /> ID: {userDetail.userId}
                 </div>
               </div>
 
-              <button
-                onClick={handleStartAssignment}
-                className="retake-button"
-              >
+              <button onClick={handleStartAssignment} className="retake-button">
                 <ReplayOutlined></ReplayOutlined>
                 <span>Retake Assessment</span>
               </button>
@@ -144,17 +149,25 @@ function Responses() {
             <div className="question-list">
               <div className="question-title">Responses</div>
               <div className="question-items">
-                {assessmentInstance_expanded_Api_call[0].answers?.map((q, index) => (
-                  <div key={q.questionId} className="question-box">
-                    <div className="question-row">
-                      <CheckCircle className="icon-success" />
-                      <span className="question-text">
-                        {index + 1}. {q.mainText}
-                      </span>
+                {assessmentInstance_expanded_Api_call[0].answers?.map(
+                  (q, index) => (
+                    <div key={q.questionId} className="question-box">
+                      <div className="question-row">
+                        <CheckCircle className="icon-success" />
+                        <span className="question-text">
+                          {index + 1}. {q.mainText}
+                        </span>
+                      </div>
+                      <div className="question-answer">
+                        ans-{" "}
+                        <span className="font-normal">
+                          {" "}
+                          {q.value ? q.value : "null"}
+                        </span>{" "}
+                      </div>
                     </div>
-                    <div className="question-answer">ans- <span className="font-normal"> {q.value ? q.value : "null"}</span> </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
 
@@ -195,9 +208,14 @@ function Responses() {
                 the monthly plan below.
               </div>
               <div className="plan-options">
-                { plans_full_api_call.map((plan, i) => (
-                  <button key={i} className={`plan-box hover:cursor-pointer ${plann === plan ? "sel" : ""}`}
-                  onClick={() => handlePlanSelection(plan)}>
+                {plans_full_api_call.map((plan, i) => (
+                  <button
+                    key={i}
+                    className={`plan-box hover:cursor-pointer ${
+                      plann === plan ? "sel" : ""
+                    }`}
+                    onClick={() => handlePlanSelection(plan)}
+                  >
                     {plan.name}
                   </button>
                 ))}
@@ -212,7 +230,12 @@ function Responses() {
               </div>
               <div className="proceed-button-wrapper">
                 <button
-                  className="flex bg-blue-600 px-4 py-3 text-white rounded-xl space-x-15 absolute bottom-4 right-4"
+                  className={`flex items-center bg-blue-600 px-4 py-3 text-white rounded-xl space-x-4 absolute bottom-4 right-4 transition-opacity ${
+                    plann === null
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-blue-700"
+                  }`}
+                  disabled={plann === null}
                   onClick={() => setSelectComponent("planCreation")}
                 >
                   <span>Proceed</span> <ArrowRight />

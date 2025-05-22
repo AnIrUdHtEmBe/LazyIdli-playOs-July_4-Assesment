@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import "./AllPlans.css";
 import { DataContext } from "../store/DataContext";
 import {
-  LucideEye,
-  LucideTrash2,
   Plus,
   Dumbbell,
   EyeIcon,
@@ -11,23 +9,28 @@ import {
 } from "lucide-react";
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
+import { useApiCalls } from "../store/axios";
 
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent, plans, setPlans } =
+  const { sessions, setSessions, setSelectComponent, plans_full_api_call } =
     useContext(DataContext)!;
+  const { getPlansFull , patchPlans } = useApiCalls();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const planCheckboxRef = useRef<HTMLInputElement>(null);
   const sessionCheckboxRef = useRef<HTMLInputElement>(null);
-
-  const [selectedPlanIds, setSelectedPlanIds] = useState<number[]>([]);
+  const [selectedPlanIds, setSelectedPlanIds] = useState<string[]>([]);
   const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
+  const [plans, setPlans] = useState<any[]>([]);
 
-  const [activePlan, setActivePlan] = useState(null);
-  const [gridAssignments, setGridAssignments] = useState<{
-    [key: number]: any;
-  }>({});
+  useEffect(() => {
+    const fetchPlans = async () => {
+      await getPlansFull();
+    };
+    fetchPlans();
+  }, []);
+
+  console.log(plans_full_api_call);
 
   // Filter sessions based on search term
   const filteredPlans = sessions.filter(
@@ -36,10 +39,7 @@ function AllPlans() {
       plan.sessionType.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Remove or fix this if not needed
-  // const isAllSelected =
-  //   filteredPlans.length > 0 && selectedSessionIds.length === filteredPlans.length;
-
+  // plan cehckbox
   useEffect(() => {
     if (planCheckboxRef.current) {
       planCheckboxRef.current.indeterminate =
@@ -47,6 +47,7 @@ function AllPlans() {
     }
   }, [selectedPlanIds, plans.length]);
 
+  // session checkbox
   useEffect(() => {
     if (sessionCheckboxRef.current) {
       sessionCheckboxRef.current.indeterminate =
@@ -55,30 +56,47 @@ function AllPlans() {
     }
   }, [selectedSessionIds, filteredPlans.length]);
 
-  const handlePlanDelete = () => {
-    setPlans((prev) => prev.filter((p) => !selectedPlanIds.includes(p.id)));
+  const handlePlanDeactivate = () => {
+    if (selectedPlanIds.length === plans_full_api_call.length) {
+      setPlans(plans_full_api_call);
+      const allTemplateIds = plans_full_api_call.map(plan => plan.templateId);
+      patchPlans(allTemplateIds);
+
+    } else {
+      const selectedPlans = plans_full_api_call.filter((p) =>
+        selectedPlanIds.includes(p.templateId)
+      );
+      setPlans(selectedPlans);
+      const selectedTemplateIds = selectedPlans.map(plan => plan.templateId);
+      patchPlans(selectedTemplateIds);
+  
+    }
     setSelectedPlanIds([]);
   };
-
-  const handleDelete = () => {
-    setSessions((prev) =>
-      prev.filter((p) => !selectedSessionIds.includes(p.id))
-    );
-    setSelectedSessionIds([]);
-  };
-
+  console.log(plans);
+  //  toggeling all plans
   const toggleSelectAllPlans = () => {
-    setSelectedPlanIds((prev) =>
-      prev.length === plans.length ? [] : plans.map((p) => p.id)
-    );
+    if (selectedPlanIds.length === plans_full_api_call.length) {
+      // Unselect all
+      setSelectedPlanIds([]);
+    } else {
+      // Select all
+      setSelectedPlanIds(plans_full_api_call.map((p) => p.templateId));
+    }
   };
-
-  const toggleSelectOnePlan = (id: number) => {
+  // toggling one plan
+  const toggleSelectOnePlan = (id: string) => {
     setSelectedPlanIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
+
+
+
+
+
+  // toggling all sessions
   const toggleSelectAllSessions = () => {
     setSelectedSessionIds((prev) =>
       prev.length === filteredPlans.length ? [] : filteredPlans.map((p) => p.id)
@@ -91,16 +109,22 @@ function AllPlans() {
     );
   };
 
+  // session delete
+  const handleDelete = () => {
+    setSessions((prev) =>
+      prev.filter((p) => !selectedSessionIds.includes(p.id))
+    );
+    setSelectedSessionIds([]);
+  };
+
   const handlePreviewClick = (session: any) => {
     setSelectedSessionIds([session.id]);
-    // Optionally clear plan selection if you want strict exclusivity:
-    // setSelectedPlanIds([]);
   };
 
   const filterPlansAccordingTo = (category: string) => {
     if (activeFilter === category) {
-      setActiveFilter(null); // Remove filter if clicked again
-      setSearchTerm(""); // Show all
+      setActiveFilter(null);
+      setSearchTerm("");
     } else {
       setActiveFilter(category);
       setSearchTerm(category);
@@ -117,12 +141,12 @@ function AllPlans() {
             <div className="section-buttons">
               <button
                 className="icon-button"
-                onClick={handlePlanDelete}
+                onClick={handlePlanDeactivate}
                 disabled={selectedPlanIds.length === 0}
               >
-                <LucideTrash2 size={20} />
+                De-activate
               </button>
-              <button className="primary-button">
+              <button className="primary-button" onClick={() => setSelectComponent("planCreation")}>
                 <Plus size={20} />
                 <span>New Plan</span>
               </button>
@@ -136,8 +160,8 @@ function AllPlans() {
                     <input
                       type="checkbox"
                       checked={
-                        plans.length > 0 &&
-                        selectedPlanIds.length === plans.length
+                        plans_full_api_call.length > 0 &&
+                        selectedPlanIds.length === plans_full_api_call.length
                       }
                       onChange={toggleSelectAllPlans}
                       ref={planCheckboxRef}
@@ -145,25 +169,23 @@ function AllPlans() {
                   </th>
                   <th>Plan Name</th>
                   <th>Category</th>
+                  <th>Status</th>
                   <th>Preview</th>
                 </tr>
               </thead>
               <tbody>
-                {plans.map((plan) => (
-                  <tr key={plan.id}>
+                {plans_full_api_call.map((plan) => (
+                  <tr key={plan.templateId}>
                     <td>
                       <input
                         type="checkbox"
-                        checked={selectedPlanIds.includes(plan.id)}
-                        onChange={() => {
-                          toggleSelectOnePlan(plan.id);
-                          // Optionally clear session selection if you want strict exclusivity:
-                          // setSelectedSessionIds([]);
-                        }}
+                        checked={selectedPlanIds.includes(plan.templateId)}
+                        onChange={() => toggleSelectOnePlan(plan.templateId)}
                       />
                     </td>
-                    <td>{plan.planName}</td>
-                    <td>{plan.category}</td>
+                    <td>{plan.title}</td>
+                    <td>{plan?.category || ""}</td>
+                    <td>{plan.status}</td>
                     <td>
                       <button>
                         <EyeIcon />
@@ -213,7 +235,7 @@ function AllPlans() {
             >
               <Trash2 size={20} className="text-red-500" />
             </button>
-            <button className="primary-button">
+            <button className="primary-button" onClick={() => setSelectComponent("/sessions")}>
               <Plus size={20} />
               <span>New Session</span>
             </button>
@@ -249,8 +271,6 @@ function AllPlans() {
                         checked={selectedSessionIds.includes(plan.id)}
                         onChange={() => {
                           toggleSelectOneSession(plan.id);
-                          // Optionally clear plan selection if you want strict exclusivity:
-                          // setSelectedPlanIds([]);
                         }}
                       />
                     </td>

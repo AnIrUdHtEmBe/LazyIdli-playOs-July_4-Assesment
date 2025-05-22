@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
+import { DataContext } from "../store/DataContext";
 import {
   ArrowRight,
   ChevronRight,
@@ -35,51 +35,35 @@ import {
 } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
-
-function SessionPage() {
+function UserPersonalisedPlan() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
+  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call } =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions, getActivities , createPlan} = useApiCalls();
+  const {getSessions} = useApiCalls();
   useEffect(() => {
     getSessions();
-    getActivities();
   }, []);
-
-  const convertGridAssignmentsToSessions = () => {
-    const sessions = Object.entries(gridAssignments).map(
-      ([scheduledDayStr, session]) => ({
-        sessionId: session.sessionId,
-        scheduledDay: Number(scheduledDayStr),
-      })
-    );
-  
-    return sessions;
-  };
-  
-
-  
-  console.log(sessions_api_call);
+  // console.log(sessions_api_call);
 
   const plans = JSON.parse(localStorage.getItem("selectedPlan"))
   console.log(plans)
-  console.log(sessions);
+  // console.log(sessions);
   // grid and checked cell interaction
-  const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
+  const [activePlan, setActivePlan] = useState(null);
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
 
-  const filteredPlans = sessions_api_call.filter(
+  const filteredPlans = plans.sessions.filter(
     (plan) =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filterPlansAccordingTo = (category: string) => {
@@ -102,16 +86,6 @@ function SessionPage() {
     }
   }, [selectedIds, filteredPlans.length]);
 
-  
-  const createANewPlan = () => {
-    const planToSubmit: Plan_Api_call = {
-      title: planName,
-      description: "",
-      category: "Fitness",
-      sessions: convertGridAssignmentsToSessions(),
-    };
-    createPlan(planToSubmit);
-  }
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
 
@@ -119,15 +93,11 @@ function SessionPage() {
       setSelectedIds([]);
       setActivePlan(null);
     } else {
-      setSelectedIds(filteredPlans.map((p) => p.sessionId));
+      setSelectedIds(filteredPlans.map((p) => p.id));
     }
   };
 
-  useEffect(() => {
-    console.log("gridAssignments", gridAssignments);
-  }, [gridAssignments])
-
-  const toggleSelectOne = (id: string) => {
+  const toggleSelectOne = (id: number) => {
     setSelectedIds((prev) => {
       const newSelected = prev.includes(id)
         ? prev.filter((i) => i !== id)
@@ -135,8 +105,7 @@ function SessionPage() {
       console.log(newSelected);
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
-        const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
-        console.log(plan);
+        const plan = sessions.find((p) => p.id === newSelected[0]);
         setActivePlan(plan || null);
       } else {
         setActivePlan(null);
@@ -155,7 +124,7 @@ function SessionPage() {
   };
 
   const handleDelete = () => {
-    setSessions_api_call((prev) => prev.filter((p) => !selectedIds.includes(p.sessionId)));
+    setSessions((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
     setSelectedIds([]);
   };
 
@@ -213,8 +182,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
   });
 };
 
-  const handlePreviewClick = (session: Session_Api_call) => {
-    
+  const handlePreviewClick = (session: any) => {
     setPreviewSession(session);
     setPreviewModalOpen(true);
     setSelectedSession(session);
@@ -314,8 +282,8 @@ const handleClearWeek = (weekNumberToClear: number) => {
                       <input
                         type="checkbox"
                         className="session-checkbox"
-                        checked={selectedIds.includes(plan.sessionId)}
-                        onChange={() => toggleSelectOne(plan.sessionId)}
+                        checked={selectedIds.includes(parseInt(plan.sessionId))}
+                        onChange={() => toggleSelectOne(parseInt(plan.sessionId))}
                       />
                     </td>
 
@@ -406,15 +374,14 @@ const handleClearWeek = (weekNumberToClear: number) => {
                           onClick={() => {
                             if (!(selectedIds.length > 1)) {
                               handleGridCellClick(index);
-                              console.log("assignedPlan", assignedPlan);
                             }
                           }}
                         >
                           {assignedPlan ? (
                             <div className="assigned-plan">
-                              <strong>{assignedPlan.title}</strong>
+                              <strong>{assignedPlan.sessionName}</strong>
                               <div className="small">
-                                {assignedPlan.category}
+                                {assignedPlan.sessionType}
                               </div>
                             </div>
                           ) : null}
@@ -448,7 +415,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 <span className="text-blue">Add Week</span>
               </button>
               <button
-                onClick={ createANewPlan }
+                onClick={() => setSelectComponent("AllPlans")}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
               >
                 <span>Confirm</span>
@@ -504,7 +471,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                   </thead>
                   <tbody>
                     {previewSession.activities.map(
-                      (activity: Activity_Api_call, idx: number) => (
+                      (activity: any, idx: number) => (
                         <tr key={idx} className="border-t border-gray-200">
                           <td className="px-4 py-2 text-center">{idx + 1}</td>
                           <td className="px-4 py-2 text-center">
@@ -518,7 +485,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.name|| ""}
+                                value={activity.selected || ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
                                   const selectedValue = e.target.value;
@@ -537,11 +504,16 @@ const handleClearWeek = (weekNumberToClear: number) => {
                                   });
                                 }}
                               >
-                                {activities_api_call.map((item: Activity_Api_call) => (
-                                  <MenuItem key={item.activityId} value={item.name}>
-                                    {item.name}
-                                  </MenuItem>
-                                ))}
+                                {activity.activityType.map(
+                                  (item: any, index: number) => (
+                                    <MenuItem
+                                      key={index}
+                                      value={item.activityType}
+                                    >
+                                      {item.activityType}
+                                    </MenuItem>
+                                  )
+                                )}
                               </Select>
                             </FormControl>
                           </td>
@@ -549,7 +521,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                             {activity.description}
                           </td>
                           <td className="px-4 py-2 text-center">
-                            {activity.reps}
+                            {activity.timeInMinutes}
                           </td>
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
@@ -594,4 +566,4 @@ const handleClearWeek = (weekNumberToClear: number) => {
   );
 }
 
-export default SessionPage;
+export default UserPersonalisedPlan;

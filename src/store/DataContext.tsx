@@ -102,6 +102,7 @@ export type plans_full_api_call = {
   title : string;
   description : string;
   category : string;
+  sessionIds : string[];
   sessions : object[];
   status : string;
 }
