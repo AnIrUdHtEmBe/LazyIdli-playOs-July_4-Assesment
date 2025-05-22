@@ -18,7 +18,7 @@ function QuestionPaper() {
 
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
-  console.log(userDetail);
+  // console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
   const context = useContext(DataContext);
@@ -47,9 +47,8 @@ function QuestionPaper() {
   console.log("answers", answers);
 
   const allAnswered =
-    paperDetails.questions.length > 0 &&
-    paperDetails.questions?.every(
-      (_: any, index: any) => answers[index] !== undefined
+    paperDetails.questions.filter(q=> q.isRequired).every(
+      (q: any, index: any) => answers[index] !== undefined
     );
 
     const handleSubmit = () => {

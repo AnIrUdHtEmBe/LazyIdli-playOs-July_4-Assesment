@@ -1,6 +1,10 @@
 import axios from "axios";
 import { useContext } from "react";
-import { Activity_Api_call, DataContext, Session_Api_call } from "./DataContext";
+import {
+  Activity_Api_call,
+  DataContext,
+  Session_Api_call,
+} from "./DataContext";
 // import { Dispatch, SetStateAction } from 'react';
 import { createAssessmentTemplate } from "./DataContext";
 const API_BASE_URL = "http://3.111.32.88:8080";
@@ -16,7 +20,8 @@ export const useApiCalls = () => {
     setQuestionsForAPICall,
     setAssessmentInstance_expanded_Api_call,
     setActivities_api_call,
-    setSessions_api_call
+    setSessions_api_call,
+    setPlans_full_api_call,
   } = context;
 
   const customers_fetching = async () => {
@@ -37,20 +42,21 @@ export const useApiCalls = () => {
       const data = res.data;
       setSessions_api_call(data);
       console.log("✅ Sessions fetched successfully:", data);
-      
-    }
-    catch(error){
+    } catch (error) {
       console.error("❌ Error fetching sessions:", error);
     }
-  }
+  };
   const createSession = async (session: Session_Api_call) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/session-templates`, session);
+      const res = await axios.post(
+        `${API_BASE_URL}/session-templates`,
+        session
+      );
       console.log("Session created successfully:", res.data);
     } catch (error) {
-      console.error("❌ Error creating session:", error); 
+      console.error("❌ Error creating session:", error);
     }
-  }
+  };
 
   const assessments_fetching = async () => {
     try {
@@ -85,8 +91,8 @@ export const useApiCalls = () => {
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
     }
-  }
-  
+  };
+
   const getActivities = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/activity-templates`);
@@ -96,7 +102,7 @@ export const useApiCalls = () => {
     } catch (error) {
       console.error("❌ Error fetching activities:", error);
     }
-  }
+  };
 
   const assessments_intsnce_fetching = async (
     assessmentInstanceIdArray: string[]
@@ -120,32 +126,44 @@ export const useApiCalls = () => {
     }
   };
 
-  const starting_assessment_by_user = async (user_id : string , template_id : string)=> {
+  const starting_assessment_by_user = async (
+    user_id: string,
+    template_id: string
+  ) => {
     console.log("Starting assessment for user:", user_id);
     console.log("Template ID:", template_id);
-    try{
-      const res = axios.post(`${API_BASE_URL}/asssessmentinstances/start/${user_id}/${template_id}`)
+    try {
+      const res = axios.post(
+        `${API_BASE_URL}/asssessmentinstances/start/${user_id}/${template_id}`
+      );
       console.log("Assessment started successfully:", (await res).status);
       // console.log("Assessment started successfully:", (await res).data);
-      localStorage.setItem("latestAssessmentTemplate", JSON.stringify((await res).data.assessmentInstanceId));
-    }
-    catch(error){
+      localStorage.setItem(
+        "latestAssessmentTemplate",
+        JSON.stringify((await res).data.assessmentInstanceId)
+      );
+    } catch (error) {
       console.error("❌ Error starting assessment:", error);
     }
-  }
+  };
 
-
-  const assessmet_submission = async (instanceId : string , answers : object[] ) => {
-    try{
-      const res = axios.patch(`${API_BASE_URL}/asssessmentinstances/${instanceId}/submit` , {
-        answers : answers
-      })
+  const assessmet_submission = async (
+    instanceId: string,
+    answers: object[]
+  ) => {
+    try {
+      const res = axios.patch(
+        `${API_BASE_URL}/asssessmentinstances/${instanceId}/submit`,
+        {
+          answers: answers,
+        }
+      );
       console.log("Assessment submitted successfully:", (await res).status);
       // console.log("Assessment submitted successfully:", (await res).data);
-    }catch(error){
+    } catch (error) {
       console.error("❌ Error submitting assessment:", error);
     }
-  }
+  };
   const Question_creation_Api_call = async (questions: object[]) => {
     try {
       for (const question of questions) {
@@ -158,26 +176,41 @@ export const useApiCalls = () => {
       console.error("❌ Error creating question:", error);
     }
   };
-  
 
-const createActivity = async (activity: Activity_Api_call) => {
-  try {
-    const res = await axios.post(`${API_BASE_URL}/activity-templates`, activity);
-    console.log("Activity created successfully:", res.data);
-  } catch (error) {
-    console.error("❌ Error creating activity:", error);
-  }
-}
-const getActivityById = async (activityId: string) => {
-  try {
-    const res = await axios.get(`${API_BASE_URL}/activity-templates/${activityId}`);
-    const data = res.data;
-    console.log("✅ Activity fetched successfully:", data);
-    return data;
-  } catch (error) {
-    console.error("❌ Error fetching activity:", error);
-  }
-}
+  const createActivity = async (activity: Activity_Api_call) => {
+    try {
+      const res = await axios.post(
+        `${API_BASE_URL}/activity-templates`,
+        activity
+      );
+      console.log("Activity created successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error creating activity:", error);
+    }
+  };
+  const getActivityById = async (activityId: string) => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/activity-templates/${activityId}`
+      );
+      const data = res.data;
+      console.log("✅ Activity fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching activity:", error);
+    }
+  };
+
+  const getPlansFull = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/plan-templates/full`);
+      const data = res.data;
+      setPlans_full_api_call(data);
+      console.log("✅ Plans fetched successfully:", data);
+    } catch (error) {
+      console.error("❌ Error fetching plans:", error);
+    }
+  };
   return {
     customers_fetching,
     assessments_fetching,
@@ -191,6 +224,7 @@ const getActivityById = async (activityId: string) => {
     createActivity,
     getActivityById,
     createSession,
-    getSessions
+    getSessions,
+    getPlansFull,
   };
 };

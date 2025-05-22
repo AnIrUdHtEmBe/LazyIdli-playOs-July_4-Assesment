@@ -240,12 +240,20 @@
   margin-top: 3rem;
   margin-bottom: 3rem;
 }
-
 .plan-options {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;      
+  grid-template-rows: repeat(2, auto); 
   gap: 1rem;
   margin-top: 0.5rem;
-  flex-wrap: wrap;
+  overflow-x: auto;                 /* Enable horizontal scrolling */
+  white-space: nowrap;              /* Prevent wrapping */
+  max-width: 100%;                  /* Optional: constrain width */
+  padding-bottom: 0.5rem;           /* Optional: space below for scrollbar */
+}
+
+.sel{
+  background-color: lightgreen;
 }
 
 .plan-box {

@@ -91,7 +91,12 @@ export type Question_Api_call = {
 
 
 export type plans_full_api_call = {
-  
+  templateId : string;
+  title : string;
+  description : string;
+  category : string;
+  sessions : object[];
+  status : string;
 }
 
 
@@ -146,6 +151,12 @@ type DataContextType = {
   // Assessment instance for each user
   assessmentInstance_expanded_Api_call: Assessment_instance_expanded_Api_call[];
   setAssessmentInstance_expanded_Api_call: Dispatch<SetStateAction<Assessment_instance_expanded_Api_call[]>>;
+
+  // plans api call
+  plans_full_api_call: plans_full_api_call[];
+  setPlans_full_api_call: Dispatch<SetStateAction<plans_full_api_call[]>>;
+  
+
 
   header: string;
   setHeader: Dispatch<SetStateAction<string>>;
@@ -425,10 +436,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   // Assessment instance for each user
   const [assessmentInstance_expanded_Api_call , setAssessmentInstance_expanded_Api_call] = useState<Assessment_instance_expanded_Api_call[]>([]);
   
-
+  // activities api call
   const [activities_api_call, setActivities_api_call] = useState<Activity_Api_call[]>([]);
-  // const [assessments, setAssessments] =
-  //   useState<Assessment[]>(initialAssessments);
+
+  // plans api call
+  const [plans_full_api_call, setPlans_full_api_call] = useState<plans_full_api_call[]>([]);
+ 
+
   const [header, setHeader] = useState<string>("Customer Dashboard");
   const [selectComponent, setSelectComponent] = useState<string>("dashboard");
 
@@ -469,8 +483,12 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setActivities_api_call,
 
         
-        // assessments,  
-        // setAssessments,
+        // plans api call
+        plans_full_api_call,
+        setPlans_full_api_call,
+        // plans api call
+
+
         header,
         setHeader,
         selectComponent,

@@ -21,7 +21,7 @@ function Responses() {
   const [loading, setLoading] = useState(true);
 
 
-  const { starting_assessment_by_user , assessments_intsnce_fetching } = useApiCalls();
+  const { starting_assessment_by_user , assessments_intsnce_fetching , getPlansFull } = useApiCalls();
 
   const context = useContext(DataContext);
   if (!context) {
@@ -33,7 +33,9 @@ function Responses() {
   const [commentModal, setCommentModal] = useState(false);
   const [tempComment, setTempComment] = useState<string>(summaryNote);
 
-  const { mcqAnswers, setSelectComponent , assessmentInstance_expanded_Api_call } = context;
+  const[plann , setPlan] = useState<any>([]);
+
+  const {   plans_full_api_call, setSelectComponent , assessmentInstance_expanded_Api_call } = context;
 
   const [comment, setComment] = useState<string>("");
   const handleCommentModal = () => {
@@ -66,6 +68,7 @@ function Responses() {
         setLoading(true);
         if (latestAssessmentInstanceId) {
           await assessments_intsnce_fetching(latestAssessmentInstanceId);
+          await getPlansFull(); 
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -82,6 +85,14 @@ function Responses() {
     "Assessment Instance Expanded API Call Data:",
     assessmentInstance_expanded_Api_call
   );
+
+  console.log("Plans Full API Call Data:", plans_full_api_call);
+
+  const handlePlanSelection = (plan :any) => {
+    console.log("Selected Plan:", plan);
+    setPlan(plan);
+    localStorage.setItem("selectedPlan", JSON.stringify(plan));
+  };
 
   if (!context || loading) {
     return (
@@ -141,7 +152,7 @@ function Responses() {
                         {index + 1}. {q.mainText}
                       </span>
                     </div>
-                    <div className="question-answer">ans- <span className="font-normal"> {q.value}</span> </div>
+                    <div className="question-answer">ans- <span className="font-normal"> {q.value ? q.value : "null"}</span> </div>
                   </div>
                 ))}
               </div>
@@ -184,14 +195,10 @@ function Responses() {
                 the monthly plan below.
               </div>
               <div className="plan-options">
-                {[
-                  "Prime Fitness",
-                  "Golden Health",
-                  "Young Changes",
-                  "Custom Plan",
-                ].map((plan, i) => (
-                  <button key={i} className="plan-box hover:cursor-pointer">
-                    {plan}
+                { plans_full_api_call.map((plan, i) => (
+                  <button key={i} className={`plan-box hover:cursor-pointer ${plann === plan ? "sel" : ""}`}
+                  onClick={() => handlePlanSelection(plan)}>
+                    {plan.name}
                   </button>
                 ))}
               </div>
