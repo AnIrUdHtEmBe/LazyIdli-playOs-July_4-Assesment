@@ -60,22 +60,32 @@ function ActivityTable() {
 
     useEffect(() => {
     console.log(emptyArr);
+    const activityIds = emptyArr.map((activity) => activity.activityId);
+    console.log(activityIds);
     
   }, [emptyArr]);
+
+
+  // useEffect(() => {
+  //   console.log(activities_api_call);
+  // }, [activities_api_call]);
   const handlePlanSaving = () => {
     setSelectComponent("AllSessions");
   };
   
 const handleSessionCreation = async () => {
+  // const activityIds = emptyArr.map((activity) => activity.activityId);
+  const activityIds: string[] =emptyArr
+  .map(item => item.activityId)
+  .filter((id): id is string => typeof id === "string");
+
   const sessionToBeCreated : Session_Api_call = {
     title: planName,
     description: "",
     category: category,
-    activitiyIds: emptyArr
-      .filter((activity): activity is Activity_Api_call & { activityId: string } => 
-        activity.activityId !== undefined)
-      .map(activity => activity.activityId),
+    activityIds: activityIds
   }
+  console.log(sessionToBeCreated);
   await createSession(sessionToBeCreated);
   console.log("Session created successfully");
 }
@@ -96,7 +106,7 @@ const addNewRow = () => {
   ]);
 };
 
-  const handleModalSave = () => {
+  const handleModalSave =async  () => {
     const validActivities = newActivities.filter(
       (activity) =>
         activity.name.trim() !== "" &&
@@ -120,20 +130,21 @@ const addNewRow = () => {
     const postEachActivity = async () => {
       try {
         await Promise.all(
-          newItems.map((item) =>
-            createActivity(item)
-          )
+          newItems.map((item) => createActivity(item))
         );
         console.log("All activities posted successfully.");
       } catch (error) {
         console.error("Error posting some activities:", error);
       }
     };
-
-    postEachActivity();
-
-    setActivities_api_call((prev) => [...prev, ...newItems]);
-
+  
+    // ✅ Wait for posting to finish
+    await postEachActivity();
+  
+    // ✅ Then update the state
+    await getActivities();
+    
+  
     setNewActivities([
       {
         name: "",

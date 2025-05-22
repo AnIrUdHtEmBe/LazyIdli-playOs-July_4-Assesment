@@ -35,6 +35,14 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching customers:", error);
     }
   };
+  const patchSession = async (sessionId: string, session: Session_Api_call) => {
+    try {
+      const res = await axios.patch(`${API_BASE_URL}/session-templates/${sessionId}`, session);
+      console.log("Session updated successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error updating session:", error); 
+    }
+  }
 
   const getSessions = async () => {
     try {
@@ -211,6 +219,10 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching plans:", error);
     }
   };
+
+
+
+
   return {
     customers_fetching,
     assessments_fetching,
@@ -226,5 +238,6 @@ export const useApiCalls = () => {
     createSession,
     getSessions,
     getPlansFull,
+    patchSession
   };
 };

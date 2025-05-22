@@ -31,7 +31,7 @@ export type Session_Api_call = {
   title: string;
   description: string;
   category: string;
-  activitiyIds?: string[];
+  activityIds?: string[];
   activities?: Activity_Api_call[];
 }
 export type Customers_Api_call ={

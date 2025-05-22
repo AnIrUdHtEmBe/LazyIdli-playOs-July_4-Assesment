@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Session_Api_call   } from "../store/DataContext";
 import { useApiCalls } from "../store/axios";
 import {
   Calendar,
@@ -39,12 +39,11 @@ interface Session {
 
 function AllSession() {
   const context = useContext(DataContext);
-  const { getSessions } = useApiCalls();
+  const { getSessions, patchSession, getActivities, getActivityById } = useApiCalls();
   if (!context) {
     return <div>Loading...</div>;
   }
-
-  const { sessions, setSessions , sessions_api_call } = context;
+  const { activities_api_call, sessions, setSessions, sessions_api_call } = context;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selecteddPlan, setSelectedPlan] = useState<Session_Api_call | null>(null);
@@ -59,6 +58,21 @@ function AllSession() {
   useEffect(() => {
     getSessions();
   }, []);
+
+
+
+  useEffect(() => {
+   
+      getActivities();
+      
+    
+  }, [selecteddPlan]);
+
+  // const 
+  useEffect(() => {
+    console.log("selected" , selecteddPlan);
+  } , [selecteddPlan])
+
   useEffect(() => {
     if (selecteddPlan) {
       setPlanName(selecteddPlan.title || "");
@@ -66,11 +80,43 @@ function AllSession() {
     }
   }, [selecteddPlan]);
 
-  const filteredPlans = sessions.filter(
+  const filteredPlans = sessions_api_call.filter(
     (plan) =>
-      plan.sessionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.sessionType.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleSave = async () => {
+    try {
+      await patchSession(selecteddPlan?.sessionId, {
+        title: planName,
+        category: category,
+        activityIds: selecteddPlan?.activityIds
+      });
+      console.log("Session updated successfully");
+    } catch (error) {
+      console.error("❌ Error updating session:", error);
+    }
+    getSessions();
+  };
+
+const emptyActivity: Activity_Api_call = {
+  activityId: "",     // or maybe use `uuid()` if needed
+  name: "",
+  description: "",
+  reps: "",
+};
+const addEmptyActivityRow = () => {
+  const updatedActivities = [...selecteddPlan.activities, emptyActivity];
+  const updatedActivityIds = [...selecteddPlan.activityIds, ""];
+
+  setSelectedPlan({
+    ...selecteddPlan,
+    activities: updatedActivities,
+    activityIds: updatedActivityIds,
+  });
+};
+
 
   const filterPlansAccordingTo = (category: string) => {
     if (activeFilter === category) {
@@ -139,7 +185,7 @@ function AllSession() {
               </tr>
             </thead>
             <tbody>
-              {sessions_api_call.map((session, index) => (
+              {filteredPlans.map((session, index) => (
                 <tr
                   key={index}
                   onClick={() => setSelectedPlan(session)}
@@ -187,7 +233,7 @@ function AllSession() {
           </div>
 
           {/* Save Button */}
-          <button className="save-button">Save Changes</button>
+          <button onClick={handleSave} className="save-button">Save Changes</button>
         </div>
 
         {/* Activities Table */}
@@ -205,19 +251,48 @@ function AllSession() {
               <tbody className="activities-table-header">
                 {selecteddPlan?.activities?.map(
                   (item: Activity_Api_call, index: number) => (
-                    <tr key={item.activityId} className="activity-row">
+                    <tr key={index} className="activity-row">
                       <td className="activity-cell font-bold">{item.activityId}</td>
                       <td className="activity-cell">
-                        <select className="activity-select">
-                          {item.name}
-                              <option
-                                key={item.activityId}
-                                value={item.name}
-                              >
-                                {item.name}
-                              </option>
-                            
-                        </select>
+                      <select
+  className="activity-select"
+  value={item.activityId}
+  onChange={(e) => {
+    const selectedId = e.target.value;
+    console.log("Selected ID:", selectedId);
+
+    (async () => {
+      try {
+        const edittedActivity = await getActivityById(selectedId);
+
+        // It's better to clone and update the state rather than mutate directly:
+        const updatedActivities = [...selecteddPlan.activities];
+        updatedActivities[index] = edittedActivity;
+
+        const updatedActivityIds = [...selecteddPlan.activityIds];
+        updatedActivityIds[index] = edittedActivity.activityId;
+
+        // Now update your selectedPlan (use a setter if you have one)
+        setSelectedPlan({
+          ...selecteddPlan,
+          activities: updatedActivities,
+          activityIds: updatedActivityIds,
+        });
+
+        console.log("Updated Plan:", updatedActivities);
+      } catch (err) {
+        console.error("Failed to fetch activity:", err);
+      }
+    })();
+  }}
+>
+  {activities_api_call.map((activity: Activity_Api_call, idx: number) => (
+    <option key={idx} value={activity.activityId}>
+      {activity.name}
+    </option>
+  ))}
+</select>
+
                       </td>
                       <td className="activity-cell">{item.description}</td>
                       <td className="activity-cell">{item.reps}</td>
@@ -226,7 +301,7 @@ function AllSession() {
                 )}
                 <tr>
                   <td colSpan={5} className="activity-cell">
-                    <button className="add-activity-button">
+                    <button onClick={addEmptyActivityRow} className="add-activity-button">
                       <Plus size={18} />
                       <span>Add Activity</span>
                     </button>

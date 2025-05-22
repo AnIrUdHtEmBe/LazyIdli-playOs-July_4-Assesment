@@ -34,10 +34,10 @@ import {
   NordicWalking,
 } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
-
+import { useApiCalls } from "../store/axios";
 function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent } =
+  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call } =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,17 +45,21 @@ function SessionPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  console.log(sessions);
+  const {getSessions} = useApiCalls();
+  useEffect(() => {
+    getSessions();
+  }, []);
+  console.log(sessions_api_call);
   // grid and checked cell interaction
   const [activePlan, setActivePlan] = useState(null);
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
 
-  const filteredPlans = sessions.filter(
+  const filteredPlans = sessions_api_call.filter(
     (plan) =>
-      plan.sessionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.sessionType.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      plan.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filterPlansAccordingTo = (category: string) => {
@@ -269,18 +273,18 @@ const handleClearWeek = (weekNumberToClear: number) => {
               </thead>
               <tbody>
                 {filteredPlans.map((plan, idx) => (
-                  <tr key={plan.id} className="table-row">
+                  <tr key={plan.sessionId} className="table-row">
                     <td>
                       <input
                         type="checkbox"
                         className="session-checkbox"
-                        checked={selectedIds.includes(plan.id)}
-                        onChange={() => toggleSelectOne(plan.id)}
+                        checked={selectedIds.includes(parseInt(plan.sessionId))}
+                        onChange={() => toggleSelectOne(parseInt(plan.sessionId))}
                       />
                     </td>
 
-                    <td>{plan.sessionName}</td>
-                    <td>{plan.sessionType}</td>
+                    <td>{plan.title}</td>
+                    <td>{plan.category}</td>
                     <td className="p-icon">
                       <button onClick={() => handlePreviewClick(plan)}>
                         <EyeIcon />
