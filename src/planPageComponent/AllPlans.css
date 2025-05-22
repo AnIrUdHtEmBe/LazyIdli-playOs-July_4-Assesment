@@ -70,14 +70,24 @@
 }
 
 .table-wrapper {
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  /* Optional: set a max-height for vertical scroll */
+  max-height: 70vh;
+  min-height: 200px;
+  /* Add a background for scrollbar visibility */
+  background: #fff;
 }
 
+/* Optional: make table min-width larger than container to force scroll */
 .table {
+  min-width: 600px;
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
+
 
 .table th,
 .table td {

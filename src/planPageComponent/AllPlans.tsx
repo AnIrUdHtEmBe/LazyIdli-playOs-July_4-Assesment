@@ -1,20 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import "./AllPlans.css";
 import { DataContext } from "../store/DataContext";
-import {
-  Plus,
-  Dumbbell,
-  EyeIcon,
-  Trash2,
-} from "lucide-react";
+import { Plus, Dumbbell, EyeIcon, Trash2 } from "lucide-react";
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 import { useApiCalls } from "../store/axios";
 
 function AllPlans() {
-  const { sessions, setSessions, setSelectComponent, plans_full_api_call } =
+  const { setSelectComponent, plans_full_api_call, sessions_api_call } =
     useContext(DataContext)!;
-  const { getPlansFull , patchPlans } = useApiCalls();
+  const { getPlansFull, patchPlans, getSessions } = useApiCalls();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const planCheckboxRef = useRef<HTMLInputElement>(null);
@@ -22,6 +17,7 @@ function AllPlans() {
   const [selectedPlanIds, setSelectedPlanIds] = useState<string[]>([]);
   const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -31,12 +27,12 @@ function AllPlans() {
   }, []);
 
   console.log(plans_full_api_call);
-
+  console.log(sessions_api_call);
   // Filter sessions based on search term
-  const filteredPlans = sessions.filter(
+  const filteredPlans = sessions_api_call.filter(
     (plan) =>
-      plan.sessionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.sessionType.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      plan.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // plan cehckbox
@@ -59,17 +55,15 @@ function AllPlans() {
   const handlePlanDeactivate = () => {
     if (selectedPlanIds.length === plans_full_api_call.length) {
       setPlans(plans_full_api_call);
-      const allTemplateIds = plans_full_api_call.map(plan => plan.templateId);
+      const allTemplateIds = plans_full_api_call.map((plan) => plan.templateId);
       patchPlans(allTemplateIds);
-
     } else {
       const selectedPlans = plans_full_api_call.filter((p) =>
         selectedPlanIds.includes(p.templateId)
       );
       setPlans(selectedPlans);
-      const selectedTemplateIds = selectedPlans.map(plan => plan.templateId);
+      const selectedTemplateIds = selectedPlans.map((plan) => plan.templateId);
       patchPlans(selectedTemplateIds);
-  
     }
     setSelectedPlanIds([]);
   };
@@ -91,16 +85,13 @@ function AllPlans() {
     );
   };
 
-
-
-
-
-
   // toggling all sessions
   const toggleSelectAllSessions = () => {
-    setSelectedSessionIds((prev) =>
-      prev.length === filteredPlans.length ? [] : filteredPlans.map((p) => p.id)
-    );
+    if (selectedSessionIds.length === filteredPlans.length) {
+      setSelectedSessionIds([]);
+    } else {
+      setSelectedSessionIds(filteredPlans.map((p) => p.id));
+    }
   };
 
   const toggleSelectOneSession = (id: number) => {
@@ -111,9 +102,14 @@ function AllPlans() {
 
   // session delete
   const handleDelete = () => {
-    setSessions((prev) =>
-      prev.filter((p) => !selectedSessionIds.includes(p.id))
-    );
+    if (selectedSessionIds.length === filteredPlans.length) {
+      setSessions(filteredPlans);
+    } else {
+      const selectedSessions = filteredPlans.filter((p) =>
+        selectedSessionIds.includes(p.sessionId)
+      );
+      setSessions(selectedSessions);
+    }
     setSelectedSessionIds([]);
   };
 
@@ -134,7 +130,7 @@ function AllPlans() {
   return (
     <div className="all-plans-container">
       <Header />
-      <div className="flex flex-col md:flex-row flex-wrap gap-5 p-5">
+      <div className="flex flex-col md:flex-row flex-wrap gap-5 p-5 h-[calc(100vh-350px)]">
         <div className="plan-section md">
           <div className="section-header">
             <h2 className="section-title">Plans</h2>
@@ -146,7 +142,10 @@ function AllPlans() {
               >
                 De-activate
               </button>
-              <button className="primary-button" onClick={() => setSelectComponent("planCreation")}>
+              <button
+                className="primary-button"
+                onClick={() => setSelectComponent("planCreation")}
+              >
                 <Plus size={20} />
                 <span>New Plan</span>
               </button>
@@ -198,6 +197,7 @@ function AllPlans() {
           </div>
         </div>
 
+
         <div className="plan-section md">
           <div className="controls">
             <h2 className="section-title">
@@ -235,7 +235,10 @@ function AllPlans() {
             >
               <Trash2 size={20} className="text-red-500" />
             </button>
-            <button className="primary-button" onClick={() => setSelectComponent("/sessions")}>
+            <button
+              className="primary-button"
+              onClick={() => setSelectComponent("/sessions")}
+            >
               <Plus size={20} />
               <span>New Session</span>
             </button>
@@ -259,24 +262,26 @@ function AllPlans() {
                   <th>Sl No</th>
                   <th>Session Name</th>
                   <th>Category</th>
+                  <th>Status</th>
                   <th>Preview</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredPlans.map((plan, idx) => (
-                  <tr key={plan.id}>
+                  <tr key={plan.sessionId}>
                     <td>
                       <input
                         type="checkbox"
-                        checked={selectedSessionIds.includes(plan.id)}
+                        checked={selectedSessionIds.includes(plan.sessionId)}
                         onChange={() => {
-                          toggleSelectOneSession(plan.id);
+                          toggleSelectOneSession(plan.sessionId);
                         }}
                       />
                     </td>
                     <td>{idx + 1}</td>
-                    <td>{plan.sessionName}</td>
-                    <td>{plan.sessionType}</td>
+                    <td>{plan.title}</td>
+                    <td>{plan.category}</td>
+                    <td>{plan.status}</td>
                     <td>
                       <button onClick={() => handlePreviewClick(plan)}>
                         <EyeIcon />
