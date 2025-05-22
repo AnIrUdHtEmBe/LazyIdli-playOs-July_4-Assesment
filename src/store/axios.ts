@@ -3,6 +3,7 @@ import { useContext } from "react";
 import {
   Activity_Api_call,
   DataContext,
+  Plan_Api_call,
   Session_Api_call,
 } from "./DataContext";
 // import { Dispatch, SetStateAction } from 'react';
@@ -134,6 +135,16 @@ export const useApiCalls = () => {
     }
   };
 
+
+  const createPlan = async(plan: Plan_Api_call) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/plan-templates`, plan);
+      console.log("Plan created successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error creating plan:", error);
+    }
+  }
+
   const starting_assessment_by_user = async (
     user_id: string,
     template_id: string
@@ -238,6 +249,7 @@ export const useApiCalls = () => {
     createSession,
     getSessions,
     getPlansFull,
-    patchSession
+    patchSession,
+    createPlan
   };
 };

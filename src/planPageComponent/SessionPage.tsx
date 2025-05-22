@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
 import {
   ArrowRight,
   ChevronRight,
@@ -35,6 +35,7 @@ import {
 } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
+
 function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
@@ -45,11 +46,23 @@ function SessionPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions, getActivities} = useApiCalls();
+  const {getSessions, getActivities , createPlan} = useApiCalls();
   useEffect(() => {
     getSessions();
     getActivities();
   }, []);
+
+  const convertGridAssignmentsToSessions = () => {
+    const sessions = Object.entries(gridAssignments).map(
+      ([scheduledDayStr, session]) => ({
+        sessionId: session.sessionId,
+        scheduledDay: Number(scheduledDayStr),
+      })
+    );
+  
+    return sessions;
+  };
+  
 
   
   console.log(sessions_api_call);
@@ -85,6 +98,16 @@ function SessionPage() {
     }
   }, [selectedIds, filteredPlans.length]);
 
+  
+  const createANewPlan = () => {
+    const planToSubmit: Plan_Api_call = {
+      title: planName,
+      description: "",
+      category: "Fitness",
+      sessions: convertGridAssignmentsToSessions(),
+    };
+    createPlan(planToSubmit);
+  }
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
 
@@ -421,7 +444,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 <span className="text-blue">Add Week</span>
               </button>
               <button
-                onClick={() => setSelectComponent("AllPlans")}
+                onClick={ createANewPlan }
                 className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
               >
                 <span>Confirm</span>

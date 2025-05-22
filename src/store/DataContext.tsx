@@ -88,6 +88,13 @@ export type Question_Api_call = {
   answerType: string;
   options?: string[];
 }
+export type Plan_Api_call = {
+  templateId ?: string;
+  title : string;
+  description : string;
+  category : string;
+  sessions : object[];
+}
 
 
 export type plans_full_api_call = {
@@ -157,6 +164,9 @@ type DataContextType = {
   setPlans_full_api_call: Dispatch<SetStateAction<plans_full_api_call[]>>;
   
 
+  // plan api call
+  plan_api_call: Plan_Api_call[];
+  setPlan_api_call: Dispatch<SetStateAction<Plan_Api_call[]>>;
 
   header: string;
   setHeader: Dispatch<SetStateAction<string>>;
@@ -453,6 +463,8 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   const [sessions , setSessions] = useState<Session[]>(dummySessions);
   const [sessions_api_call , setSessions_api_call] = useState<Session_Api_call[]>([]);
+
+  const [plan_api_call , setPlan_api_call] = useState<Plan_Api_call[]>([]);
   return (
     <DataContext.Provider
       value={{
@@ -505,6 +517,10 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         // sessions for api call
         sessions_api_call,
         setSessions_api_call,
+
+        // plan api call
+        plan_api_call,
+        setPlan_api_call,
       }}
     >
       {children}
