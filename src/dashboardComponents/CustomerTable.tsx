@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useRef, useState } from "react";
-import {
-  Customer,
-  Customers_Api_call,
-  DataContext,
-} from "../store/DataContext";
+import { Customers_Api_call, DataContext } from "../store/DataContext";
 import "./CustomerTable.css";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useApiCalls } from "../store/axios";
-
 import {
   Button,
+  CircularProgress,
   InputAdornment,
   MenuItem,
   Select,
@@ -24,23 +20,23 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import "dayjs";
+
+const actions = ["Go to profile", "See plan", "Take Assessment"];
 
 interface ActionsContainerProps {
   takeAssessment: () => void;
 }
 
-const actions = ["Go to profile", "See plan", "Take Assessment"];
-
-const ActionsContainer = (props: ActionsContainerProps) => {
+const ActionsContainer = ({ takeAssessment }: ActionsContainerProps) => {
   const [value, setValue] = useState(actions[0]);
 
   const changeHandler = (event: SelectChangeEvent) => {
     if (event.target.value === actions[2]) {
-      props.takeAssessment();
+      takeAssessment();
     }
-    setValue(event.target.value as string);
+    setValue(event.target.value);
   };
+
   return (
     <Select
       value={value}
@@ -48,17 +44,11 @@ const ActionsContainer = (props: ActionsContainerProps) => {
       sx={{
         bgcolor: "#0070FF",
         color: "white",
-        fontSize: "0.75rem", // smaller font
-        minHeight: "30px", // decrease height
-        ".MuiSelect-icon": {
-          color: "white", // icon color
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-          borderColor: "transparent", // optional: remove border
-        },
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-          borderColor: "white",
-        },
+        fontSize: "0.75rem",
+        minHeight: "30px",
+        ".MuiSelect-icon": { color: "white" },
+        "& .MuiOutlinedInput-notchedOutline": { borderColor: "transparent" },
+        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
           borderColor: "white",
         },
@@ -66,19 +56,23 @@ const ActionsContainer = (props: ActionsContainerProps) => {
       onChange={changeHandler}
     >
       {actions.map((action) => (
-        <MenuItem value={action}>{action}</MenuItem>
+        <MenuItem key={action} value={action}>
+          {action}
+        </MenuItem>
       ))}
     </Select>
   );
 };
 
 const CustomerTable = () => {
-  const { customers, setSelectComponent, customers_Api_call } =
-    useContext(DataContext);
-  const [columns, setColumns] = useState<any[]>([]);
+  const { setSelectComponent, customers_Api_call } = useContext(DataContext);
+  const [columns, setColumns] = useState<GridColDef[]>([]);
   const [rows, setRows] = useState<any[]>([]);
+  const [filteredRows, setFilteredRows] = useState<any[]>([]);
   const ref = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [term, setTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState<any | null>(null);
 
   const { customers_fetching } = useApiCalls();
 
@@ -91,105 +85,156 @@ const CustomerTable = () => {
     fetchData();
   }, []);
 
-  // console.log(customers_Api_call);
+  const assessmentHandler = (customer: Customers_Api_call) => {
+    localStorage.setItem("user", JSON.stringify(customer));
+    setSelectComponent("assessment");
+  };
 
-	const assessmentHandler = (customer: Customers_Api_call) => {
-		localStorage.setItem("user", JSON.stringify(customer));
-		setSelectComponent("assessment");
-	};
-	
+  const dateChangeHandler = (date: any) => {
+    const dateObj = new Date(date);
+    return dateObj.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   const generateColumns = () => {
-    const columns: GridColDef[] = [
+    return [
       { field: "no", headerName: "SI.No" },
       { field: "name", headerName: "Name" },
       { field: "age", headerName: "Age" },
-			{ field: "mobile", headerName: "Mobile" },
+      { field: "mobile", headerName: "Mobile" },
       { field: "joinedOn", headerName: "Joined On" },
       { field: "phoneNumber", headerName: "Phone Number" },
       { field: "memberShip", headerName: "Membership" },
       { field: "lastAssessedOn", headerName: "Last Assessed On" },
       { field: "planAllocated", headerName: "Plan Allocated" },
-			{
-				field: "action",
-				headerName: "",
-				renderCell: (params: any) => (
-					<ActionsContainer
-						takeAssessment={() => assessmentHandler(params.row.customerData)}
-					/>
-				),
-			}
-			
+      {
+        field: "action",
+        headerName: "",
+        renderCell: (params: any) => (
+          <ActionsContainer
+            takeAssessment={() => assessmentHandler(params.row.customerData)}
+          />
+        ),
+      },
     ];
-    return columns;
   };
 
-	const generateRows = () => {
-		return customers_Api_call.map((customer: Customers_Api_call, i: number) => ({
-			no: i + 1,
-			id: customer.userId,
-			name: customer.name,
-			age: customer.age,
-			mobile: customer.mobile || "-",
-			joinedOn: customer.created_on,
-			phoneNumber: customer.mobile || "-",
-			memberShip: customer.membershipType,
-			lastAssessedOn: customer.lastAssessed || "-",
-			planAllocated: customer.plansAllocated?.[0] || "-",
-			customerData: customer, // <-- Add the full customer object here
-		}));
-	};
-	
+  const generateRows = () => {
+    return customers_Api_call.map((customer, i) => ({
+      no: i + 1,
+      id: customer.userId,
+      name: customer.name,
+      age: customer.age,
+      mobile: customer.mobile || "-",
+      joinedOn: dateChangeHandler(customer.created_on),
+      phoneNumber: customer.mobile || "-",
+      memberShip: customer.membershipType,
+      lastAssessedOn: customer.lastAssessed || "-",
+      planAllocated: customer.plansAllocated?.[0] || "-",
+      customerData: customer,
+    }));
+  };
+
   const formatColumns = (columns: GridColDef[]) => {
-    const col = columns.map((column) => {
-      const width = ref.current!.clientWidth;
-      if (column.field == "no") {
-        return { ...column, width: 70, headerAlign: "center", align: "center" };
-      } else if (column.field === "action") {
-        return {
-          ...column,
-          width: 170,
-          headerAlign: "center",
-          align: "center",
-        };
-      } else {
-        return {
-          ...column,
-          width: width / 9.7,
-          headerAlign: "center",
-          align: "center",
-        };
+    const width = ref.current?.clientWidth || 900;
+    return columns.map((col) => {
+      if (col.field === "no") {
+        return { ...col, width: 70, headerAlign: "center", align: "center" };
       }
+      if (col.field === "action") {
+        return { ...col, width: 170, headerAlign: "center", align: "center" };
+      }
+      return {
+        ...col,
+        width: width / 9.7,
+        headerAlign: "center",
+        align: "center",
+      };
     });
-    return col;
   };
 
   useEffect(() => {
     if (!ref.current) return;
-    const rows = generateRows();
-    const columns = generateColumns();
-    const formattedColumns = formatColumns(columns);
-    setColumns(formattedColumns);
-    setRows(rows);
+    const _rows = generateRows();
+    const _columns = formatColumns(generateColumns());
+    setRows(_rows);
+    setFilteredRows(_rows); // initially same as full list
+    setColumns(_columns);
   }, [customers_Api_call]);
 
+  useEffect(() => {
+    const lowerTerm = term.toLowerCase();
+    const filtered = rows.filter(
+      (row) =>
+        row.name.toLowerCase().includes(lowerTerm) ||
+        row.mobile?.toLowerCase().includes(lowerTerm) ||
+        row.memberShip?.toLowerCase().includes(lowerTerm)
+    );
+    setFilteredRows(filtered);
+  }, [term, rows]);
+
+
+  useEffect(() => {
+    if (!selectedDate) {
+      setFilteredRows(rows);
+      return;
+    }
+  
+    const targetDate = new Date(selectedDate).toDateString();
+  
+    const filtered = rows.filter((row) => {
+      const rowDate = new Date(row.joinedOn).toDateString();
+      return rowDate === targetDate;
+    });
+  
+    setFilteredRows(filtered);
+  }, [selectedDate, rows]);
+  
+
+  const handleExport = () => {
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      filteredRows
+        .map((row) =>
+          Object.values(row)
+            .map((val) => `"${val}"`)
+            .join(",")
+        )
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "customers.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (isLoading) {
-    return <div>Loading customers...</div>;
+    return (
+      <div className="loading-state">
+        <CircularProgress style={{ color: "#1976d2" }} /> {/* Default MUI blue */}
+      </div>
+    );
   }
 
   return (
     <div className="customer-dashboard-outlay-container">
       <div className="--side-bar"></div>
-
       <div className="customer-dashboard-container" ref={ref}>
         <div className="customer-dashboard-main-table-container">
           <div className="customer-dashboard-main-top-filter-container">
             <div className="customer-dashboard-search-container">
               <TextField
+                onChange={(e) => setTerm(e.target.value)}
                 variant="outlined"
                 size="small"
-                placeholder="Search..."
-                sx={{ width: 300 }} // adjust as needed
+                placeholder="Search by name, mobile or membership..."
+                sx={{ width: 300 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -203,26 +248,25 @@ const CustomerTable = () => {
               <div className="--date">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
+                    onChange={(newDate) => setSelectedDate(newDate)}
                     slotProps={{
                       textField: {
                         size: "small",
-                        sx: {
-                          maxWidth: 150,
-                          fontSize: "0.8rem",
-                        },
+                        sx: { maxWidth: 150, fontSize: "0.8rem" },
                       },
                     }}
-                    label="Date"
+                    label="Joined On"
                   />
                 </LocalizationProvider>
               </div>
               <div className="--delete">
                 <Button
+                  onClick={() => alert("Cannot delete")}
                   variant="outlined"
                   color="error"
                   sx={{
                     padding: "5px 12px",
-                    border: "1.3px solid rgba(0, 0, 0, 0.15)",
+                    border: "1.3px solid rgba(0,0,0,0.15)",
                   }}
                   startIcon={<DeleteIcon />}
                   size="small"
@@ -232,12 +276,13 @@ const CustomerTable = () => {
               </div>
               <div className="--export">
                 <Button
+                  onClick={handleExport}
                   variant="outlined"
                   sx={{
                     padding: "5px 12px",
                     background: "#FFFFFF",
                     color: "rgba(0, 0, 0, 0.8)",
-                    border: "1.3px solid rgba(0, 0, 0, 0.15)",
+                    border: "1.3px solid rgba(0,0,0,0.15)",
                   }}
                   startIcon={<FileDownloadIcon />}
                   size="small"
@@ -249,7 +294,7 @@ const CustomerTable = () => {
           </div>
           <div className="customer-dashboard-table">
             <DataGrid
-              rows={rows}
+              rows={filteredRows}
               columns={columns}
               pageSizeOptions={[5, 10]}
               checkboxSelection
@@ -263,11 +308,11 @@ const CustomerTable = () => {
             <span className="--tail">Assessment Due</span>
           </div>
           <div className="--customer-dashboard-bottom-box">
-            <span className="--head">5</span>
+            <span className="--head">{rows.length}</span>
             <span className="--tail">Total Customers</span>
           </div>
           <div className="--customer-dashboard-bottom-box">
-            <span className="--head">5</span>
+            <span className="--head">{rows.length}</span>
             <span className="--tail">Total Members</span>
           </div>
         </div>
