@@ -104,13 +104,12 @@ function AllPlans() {
       setSelectedSessionIds(filteredPlans.map((p) => p.sessionId));
     }
   };
-  
+
   const toggleSelectOneSession = (id: string) => {
     setSelectedSessionIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  
 
   // session delete
   const handleDelete = () => {
@@ -161,6 +160,9 @@ function AllPlans() {
       setShowPlanModal(false);
     }
   }, [showPlanModal, previewPlan]);
+
+  // const planRowsToFill = ;
+  // const activityRowsToFill =;
 
   return (
     <div className="all-plans-container">
@@ -231,9 +233,7 @@ function AllPlans() {
             </table>
           </div>
         </div>
-{/* session */}
-
-
+        {/* session */}
 
         <div className="plan-section md">
           <div className="controls">
@@ -334,36 +334,51 @@ function AllPlans() {
 
       {showPlanModal && previewPlan && (
         <div className="modal-overlay">
-          <div className="modal-content modal-min-height">
+          <div className="modal-content">
             <button
               className="close-button"
               onClick={() => setShowPlanModal(false)}
             >
-            <X></X>
+              <X></X>
             </button>
-            <h2>{previewPlan.title} - Sessions</h2>
-            {previewPlan.sessions && previewPlan.sessions.length > 0 ? (
-              <table className="modal-table">
-                <thead>
-                  <tr>
-                    <th>Sl No</th>
-                    <th>Session Title</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewPlan.sessions.map((session: any, idx: number) => (
-                    <tr key={session.sessionId}>
-                      <td>{idx + 1}</td>
-                      <td>{session.title}</td>
-                      <td>{session.category}</td>
-                      <td>{session.status}</td>
+            <div className="modal">
+              <h1 className="modal-titlebhav">{previewPlan.title}</h1>
+              {previewPlan.sessions && previewPlan.sessions.length > 0 ? (
+                <table className="modal-table">
+                  <thead>
+                    <tr>
+                      <th>Sl No</th>
+                      <th>Session Title</th>
+                      <th>Category</th>
+                      <th>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : null}
+                  </thead>
+                  <tbody>
+                    {previewPlan.sessions.map((session: any, idx: number) => (
+                      <tr key={session.sessionId}>
+                        <td>{idx + 1}</td>
+                        <td>{session.title}</td>
+                        <td>{session.category}</td>
+                        <td>{session.status}</td>
+                      </tr>
+                    ))}
+                    {Array.from({
+                      length: Math.max(
+                        0,
+                        15 - (previewPlan.sessions?.length || 0)
+                      ),
+                    }).map((_, idx) => (
+                      <tr key={`empty-plan-row-${idx}`}>
+                        <td
+                          colSpan={4}
+                          style={{ height: "40px", background: "white" }}
+                        ></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : null}
+            </div>
           </div>
         </div>
       )}
@@ -377,29 +392,46 @@ function AllPlans() {
             >
               <X></X>
             </button>
-            {previewSession.activities &&
-            previewSession.activities.length > 0 ? (
-              <table className="modal-table">
-                <thead>
-                  <tr>
-                    <th>Sl No</th>
-                    <th>Activity Name</th>
-                    <th>Description</th>
-                    <th>Reps</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {previewSession.activities.map((act: any, idx: number) => (
-                    <tr key={act.activityId}>
-                      <td>{idx + 1}</td>
-                      <td>{act.name}</td>
-                      <td>{act.description}</td>
-                      <td>{act.reps}</td>
+            <div className="modal">
+              <h1 className="modal-titlebhav">{previewSession.title}</h1>
+              {previewSession.activities &&
+              previewSession.activities.length > 0 ? (
+                <table className="modal-table">
+                  <thead>
+                    <tr>
+                      <th>Sl No</th>
+                      <th>Activity Name</th>
+                      <th>Description</th>
+                      <th>Reps</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : null}
+                  </thead>
+                  <tbody>
+                    {previewSession.activities.map((act: any, idx: number) => (
+                      <tr key={act.activityId}>
+                        <td>{idx + 1}</td>
+                        <td>{act.name}</td>
+                        <td>{act.description}</td>
+                        <td>{act.reps}</td>
+                      </tr>
+                    ))}
+
+                    {Array.from({
+                      length: Math.max(
+                        0,
+                        15 - (previewSession.activities?.length || 0)
+                      ),
+                    }).map((_, idx) => (
+                      <tr key={`empty-plan-row-${idx}`}>
+                        <td
+                          colSpan={4}
+                          style={{ height: "40px", background: "white" }}
+                        ></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : null}
+            </div>
           </div>
         </div>
       )}
