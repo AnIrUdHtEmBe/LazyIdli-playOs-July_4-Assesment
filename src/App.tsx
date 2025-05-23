@@ -73,7 +73,7 @@ function App() {
               selectComponent === "AllPlans" ? <AllPlans /> : <PlansPage />
             }
           />
-          x{/* // <Route path="/planCreation" element={< />} /> */}
+          {/* // <Route path="/planCreation" element={< />} /> */}
         </Routes>
       </Layout>
     </Router>

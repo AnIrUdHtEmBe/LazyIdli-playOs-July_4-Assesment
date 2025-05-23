@@ -216,7 +216,7 @@ function Responses() {
                     }`}
                     onClick={() => handlePlanSelection(plan)}
                   >
-                    {plan.name}
+                    {plan.title}
                   </button>
                 ))}
               </div>

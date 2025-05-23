@@ -53,6 +53,9 @@ function UserPersonalisedPlan() {
 
   const plans = JSON.parse(localStorage.getItem("selectedPlan"))
   console.log(plans)
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log(user);
   // console.log(sessions);
   // grid and checked cell interaction
   const [activePlan, setActivePlan] = useState(null);

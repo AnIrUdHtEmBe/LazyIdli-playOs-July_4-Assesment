@@ -11,7 +11,6 @@ type Notes = {
 };
 
 function QuestionPaper() {
-
   const paperDetails = JSON.parse(
     localStorage.getItem("assessmentDetails") || "{}"
   );
@@ -28,7 +27,7 @@ function QuestionPaper() {
   }
 
   const { setSelectComponent } = context;
-  const { assessmet_submission} = useApiCalls();
+  const { assessmet_submission } = useApiCalls();
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -43,25 +42,55 @@ function QuestionPaper() {
     }));
   };
 
+  const handleChooseManyOption = (
+    questionIndex: number,
+    optionValue: string
+  ) => {
+    setAnswers((prev) => {
+      const current = prev[questionIndex];
+      let updated: string[];
+      if (Array.isArray(current)) {
+        // Toggle selection
+        if (current.includes(optionValue)) {
+          updated = current.filter((opt) => opt !== optionValue);
+        } else {
+          updated = [...current, optionValue];
+        }
+      } else {
+        updated = [optionValue];
+      }
+      return { ...prev, [questionIndex]: updated };
+    });
+  };
 
   console.log("answers", answers);
-
   const allAnswered =
-    paperDetails.questions.filter(q=> q.isRequired).every(
-      (q: any, index: any) => answers[index] !== undefined
-    );
+  paperDetails.questions.filter(q => q.isRequired).every((q: any, index: any) => {
+    const val = answers[index];
+    if (q.answerType === "choose_many") {
+      return Array.isArray(val) && val.length > 0;
+    }
+    return val !== undefined && val !== "";
+  });
 
-    const handleSubmit = () => {
-      const instanceId = JSON.parse(localStorage.getItem("latestAssessmentTemplate"));
-      const ans = paperDetails.questions.map((question: any, index: number) => ({
+  const handleSubmit = () => {
+    const instanceId = JSON.parse(
+      localStorage.getItem("latestAssessmentTemplate")
+    );
+    const ans = paperDetails.questions.map((question: any, index: number) => {
+      let value = answers[index] || "";
+      if (question.answerType === "choose_many" && Array.isArray(value)) {
+        value = value.join(", ");
+      }
+      return {
         questionId: question.questionId,
-        value: answers[index] || "", 
-      }));
-      console.log("ans", ans);
-      assessmet_submission(instanceId, ans);
-      setSelectComponent("responses");
-    };
-    
+        value,
+      };
+    });
+    assessmet_submission(instanceId, ans);
+    setSelectComponent("responses");
+  };
+
   return (
     <div className="dashboard-container">
       {/* Fixed Header */}
@@ -276,6 +305,34 @@ function QuestionPaper() {
                         }
                         className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
                       />
+                    </div>
+                  ) : question.answerType === "choose_many" ? (
+                    <div className="options-container">
+                      {question.options?.map(
+                        (option: string, optionIndex: number) => {
+                          const selectedOptions = Array.isArray(
+                            answers[questionIndex]
+                          )
+                            ? answers[questionIndex]
+                            : [];
+                          const isChecked = selectedOptions.includes(option);
+                          return (
+                            <label
+                              key={optionIndex}
+                              className="flex items-center gap-2 p-1 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() =>
+                                  handleChooseManyOption(questionIndex, option)
+                                }
+                              />
+                              <span className="option-text">{option}</span>
+                            </label>
+                          );
+                        }
+                      )}
                     </div>
                   ) : (
                     ""
