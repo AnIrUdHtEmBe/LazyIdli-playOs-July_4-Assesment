@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import "./AllPlans.css";
 import { DataContext } from "../store/DataContext";
-import { Plus, Dumbbell, EyeIcon, Trash2 } from "lucide-react";
+import { Plus, Dumbbell, EyeIcon, Trash2, X } from "lucide-react";
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 import { useApiCalls } from "../store/axios";
@@ -15,12 +15,15 @@ function AllPlans() {
   const planCheckboxRef = useRef<HTMLInputElement>(null);
   const sessionCheckboxRef = useRef<HTMLInputElement>(null);
   const [selectedPlanIds, setSelectedPlanIds] = useState<string[]>([]);
-  const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
+  const [selectedSessionIds, setSelectedSessionIds] = useState<string[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
 
   const [previewSession, setPreviewSession] = useState<any | null>(null);
   const [showSessionModal, setShowSessionModal] = useState(false);
+
+  const [previewPlan, setPreviewPlan] = useState<any | null>(null);
+  const [showPlanModal, setShowPlanModal] = useState(false);
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -88,20 +91,26 @@ function AllPlans() {
     );
   };
 
+  const handlePlanPreviewClick = (plan: any) => {
+    setPreviewPlan(plan);
+    setShowPlanModal(true);
+  };
+
   // toggling all sessions
   const toggleSelectAllSessions = () => {
     if (selectedSessionIds.length === filteredPlans.length) {
       setSelectedSessionIds([]);
     } else {
-      setSelectedSessionIds(filteredPlans.map((p) => p.id));
+      setSelectedSessionIds(filteredPlans.map((p) => p.sessionId));
     }
   };
-
-  const toggleSelectOneSession = (id: number) => {
+  
+  const toggleSelectOneSession = (id: string) => {
     setSelectedSessionIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
+  
 
   // session delete
   const handleDelete = () => {
@@ -130,6 +139,28 @@ function AllPlans() {
       setSearchTerm(category);
     }
   };
+
+  useEffect(() => {
+    if (
+      showSessionModal &&
+      previewSession &&
+      (!previewSession.activities || previewSession.activities.length === 0)
+    ) {
+      alert("No activities found for this session.");
+      setShowSessionModal(false);
+    }
+  }, [showSessionModal, previewSession]);
+
+  useEffect(() => {
+    if (
+      showPlanModal &&
+      previewPlan &&
+      (!previewPlan.sessions || previewPlan.sessions.length === 0)
+    ) {
+      alert("No sessions found for this plan.");
+      setShowPlanModal(false);
+    }
+  }, [showPlanModal, previewPlan]);
 
   return (
     <div className="all-plans-container">
@@ -190,7 +221,7 @@ function AllPlans() {
                     <td>{plan?.category || ""}</td>
                     <td>{plan.status}</td>
                     <td>
-                      <button>
+                      <button onClick={() => handlePlanPreviewClick(plan)}>
                         <EyeIcon />
                       </button>
                     </td>
@@ -200,6 +231,9 @@ function AllPlans() {
             </table>
           </div>
         </div>
+{/* session */}
+
+
 
         <div className="plan-section md">
           <div className="controls">
@@ -298,6 +332,42 @@ function AllPlans() {
         </div>
       </div>
 
+      {showPlanModal && previewPlan && (
+        <div className="modal-overlay">
+          <div className="modal-content modal-min-height">
+            <button
+              className="close-button"
+              onClick={() => setShowPlanModal(false)}
+            >
+            <X></X>
+            </button>
+            <h2>{previewPlan.title} - Sessions</h2>
+            {previewPlan.sessions && previewPlan.sessions.length > 0 ? (
+              <table className="modal-table">
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Session Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {previewPlan.sessions.map((session: any, idx: number) => (
+                    <tr key={session.sessionId}>
+                      <td>{idx + 1}</td>
+                      <td>{session.title}</td>
+                      <td>{session.category}</td>
+                      <td>{session.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : null}
+          </div>
+        </div>
+      )}
+
       {showSessionModal && previewSession && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -305,9 +375,8 @@ function AllPlans() {
               className="close-button"
               onClick={() => setShowSessionModal(false)}
             >
-              Close
+              <X></X>
             </button>
-            <h2>{previewSession.title} - Activities</h2>
             {previewSession.activities &&
             previewSession.activities.length > 0 ? (
               <table className="modal-table">
@@ -330,9 +399,7 @@ function AllPlans() {
                   ))}
                 </tbody>
               </table>
-            ) : (
-              <p>No activities found for this session.</p>
-            )}
+            ) : null}
           </div>
         </div>
       )}

@@ -143,23 +143,20 @@
   box-shadow: 0 2px 16px rgba(0,0,0,0.2);
 }
 
-.modal-table{
-  background-color: white;
-}
-
 .modal-table {
-  min-width: 600px;
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* Ensures consistent column widths */
   text-align: left;
 }
-
 
 .modal-table th,
 .modal-table td {
   padding: 0.75rem;
   border-bottom: 1px solid #e5e7eb;
-  text-align: center;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
 }
 
 .modal-table th {
@@ -168,6 +165,30 @@
   font-size: 0.875rem;
 }
 
+/* Optional: control column widths more precisely */
+.modal-table th:nth-child(1),
+.modal-table td:nth-child(1) {
+  width: 60px;
+  text-align: center;
+}
+
+.modal-table th:nth-child(2),
+.modal-table td:nth-child(2) {
+  width: 150px;
+}
+
+.modal-table th:nth-child(3),
+.modal-table td:nth-child(3) {
+  width: 300px;
+}
+
+.modal-table th:nth-child(4),
+.modal-table td:nth-child(4) {
+  width: 80px;
+  text-align: center;
+}
+
+
 .close-button {
   float: right;
   background: transparent;
@@ -175,4 +196,11 @@
   font-size: 1.2rem;
   cursor: pointer;
   color: #ef4444;
+}
+
+
+.modal-min-height {
+  min-height: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
