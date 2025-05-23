@@ -50,7 +50,10 @@ export type Customers_Api_call ={
   plansAllocated: string[];
   assessments?: string[];
 }
-
+export type Plan_Instance_Api_call = {
+  sessionTemplateIds: string[];
+  scheduledDates: string[];
+}
 
 // Assessments (dashboard page)
 export type Assessment_Api_call = {

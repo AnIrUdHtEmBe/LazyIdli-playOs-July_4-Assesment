@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Plan_Api_call, Plan_Instance_Api_call, Session_Api_call } from "../store/DataContext";
 import {
   ArrowRight,
   CirclePlus,
@@ -43,7 +43,7 @@ function SessionPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions, getActivities , createPlan, getActivityById , patchSession , getPlanByPlanId , getSessionById} = useApiCalls();
+  const {getSessions, getActivities , createPlan, getActivityById , patchSession , getPlanByPlanId , getSessionById , createPlanInstance} = useApiCalls();
   useEffect(() => {
     getSessions();
     getActivities();
@@ -129,16 +129,26 @@ call();
     }
   }, [selectedIds, filteredPlans.length]);
 
-  
-  const createANewPlan = () => {
-    const planToSubmit: Plan_Api_call = {
-      title: planName,
-      description: "",
-      category: "FITNESS",
-      sessions: convertGridAssignmentsToSessions(),
-    };
-    createPlan(planToSubmit);
-  }
+
+ 
+ const createANewPlan = () => {
+  const sessionTemplateIds: string[] = [];
+  const scheduledDates: string[] = [];
+
+  Object.entries(gridAssignments).forEach(([key, value]) => {
+    sessionTemplateIds.push(value.sessionId);
+    // Format selectedDate to "YYYY-MM-DD"
+    scheduledDates.push(dayjs(selectedDate).format("YYYY-MM-DD"));
+  });
+
+  const planToSubmit: Plan_Instance_Api_call = {
+    sessionTemplateIds,
+    scheduledDates
+  };
+
+  createPlanInstance(plans.templateId, user.userId, planToSubmit);
+};
+
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
 

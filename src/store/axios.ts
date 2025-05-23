@@ -4,6 +4,7 @@ import {
   Activity_Api_call,
   DataContext,
   Plan_Api_call,
+  Plan_Instance_Api_call,
   Session_Api_call,
 } from "./DataContext";
 // import { Dispatch, SetStateAction } from 'react';
@@ -147,15 +148,23 @@ export const useApiCalls = () => {
     }
   };
 
+  const createPlanInstance = async (planTemplateId:string , userId:string , plan: Plan_Instance_Api_call) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/plan-instances?planTemplateId=${planTemplateId}&userId=${userId}`, plan);
+      console.log("Plan instance created successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error creating plan instance:", error);
+    }
+  };
 
-  const createPlan = async(plan: Plan_Api_call) => {
+  const createPlan = async (plan: Plan_Api_call) => {
     try {
       const res = await axios.post(`${API_BASE_URL}/plan-templates`, plan);
       console.log("Plan created successfully:", res.data);
     } catch (error) {
       console.error("❌ Error creating plan:", error);
     }
-  }
+  };
 
   const starting_assessment_by_user = async (
     user_id: string,
@@ -244,15 +253,14 @@ export const useApiCalls = () => {
   };
 
   const getSessionById = async (sessionId: string) => {
-    try { 
+    try {
       const res = await axios.get(
         `${API_BASE_URL}/session-templates/${sessionId}`
       );
       const data = res.data;
       console.log("✅ Session fetched successfully:", data);
       return data;
-    }
-    catch (error) {
+    } catch (error) {
       console.error("❌ Error fetching session:", error);
     }
   };
@@ -260,7 +268,9 @@ export const useApiCalls = () => {
   const patchPlans = async (templateIds: string[]) => {
     const updatePromises = templateIds.map((templateId) =>
       axios
-        .patch(`${API_BASE_URL}/plan-templates/${templateId}`, { status: "INACTIVE" })
+        .patch(`${API_BASE_URL}/plan-templates/${templateId}`, {
+          status: "INACTIVE",
+        })
         .then((res) => res.data)
         .catch((err) => {
           console.error(`Failed to patch ${templateId}`, err);
@@ -293,5 +303,6 @@ export const useApiCalls = () => {
     patchPlans,
     getPlanByPlanId,
     getSessionById,
+    createPlanInstance,
   };
 };
