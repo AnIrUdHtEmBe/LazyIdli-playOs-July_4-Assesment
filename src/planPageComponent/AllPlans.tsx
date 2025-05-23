@@ -5,6 +5,7 @@ import { Plus, Dumbbell, EyeIcon, Trash2, X } from "lucide-react";
 import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 import { useApiCalls } from "../store/axios";
+import { useNavigate } from "react-router-dom";
 
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
@@ -24,6 +25,8 @@ function AllPlans() {
 
   const [previewPlan, setPreviewPlan] = useState<any | null>(null);
   const [showPlanModal, setShowPlanModal] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -181,7 +184,7 @@ function AllPlans() {
               </button>
               <button
                 className="primary-button"
-                onClick={() => setSelectComponent("planCreation")}
+                onClick={() => setSelectComponent("/plans")}
               >
                 <Plus size={20} />
                 <span>New Plan</span>
@@ -274,7 +277,7 @@ function AllPlans() {
             </button>
             <button
               className="primary-button"
-              onClick={() => setSelectComponent("/sessions")}
+              onClick={() => navigate("/sessions")}
             >
               <Plus size={20} />
               <span>New Session</span>

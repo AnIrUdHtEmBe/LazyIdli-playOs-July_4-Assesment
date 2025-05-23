@@ -15,10 +15,8 @@ import dayjs from "dayjs";
 import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
 import {
   ArrowRight,
-  ChevronRight,
   CirclePlus,
   Dumbbell,
-  EyeClosed,
   EyeIcon,
   LucideCircleMinus,
   MinusCircle,
@@ -28,7 +26,6 @@ import {
 import "./SessionPage.css"; // Import the CSS file
 
 import {
-  ArrowRightAlt,
   DashboardCustomize,
   Mediation,
   NordicWalking,
@@ -38,7 +35,7 @@ import { useApiCalls } from "../store/axios";
 
 function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
+  const { selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -625,16 +622,7 @@ useEffect(() => {
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
                               onClick={() => {
-                                // setPreviewSession((prev: any) => {
-                                //   const updatedActivities =
-                                //     prev.activities.filter(
-                                //       (_: any, i: number) => i !== idx
-                                //     );
-                                //   return {
-                                //     ...prev,
-                                //     activities: updatedActivities,
-                                //   };
-                                // });
+                                
                                 setPreviewSession((prev: any) => {
                                   const updatedActivities = prev.activities.filter(
                                     (_: any, i: number) => i !== idx

@@ -8,44 +8,35 @@
 }
 
 .header-topp {
-  font-size: 10px;
-  padding-left:60px ;
   display: flex;
- padding: 0 15px;
- padding-top:10px;
-  align-items: center;
-  gap: 10px;
-
+  flex-direction: column; /* stack the rows */
+  padding: 1rem 15px 0 60px;
+  /* gap: 12px; */
 }
 
-@media (min-width: 640px) {
-  .header-topp {
-    flex-direction: row;
-    font-size: 10px;
-    gap: 10px;
-    padding: 1rem;
-    padding-left: 60px;
-    align-items: center;
-  }
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .header-icon {
-  color: #1f2937; /* Tailwind's text-gray-800 */
+  color: #1f2937; /* text-gray-800 */
 }
 
 .header-titleee {
   font-size: 24px;
   font-weight: 500;
   color: #0A0A0A;
-  text-align: center;
 }
 
+/* Optional: responsiveness */
 @media (min-width: 640px) {
-  .header-titlee {
+  .header-titleee {
     font-size: 1.5rem;
-    text-align: left;
   }
 }
+
 
 /* @media (min-width: 768px) {
   .header-title {

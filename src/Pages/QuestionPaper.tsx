@@ -185,7 +185,7 @@ function QuestionPaper() {
                       selectedQuestionIndex === index ? "selected" : "hover"
                     }`}
                   >
-                    {answers[index] !== undefined ? (
+                    {answers[index] !== "" ? (
                       <CheckCircle className="answered-icon" />
                     ) : (
                       <Circle className="unanswered-icon" />

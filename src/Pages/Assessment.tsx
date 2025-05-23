@@ -105,7 +105,8 @@ const Assessment: React.FC = () => {
                   selectedRow ? "start-button" : "disable-button"
                 }`}
                 disabled={!selectedRow}
-                onClick={handleEditAssessment}>Edit</button>
+                onClick={handleEditAssessment}>   <span>Edit</span>
+                  <ArrowRight size={20} /></button>
               )}
             </div>
           </div>

@@ -18,7 +18,7 @@ function Header() {
       </div>
       <div className="header-tabs-ass">
         <button
-          className={`text-[20px] font-medium ${selectComponent === "/assignment" || selectComponent === "AssessmentCreationPage2" ? "border-b-4 border-black" : ""}`}
+          className={`text-[20px] font-medium ${selectComponent === "/assignment" || selectComponent === "AssessmentCreationPage2" || selectComponent === 'dashboard' ? "border-b-4 border-black" : ""}`}
         >
           Assessments
         </button>

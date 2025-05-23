@@ -18,7 +18,7 @@ function Header() {
       </div>
       <div className="header-tabsss">
         <button
-          className={`text-xl font-medium ${ selectComponent === "/sessions" ? "border-b-3 " : ""}`}
+          className={`text-xl font-medium ${ selectComponent === "/sessions" || selectComponent === "dashboard" ? "border-b-3 " : ""}`}
           onClick={() => setSelectComponent("/sessions")}
         >
           Session Creator
