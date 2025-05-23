@@ -24,10 +24,17 @@ const Assessment: React.FC = () => {
   const [selectedAssessment, setSelectedAssessment] = useState<Object | null>(
     null
   );
+
   const [showModal, setShowModal] = useState(false);
   const [showTaken, setShowTaken] = useState(false);
 
   const [loading, setLoading] = useState(true);
+
+
+  const handleEditAssessment = () => {
+    setSelectComponent("Q&A");
+    localStorage.setItem("assessmentDetails", JSON.stringify(selectedRow));
+  };
 
   const handleStartAssignment = () => {
     setSelectComponent("Q&A");
@@ -81,14 +88,25 @@ const Assessment: React.FC = () => {
                 <Switch onClick={() => setShowTaken(!showTaken)}></Switch>
                 <span>To Take</span>
               </div>
-              <button
-                className={`${selectedRow ? "start-button" : "disable-button"}`}
+              {showTaken ? (
+                <button
+                  className={`${
+                    selectedRow ? "start-button" : "disable-button"
+                  }`}
+                  disabled={!selectedRow}
+                  onClick={handleStartAssignment}
+                >
+                  <span>Start</span>
+                  <ArrowRight size={20} />
+                </button>
+              ) : (
+                <button
+                className={`${
+                  selectedRow ? "start-button" : "disable-button"
+                }`}
                 disabled={!selectedRow}
-                onClick={handleStartAssignment}
-              >
-                <span>Start</span>
-                <ArrowRight size={20} />
-              </button>
+                onClick={handleEditAssessment}>Edit</button>
+              )}
             </div>
           </div>
 

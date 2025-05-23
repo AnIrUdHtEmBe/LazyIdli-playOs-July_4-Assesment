@@ -310,8 +310,13 @@
   text-align: left;
 }
 .mandatory-header {
-  width: 40%; /* w-3/12 */
+  width: 20%; /* w-3/12 */
   text-align: left;
+}
+
+.mandatory-answer{
+  width: 20%; /* w-3/12 */
+  text-align: center;
 }
 
 .mandatory-header .madat-option{}
