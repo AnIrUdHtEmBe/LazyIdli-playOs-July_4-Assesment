@@ -219,7 +219,10 @@ const addNewRow = () => {
                 displayEmpty
                 sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
               >
-                <MenuItem value="Fitness">Fitness</MenuItem>
+                <MenuItem value="FITNESS">Fitness</MenuItem>
+                <MenuItem value="SPORTS">Sports</MenuItem>
+                <MenuItem value="WELLNESS">Wellness</MenuItem>
+                <MenuItem value="OTHER">Other</MenuItem>
                 {/* You can add more categories here */}
               </Select>
             </FormControl>

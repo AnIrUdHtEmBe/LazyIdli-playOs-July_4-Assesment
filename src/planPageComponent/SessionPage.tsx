@@ -46,7 +46,7 @@ function SessionPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions, getActivities , createPlan} = useApiCalls();
+  const {getSessions, getActivities , createPlan, getActivityById , patchSession} = useApiCalls();
   useEffect(() => {
     getSessions();
     getActivities();
@@ -67,9 +67,9 @@ function SessionPage() {
   
   console.log(sessions_api_call);
 
-  const plans = JSON.parse(localStorage.getItem("selectedPlan"))
-  console.log(plans)
-  console.log(sessions);
+  // const plans = JSON.parse(localStorage.getItem("selectedPlan"))
+  // console.log(plans)
+  // console.log(sessions);
   // grid and checked cell interaction
   const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
   const [gridAssignments, setGridAssignments] = useState<{
@@ -107,7 +107,7 @@ function SessionPage() {
     const planToSubmit: Plan_Api_call = {
       title: planName,
       description: "",
-      category: "Fitness",
+      category: "FITNESS",
       sessions: convertGridAssignmentsToSessions(),
     };
     createPlan(planToSubmit);
@@ -123,6 +123,20 @@ function SessionPage() {
     }
   };
 
+  const handleSaveSesion = async () => {
+    try {
+      await patchSession(previewSession.sessionId, {
+        title: previewSession.title,
+        description: previewSession.description,
+        category: previewSession.category,
+        activityIds: previewSession?.activityIds
+      });
+      console.log("Session updated successfully");
+    } catch (error) {
+      console.error("❌ Error updating session:", error);
+    }
+    getSessions();
+  }
   useEffect(() => {
     console.log("gridAssignments", gridAssignments);
   }, [gridAssignments])
@@ -221,6 +235,37 @@ const handleClearWeek = (weekNumberToClear: number) => {
 
     console.log("Previewing session:", session);
   };
+
+    useEffect(() => {
+    console.log("preview session", previewSession);
+  }, [previewSession]);
+
+
+function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
+  const selectedValue = e.target.value;
+  console.log("Selected value:", selectedValue);
+  async function fetchActivityDetails() {
+    const activityDetails = await getActivityById(selectedValue);
+    console.log("Activity details:", activityDetails);
+    setPreviewSession((prev: any) => {
+      if (!prev) return prev;
+      const updatedActivities = [...prev.activities];
+      updatedActivities[idx] = activityDetails;
+
+      const updatedActivityIds = [...prev.activityIds];
+      updatedActivityIds[idx] = selectedValue;
+
+      return {
+        ...prev,
+        activityIds: updatedActivityIds,
+        activities: updatedActivities,
+      };
+    });
+  }
+  fetchActivityDetails();
+  console.log("preview session", previewSession);
+}
+
 
   return (
     <div className="responses-root">
@@ -480,14 +525,18 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 <div className="flex gap-6 ">
                   <input
                     type="text"
+                    
                     className="w-full border-b border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Session name"
                   />
                   <select className="w-full border-b-1 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Fitness</option>
+                    <option value="FITNESS">Fitness</option>
+                    <option value="SPORTS">Sports</option>
+                    <option value="WELLNESS">Wellness</option>
+                    <option value="OTHER">Other</option>
                   </select>
                 </div>
-                <button className="save-changes-button">Save changes</button>
+                <button onClick={handleSaveSesion} className="save-changes-button">Save changes</button>
               </div>
 
               {/* Activity Table */}
@@ -518,27 +567,15 @@ const handleClearWeek = (weekNumberToClear: number) => {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.name|| ""}
+                                value={activity.activityId|| ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
-                                  const selectedValue = e.target.value;
-                                  setPreviewSession((prev: any) => {
-                                    const updatedActivities = [
-                                      ...prev.activities,
-                                    ];
-                                    updatedActivities[idx] = {
-                                      ...updatedActivities[idx],
-                                      selected: selectedValue,
-                                    };
-                                    return {
-                                      ...prev,
-                                      activities: updatedActivities,
-                                    };
-                                  });
+
+                                  setActivityInThePreviewSession(e, idx);
                                 }}
                               >
-                                {activities_api_call.map((item: Activity_Api_call) => (
-                                  <MenuItem key={item.activityId} value={item.name}>
+                                {activities_api_call.map((item: Activity_Api_call, index) => (
+                                  <MenuItem key={index} value={item.activityId}>
                                     {item.name}
                                   </MenuItem>
                                 ))}
@@ -554,16 +591,32 @@ const handleClearWeek = (weekNumberToClear: number) => {
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
                               onClick={() => {
+                                // setPreviewSession((prev: any) => {
+                                //   const updatedActivities =
+                                //     prev.activities.filter(
+                                //       (_: any, i: number) => i !== idx
+                                //     );
+                                //   return {
+                                //     ...prev,
+                                //     activities: updatedActivities,
+                                //   };
+                                // });
                                 setPreviewSession((prev: any) => {
-                                  const updatedActivities =
-                                    prev.activities.filter(
-                                      (_: any, i: number) => i !== idx
-                                    );
+                                  const updatedActivities = prev.activities.filter(
+                                    (_: any, i: number) => i !== idx
+                                  );
+
+                                  const updatedActivityIds = prev.activityIds.filter(
+                                    (_: any, i: number) => i !== idx
+                                  );
+
                                   return {
                                     ...prev,
                                     activities: updatedActivities,
+                                    activityIds: updatedActivityIds,
                                   };
-                                });
+                                })
+
                               }}
                             >
                               <LucideCircleMinus
@@ -581,7 +634,19 @@ const handleClearWeek = (weekNumberToClear: number) => {
 
               {/* Footer */}
               <div className="flex pt-4 ">
-                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2">
+                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
+                  onClick={() => {
+                    setPreviewSession((prev: any) => {
+                    const updatedActivities = [...(prev.activities || []), {}];
+                    const updatedActivityIds = [...(prev.activityIds || []), null]; // or "" or a default value
+
+                    return {
+                      ...prev,
+                      activities: updatedActivities,
+                      activityIds: updatedActivityIds,
+                    }
+                    });
+                  }}>
                   <Plus size={20} />
                   Add Activity
                 </button>

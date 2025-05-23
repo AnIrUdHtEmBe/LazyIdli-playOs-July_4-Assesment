@@ -226,7 +226,10 @@ const addEmptyActivityRow = () => {
                   label="Category"
                   onChange={(e) => setCategory(e.target.value)}
                 >
-                  <MenuItem value={category}>{category}</MenuItem>
+                  <MenuItem value="FITNESS">Fitness</MenuItem>
+                <MenuItem value="SPORTS">Sports</MenuItem>
+                <MenuItem value="WELLNESS">Wellness</MenuItem>
+                <MenuItem value="OTHER">Other</MenuItem>
                 </Select>
               </FormControl>
             
