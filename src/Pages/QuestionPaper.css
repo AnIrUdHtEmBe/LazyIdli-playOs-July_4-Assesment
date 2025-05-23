@@ -21,7 +21,9 @@
     overflow-y: hidden;
   }
 
-
+.has-note{
+  background-color: #2563EB;
+}
 
 
   /* CHANGES IN OVERFLOW AND HEIGHT  */

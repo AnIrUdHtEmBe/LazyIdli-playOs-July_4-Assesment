@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { CheckCircle, Circle, StickyNote } from "lucide-react";
 import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
@@ -11,9 +11,9 @@ type Notes = {
 };
 
 function QuestionPaper() {
-  const paperDetails = JSON.parse(
-    localStorage.getItem("assessmentDetails") || "{}"
-  );
+  const paperDetails = useMemo(() => {
+    return JSON.parse(localStorage.getItem("assessmentDetails") || "{}");
+  }, []);
 
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
@@ -34,6 +34,47 @@ function QuestionPaper() {
   const [commentModal, setCommentModal] = useState(false);
   const [comment, setComment] = useState<string>("");
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!paperDetails) return;
+
+    if (Array.isArray(paperDetails.answers)) {
+      const initialAnswers: Record<number, string | string[]> = {};
+      paperDetails.answers.forEach((answer: any) => {
+        const questionIndex = questions.findIndex(
+          (q: any) => q.questionId === answer.questionId
+        );
+        if (questionIndex !== -1) {
+          if (
+            answer.answerType === "choose_many" &&
+            typeof answer.value === "string"
+          ) {
+            initialAnswers[questionIndex] = answer.value
+              .split(",")
+              .map((v: string) => v.trim());
+          } else {
+            initialAnswers[questionIndex] = answer.value || "";
+          }
+        }
+      });
+      setAnswers(initialAnswers);
+    } else if (Array.isArray(questions)) {
+      const initialAnswers: Record<number, string | string[]> = {};
+      questions.forEach((_: any, idx: number) => {
+        initialAnswers[idx] = "";
+      });
+      setAnswers(initialAnswers);
+    }
+  }, [paperDetails]);
+
+  // Handles both possible structures
+  const questions = Array.isArray(paperDetails.questions)
+    ? paperDetails.questions
+    : paperDetails.template && Array.isArray(paperDetails.template.questions)
+    ? paperDetails.template.questions
+    : [];
+
+  console.log(questions);
 
   const handleOptionSelect = (questionIndex: number, optionValue: string) => {
     setAnswers((prev) => ({
@@ -64,29 +105,34 @@ function QuestionPaper() {
   };
 
   console.log("answers", answers);
-  const allAnswered =
-  paperDetails.questions.filter(q => q.isRequired).every((q: any, index: any) => {
-    const val = answers[index];
-    if (q.answerType === "choose_many") {
-      return Array.isArray(val) && val.length > 0;
-    }
-    return val !== undefined && val !== "";
-  });
+  const allAnswered = questions
+    .filter((q) => q.isRequired)
+    .every((q: any, index: any) => {
+      const val = answers[index];
+      if (q.answerType === "choose_many") {
+        return Array.isArray(val) && val.length > 0;
+      }
+      return val !== undefined && val !== "";
+    });
 
+  console.log(notes);
   const handleSubmit = () => {
     const instanceId = JSON.parse(
       localStorage.getItem("latestAssessmentTemplate")
     );
-    const ans = paperDetails.questions.map((question: any, index: number) => {
+    const ans = questions.map((question: any, index: number) => {
       let value = answers[index] || "";
       if (question.answerType === "choose_many" && Array.isArray(value)) {
         value = value.join(", ");
       }
+      const noteObj = notes.find((n) => n.questionId === question.questionId);
       return {
         questionId: question.questionId,
         value,
+        notes: noteObj ? noteObj.comment : null,
       };
     });
+
     assessmet_submission(instanceId, ans);
     setSelectComponent("responses");
   };
@@ -131,7 +177,7 @@ function QuestionPaper() {
             <div className="questions-list">
               <div className="questions-title">Questions</div>
               <div className="questions-container">
-                {paperDetails.questions.map((q, index) => (
+                {questions.map((q, index) => (
                   <div
                     key={q.questionId}
                     onClick={() => setSelectedQuestionIndex(index)}
@@ -155,14 +201,14 @@ function QuestionPaper() {
 
             {/* Right Scrollable All Questions Display */}
             <div className="questions-display">
-              {paperDetails.questions.map((question, questionIndex: number) => (
+              {questions.map((question, questionIndex: number) => (
                 <div key={question.questionId} className="question-header">
                   <div className="question-subheader">
                     <div>
                       <div className="question-number">
                         Question {questionIndex + 1} /{" "}
                         <span className="question-count">
-                          {paperDetails.questions.length}
+                          {questions.length}
                         </span>
                         {question.isRequired ? (
                           <span className="text-red-600"> * </span>
@@ -185,7 +231,13 @@ function QuestionPaper() {
                       }}
                     >
                       <StickyNote
-                        className="py-1 px-2 rounded-md stick-comment"
+                        className={`py-1 px-2 rounded-md stick-comment ${
+                          notes.find(
+                            (n) => n.questionId === question.questionId
+                          )
+                            ? "has-note"
+                            : ""
+                        }`}
                         size={40}
                       />
                     </button>
@@ -366,8 +418,8 @@ function QuestionPaper() {
               <button
                 onClick={() => {
                   if (activeQuestionId !== null) {
-                    setNotes([
-                      ...notes,
+                    setNotes((prev) => [
+                      ...prev.filter((n) => n.questionId !== activeQuestionId),
                       { questionId: activeQuestionId, comment },
                     ]);
                     setCommentModal(false);

@@ -221,6 +221,10 @@ const CustomerTable = () => {
       </div>
     );
   }
+  const neverAssessedCount = rows.filter(
+    (row) => !row.lastAssessedOn || row.lastAssessedOn === "-"
+  ).length;
+  
 
   return (
     <div className="customer-dashboard-outlay-container">
@@ -304,7 +308,7 @@ const CustomerTable = () => {
         </div>
         <div className="customer-dashboard-footer-container">
           <div className="--customer-dashboard-bottom-box">
-            <span className="--head">3</span>
+            <span className="--head">{neverAssessedCount}</span>
             <span className="--tail">Assessment Due</span>
           </div>
           <div className="--customer-dashboard-bottom-box">
