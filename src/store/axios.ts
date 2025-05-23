@@ -47,7 +47,16 @@ export const useApiCalls = () => {
       console.error("❌ Error updating session:", error);
     }
   };
-
+  const getPlanByPlanId = async (planId: string) => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/plan-templates/${planId}`);
+      const data = res.data;
+      console.log("✅ Plan fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching plan:", error);
+    }
+  };
   const getSessions = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/session-templates/full`);
@@ -234,6 +243,20 @@ export const useApiCalls = () => {
     }
   };
 
+  const getSessionById = async (sessionId: string) => {
+    try { 
+      const res = await axios.get(
+        `${API_BASE_URL}/session-templates/${sessionId}`
+      );
+      const data = res.data;
+      console.log("✅ Session fetched successfully:", data);
+      return data;
+    }
+    catch (error) {
+      console.error("❌ Error fetching session:", error);
+    }
+  };
+
   const patchPlans = async (templateIds: string[]) => {
     const updatePromises = templateIds.map((templateId) =>
       axios
@@ -268,5 +291,7 @@ export const useApiCalls = () => {
     patchSession,
     createPlan,
     patchPlans,
+    getPlanByPlanId,
+    getSessionById,
   };
 };

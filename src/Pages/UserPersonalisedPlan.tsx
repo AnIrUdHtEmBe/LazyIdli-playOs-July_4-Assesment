@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { DataContext } from "../store/DataContext";
+import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
 import {
   ArrowRight,
   ChevronRight,
@@ -35,38 +35,81 @@ import {
 } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
-function UserPersonalisedPlan() {
+
+function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call } =
+  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
     useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
-  const {getSessions} = useApiCalls();
+  const {getSessions, getActivities , createPlan, getActivityById , patchSession , getPlanByPlanId , getSessionById} = useApiCalls();
   useEffect(() => {
     getSessions();
+    getActivities();
   }, []);
-  // console.log(sessions_api_call);
 
   const plans = JSON.parse(localStorage.getItem("selectedPlan"))
-  console.log(plans)
+  console.log(plans);
 
   const user = JSON.parse(localStorage.getItem("user"));
   console.log(user);
+
+  const call = async () => {
+  const res = await getPlanByPlanId(plans.templateId);
+  console.log("plan", res);
+
+  await Promise.all(
+    res.sessions.map(async (session) => {
+      const updateSession = await getSessionById(session.sessionId);
+      gridAssignments[session.scheduledDay] = {
+        sessionId: session.sessionId,
+        title: updateSession.title,
+        description: updateSession.description,
+        category: updateSession.category,
+        activityIds: updateSession.activityIds,
+      };
+    })
+  );
+};
+call();
+
+
+   
+
+  
+
+  const convertGridAssignmentsToSessions = () => {
+    const sessions = Object.entries(gridAssignments).map(
+      ([scheduledDayStr, session]) => ({
+        sessionId: session.sessionId,
+        scheduledDay: Number(scheduledDayStr),
+      })
+    );
+  
+    return sessions;
+  };
+  
+
+  
+  console.log(sessions_api_call);
+
+  // const plans = JSON.parse(localStorage.getItem("selectedPlan"))
+  // console.log(plans)
   // console.log(sessions);
   // grid and checked cell interaction
-  const [activePlan, setActivePlan] = useState(null);
+  const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
 
-  const filteredPlans = plans.sessions.filter(
+  const filteredPlans = sessions_api_call.filter(
     (plan) =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.category.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filterPlansAccordingTo = (category: string) => {
@@ -89,6 +132,16 @@ function UserPersonalisedPlan() {
     }
   }, [selectedIds, filteredPlans.length]);
 
+  
+  const createANewPlan = () => {
+    const planToSubmit: Plan_Api_call = {
+      title: planName,
+      description: "",
+      category: "FITNESS",
+      sessions: convertGridAssignmentsToSessions(),
+    };
+    createPlan(planToSubmit);
+  }
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
 
@@ -96,11 +149,29 @@ function UserPersonalisedPlan() {
       setSelectedIds([]);
       setActivePlan(null);
     } else {
-      setSelectedIds(filteredPlans.map((p) => p.id));
+      setSelectedIds(filteredPlans.map((p) => p.sessionId));
     }
   };
 
-  const toggleSelectOne = (id: number) => {
+  const handleSaveSesion = async () => {
+    try {
+      await patchSession(previewSession.sessionId, {
+        title: previewSession.title,
+        description: previewSession.description,
+        category: previewSession.category,
+        activityIds: previewSession?.activityIds
+      });
+      console.log("Session updated successfully");
+    } catch (error) {
+      console.error("❌ Error updating session:", error);
+    }
+    getSessions();
+  }
+  useEffect(() => {
+    console.log("gridAssignments", gridAssignments);
+  }, [gridAssignments])
+
+  const toggleSelectOne = (id: string) => {
     setSelectedIds((prev) => {
       const newSelected = prev.includes(id)
         ? prev.filter((i) => i !== id)
@@ -108,7 +179,8 @@ function UserPersonalisedPlan() {
       console.log(newSelected);
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
-        const plan = sessions.find((p) => p.id === newSelected[0]);
+        const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
+        console.log(plan);
         setActivePlan(plan || null);
       } else {
         setActivePlan(null);
@@ -127,7 +199,7 @@ function UserPersonalisedPlan() {
   };
 
   const handleDelete = () => {
-    setSessions((prev) => prev.filter((p) => !selectedIds.includes(p.id)));
+    setSessions_api_call((prev) => prev.filter((p) => !selectedIds.includes(p.sessionId)));
     setSelectedIds([]);
   };
 
@@ -185,13 +257,49 @@ const handleClearWeek = (weekNumberToClear: number) => {
   });
 };
 
-  const handlePreviewClick = (session: any) => {
+  const handlePreviewClick = (session: Session_Api_call) => {
+    
     setPreviewSession(session);
     setPreviewModalOpen(true);
     setSelectedSession(session);
 
     console.log("Previewing session:", session);
   };
+
+    useEffect(() => {
+    console.log("preview session", previewSession);
+  }, [previewSession]);
+
+
+function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
+  const selectedValue = e.target.value;
+  console.log("Selected value:", selectedValue);
+  async function fetchActivityDetails() {
+    const activityDetails = await getActivityById(selectedValue);
+    console.log("Activity details:", activityDetails);
+    setPreviewSession((prev: any) => {
+      if (!prev) return prev;
+      const updatedActivities = [...prev.activities];
+      updatedActivities[idx] = activityDetails;
+
+      const updatedActivityIds = [...prev.activityIds];
+      updatedActivityIds[idx] = selectedValue;
+
+      return {
+        ...prev,
+        activityIds: updatedActivityIds,
+        activities: updatedActivities,
+      };
+    });
+  }
+  fetchActivityDetails();
+  console.log("preview session", previewSession);
+}
+
+useEffect(() => {
+  console.log(gridAssignments);
+} , [gridAssignments])
+
 
   return (
     <div className="responses-root">
@@ -279,14 +387,14 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPlans.map((plan, idx) => (
+                {plans.sessions.map((plan, idx) => (
                   <tr key={plan.sessionId} className="table-row">
                     <td>
                       <input
                         type="checkbox"
                         className="session-checkbox"
-                        checked={selectedIds.includes(parseInt(plan.sessionId))}
-                        onChange={() => toggleSelectOne(parseInt(plan.sessionId))}
+                        checked={selectedIds.includes(plan.sessionId)}
+                        onChange={() => toggleSelectOne(plan.sessionId)}
                       />
                     </td>
 
@@ -377,14 +485,15 @@ const handleClearWeek = (weekNumberToClear: number) => {
                           onClick={() => {
                             if (!(selectedIds.length > 1)) {
                               handleGridCellClick(index);
+                              console.log("assignedPlan", assignedPlan);
                             }
                           }}
                         >
                           {assignedPlan ? (
                             <div className="assigned-plan">
-                              <strong>{assignedPlan.sessionName}</strong>
+                              <strong>{assignedPlan.title}</strong>
                               <div className="small">
-                                {assignedPlan.sessionType}
+                                {assignedPlan.category}
                               </div>
                             </div>
                           ) : null}
@@ -418,7 +527,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 <span className="text-blue">Add Week</span>
               </button>
               <button
-                onClick={() => setSelectComponent("AllPlans")}
+                onClick={ createANewPlan }
                 className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
               >
                 <span>Confirm</span>
@@ -450,14 +559,18 @@ const handleClearWeek = (weekNumberToClear: number) => {
                 <div className="flex gap-6 ">
                   <input
                     type="text"
+                    
                     className="w-full border-b border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Session name"
                   />
                   <select className="w-full border-b-1 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Fitness</option>
+                    <option value="FITNESS">Fitness</option>
+                    <option value="SPORTS">Sports</option>
+                    <option value="WELLNESS">Wellness</option>
+                    <option value="OTHER">Other</option>
                   </select>
                 </div>
-                <button className="save-changes-button">Save changes</button>
+                <button onClick={handleSaveSesion} className="save-changes-button">Save changes</button>
               </div>
 
               {/* Activity Table */}
@@ -474,7 +587,7 @@ const handleClearWeek = (weekNumberToClear: number) => {
                   </thead>
                   <tbody>
                     {previewSession.activities.map(
-                      (activity: any, idx: number) => (
+                      (activity: Activity_Api_call, idx: number) => (
                         <tr key={idx} className="border-t border-gray-200">
                           <td className="px-4 py-2 text-center">{idx + 1}</td>
                           <td className="px-4 py-2 text-center">
@@ -488,35 +601,18 @@ const handleClearWeek = (weekNumberToClear: number) => {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.selected || ""}
+                                value={activity.activityId|| ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
-                                  const selectedValue = e.target.value;
-                                  setPreviewSession((prev: any) => {
-                                    const updatedActivities = [
-                                      ...prev.activities,
-                                    ];
-                                    updatedActivities[idx] = {
-                                      ...updatedActivities[idx],
-                                      selected: selectedValue,
-                                    };
-                                    return {
-                                      ...prev,
-                                      activities: updatedActivities,
-                                    };
-                                  });
+
+                                  setActivityInThePreviewSession(e, idx);
                                 }}
                               >
-                                {activity.activityType.map(
-                                  (item: any, index: number) => (
-                                    <MenuItem
-                                      key={index}
-                                      value={item.activityType}
-                                    >
-                                      {item.activityType}
-                                    </MenuItem>
-                                  )
-                                )}
+                                {activities_api_call.map((item: Activity_Api_call, index) => (
+                                  <MenuItem key={index} value={item.activityId}>
+                                    {item.name}
+                                  </MenuItem>
+                                ))}
                               </Select>
                             </FormControl>
                           </td>
@@ -524,21 +620,37 @@ const handleClearWeek = (weekNumberToClear: number) => {
                             {activity.description}
                           </td>
                           <td className="px-4 py-2 text-center">
-                            {activity.timeInMinutes}
+                            {activity.reps}
                           </td>
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
                               onClick={() => {
+                                // setPreviewSession((prev: any) => {
+                                //   const updatedActivities =
+                                //     prev.activities.filter(
+                                //       (_: any, i: number) => i !== idx
+                                //     );
+                                //   return {
+                                //     ...prev,
+                                //     activities: updatedActivities,
+                                //   };
+                                // });
                                 setPreviewSession((prev: any) => {
-                                  const updatedActivities =
-                                    prev.activities.filter(
-                                      (_: any, i: number) => i !== idx
-                                    );
+                                  const updatedActivities = prev.activities.filter(
+                                    (_: any, i: number) => i !== idx
+                                  );
+
+                                  const updatedActivityIds = prev.activityIds.filter(
+                                    (_: any, i: number) => i !== idx
+                                  );
+
                                   return {
                                     ...prev,
                                     activities: updatedActivities,
+                                    activityIds: updatedActivityIds,
                                   };
-                                });
+                                })
+
                               }}
                             >
                               <LucideCircleMinus
@@ -556,7 +668,19 @@ const handleClearWeek = (weekNumberToClear: number) => {
 
               {/* Footer */}
               <div className="flex pt-4 ">
-                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2">
+                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
+                  onClick={() => {
+                    setPreviewSession((prev: any) => {
+                    const updatedActivities = [...(prev.activities || []), {}];
+                    const updatedActivityIds = [...(prev.activityIds || []), null]; // or "" or a default value
+
+                    return {
+                      ...prev,
+                      activities: updatedActivities,
+                      activityIds: updatedActivityIds,
+                    }
+                    });
+                  }}>
                   <Plus size={20} />
                   Add Activity
                 </button>
@@ -569,4 +693,4 @@ const handleClearWeek = (weekNumberToClear: number) => {
   );
 }
 
-export default UserPersonalisedPlan;
+export default SessionPage;
