@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Activity_Api_call, DataContext, Session_Api_call   } from "../store/DataContext";
+import {
+  Activity_Api_call,
+  DataContext,
+  Session_Api_call,
+} from "../store/DataContext";
 import { useApiCalls } from "../store/axios";
 import {
   Calendar,
@@ -39,17 +43,19 @@ interface Session {
 
 function AllSession() {
   const context = useContext(DataContext);
-  const { getSessions, patchSession, getActivities, getActivityById } = useApiCalls();
+  const { getSessions, patchSession, getActivities, getActivityById } =
+    useApiCalls();
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { activities_api_call, sessions, setSessions, sessions_api_call } = context;
+  const { activities_api_call, sessions, setSessions, sessions_api_call } =
+    context;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selecteddPlan, setSelectedPlan] = useState<Session_Api_call | null>(null);
-  const [planName, setPlanName] = useState<string>(
-    selecteddPlan?.title || ""
+  const [selecteddPlan, setSelectedPlan] = useState<Session_Api_call | null>(
+    null
   );
+  const [planName, setPlanName] = useState<string>(selecteddPlan?.title || "");
   const [category, setCategory] = useState<string>(
     selecteddPlan?.category || "Fitness"
   );
@@ -59,19 +65,14 @@ function AllSession() {
     getSessions();
   }, []);
 
-
-
   useEffect(() => {
-   
-      getActivities();
-      
-    
+    getActivities();
   }, [selecteddPlan]);
 
-  // const 
+  // const
   useEffect(() => {
-    console.log("selected" , selecteddPlan);
-  } , [selecteddPlan])
+    console.log("selected", selecteddPlan);
+  }, [selecteddPlan]);
 
   useEffect(() => {
     if (selecteddPlan) {
@@ -91,7 +92,7 @@ function AllSession() {
       await patchSession(selecteddPlan?.sessionId, {
         title: planName,
         category: category,
-        activityIds: selecteddPlan?.activityIds
+        activityIds: selecteddPlan?.activityIds,
       });
       console.log("Session updated successfully");
     } catch (error) {
@@ -100,23 +101,22 @@ function AllSession() {
     getSessions();
   };
 
-const emptyActivity: Activity_Api_call = {
-  activityId: "",     // or maybe use `uuid()` if needed
-  name: "",
-  description: "",
-  reps: "",
-};
-const addEmptyActivityRow = () => {
-  const updatedActivities = [...selecteddPlan.activities, emptyActivity];
-  const updatedActivityIds = [...selecteddPlan.activityIds, ""];
+  const emptyActivity: Activity_Api_call = {
+    activityId: "", // or maybe use `uuid()` if needed
+    name: "",
+    description: "",
+    reps: "",
+  };
+  const addEmptyActivityRow = () => {
+    const updatedActivities = [...selecteddPlan.activities, emptyActivity];
+    const updatedActivityIds = [...selecteddPlan.activityIds, ""];
 
-  setSelectedPlan({
-    ...selecteddPlan,
-    activities: updatedActivities,
-    activityIds: updatedActivityIds,
-  });
-};
-
+    setSelectedPlan({
+      ...selecteddPlan,
+      activities: updatedActivities,
+      activityIds: updatedActivityIds,
+    });
+  };
 
   const filterPlansAccordingTo = (category: string) => {
     if (activeFilter === category) {
@@ -127,6 +127,8 @@ const addEmptyActivityRow = () => {
       setSearchTerm(category);
     }
   };
+
+  let slNo = 1;
 
   return (
     <div className="all-session-container">
@@ -216,27 +218,28 @@ const addEmptyActivityRow = () => {
                 onChange={(e) => setPlanName(e.target.value)}
               />
             </div>
-           
-              <FormControl fullWidth sx={{ width: "200px" }}>
-                <InputLabel id="category-label">Category</InputLabel>
-                <Select
-                  labelId="category-label"
-                  id="category-select"
-                  value={category}
-                  label="Category"
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <MenuItem value="FITNESS">Fitness</MenuItem>
+
+            <FormControl fullWidth sx={{ width: "200px" }}>
+              <InputLabel id="category-label">Category</InputLabel>
+              <Select
+                labelId="category-label"
+                id="category-select"
+                value={category}
+                label="Category"
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <MenuItem value="FITNESS">Fitness</MenuItem>
                 <MenuItem value="SPORTS">Sports</MenuItem>
                 <MenuItem value="WELLNESS">Wellness</MenuItem>
                 <MenuItem value="OTHER">Other</MenuItem>
-                </Select>
-              </FormControl>
-            
+              </Select>
+            </FormControl>
           </div>
 
           {/* Save Button */}
-          <button onClick={handleSave} className="save-button">Save Changes</button>
+          <button onClick={handleSave} className="save-button">
+            Save Changes
+          </button>
         </div>
 
         {/* Activities Table */}
@@ -255,47 +258,57 @@ const addEmptyActivityRow = () => {
                 {selecteddPlan?.activities?.map(
                   (item: Activity_Api_call, index: number) => (
                     <tr key={index} className="activity-row">
-                      <td className="activity-cell font-bold">{item.activityId}</td>
+                      <td className="activity-cell font-bold">{slNo++}</td>
                       <td className="activity-cell">
-                      <select
-  className="activity-select"
-  value={item.activityId}
-  onChange={(e) => {
-    const selectedId = e.target.value;
-    console.log("Selected ID:", selectedId);
+                        <FormControl fullWidth>
+                          <InputLabel id={`activity-select-label-${index}`}>
+                            Activity
+                          </InputLabel>
+                          <Select
+                            labelId={`activity-select-label-${index}`}
+                            value={item.activityId}
+                            label="Activity"
+                            onChange={async (e) => {
+                              const selectedId = e.target.value;
+                              console.log("Selected ID:", selectedId);
 
-    (async () => {
-      try {
-        const edittedActivity = await getActivityById(selectedId);
+                              try {
+                                const edittedActivity = await getActivityById(
+                                  selectedId
+                                );
 
-        // It's better to clone and update the state rather than mutate directly:
-        const updatedActivities = [...selecteddPlan.activities];
-        updatedActivities[index] = edittedActivity;
+                                const updatedActivities = [
+                                  ...selecteddPlan.activities,
+                                ];
+                                updatedActivities[index] = edittedActivity;
 
-        const updatedActivityIds = [...selecteddPlan.activityIds];
-        updatedActivityIds[index] = edittedActivity.activityId;
+                                const updatedActivityIds = [
+                                  ...selecteddPlan.activityIds,
+                                ];
+                                updatedActivityIds[index] =
+                                  edittedActivity.activityId;
 
-        // Now update your selectedPlan (use a setter if you have one)
-        setSelectedPlan({
-          ...selecteddPlan,
-          activities: updatedActivities,
-          activityIds: updatedActivityIds,
-        });
+                                setSelectedPlan({
+                                  ...selecteddPlan,
+                                  activities: updatedActivities,
+                                  activityIds: updatedActivityIds,
+                                });
 
-        console.log("Updated Plan:", updatedActivities);
-      } catch (err) {
-        console.error("Failed to fetch activity:", err);
-      }
-    })();
-  }}
->
-  {activities_api_call.map((activity: Activity_Api_call, idx: number) => (
-    <option key={idx} value={activity.activityId}>
-      {activity.name}
-    </option>
-  ))}
-</select>
-
+                                console.log("Updated Plan:", updatedActivities);
+                              } catch (err) {
+                                console.error("Failed to fetch activity:", err);
+                              }
+                            }}
+                          >
+                            {activities_api_call.map(
+                              (activity: Activity_Api_call, idx: number) => (
+                                <MenuItem key={idx} value={activity.activityId}>
+                                  {activity.name}
+                                </MenuItem>
+                              )
+                            )}
+                          </Select>
+                        </FormControl>
                       </td>
                       <td className="activity-cell">{item.description}</td>
                       <td className="activity-cell">{item.reps}</td>
@@ -304,7 +317,10 @@ const addEmptyActivityRow = () => {
                 )}
                 <tr>
                   <td colSpan={5} className="activity-cell">
-                    <button onClick={addEmptyActivityRow} className="add-activity-button">
+                    <button
+                      onClick={addEmptyActivityRow}
+                      className="add-activity-button"
+                    >
                       <Plus size={18} />
                       <span>Add Activity</span>
                     </button>

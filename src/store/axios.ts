@@ -112,6 +112,7 @@ export const useApiCalls = () => {
       );
       console.log("✅ Assessment submitted successfully:", res.data);
     } catch (error) {
+      alert("Please check if you have filled the assesment name");
       console.error("❌ Error submitting assessment:", error);
     }
   };

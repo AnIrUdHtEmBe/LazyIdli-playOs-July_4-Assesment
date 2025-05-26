@@ -23,7 +23,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import "./SessionPage.css"; // Import the CSS file
+import "./UserPersonalisedPlan.css"; // Import the CSS file
 
 import {
   DashboardCustomize,
@@ -55,41 +55,12 @@ function SessionPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   console.log(user);
 
-  const call = async () => {
-  const res = await getPlanByPlanId(plans.templateId);
-  console.log("plan", res);
-
-  await Promise.all(
-    res.sessions.map(async (session) => {
-      const updateSession = await getSessionById(session.sessionId);
-      gridAssignments[session.scheduledDay] = {
-        sessionId: session.sessionId,
-        title: updateSession.title,
-        description: updateSession.description,
-        category: updateSession.category,
-        activityIds: updateSession.activityIds,
-      };
-    })
-  );
-};
-call();
-
-
-   
-
   
 
-  const convertGridAssignmentsToSessions = () => {
-    const sessions = Object.entries(gridAssignments).map(
-      ([scheduledDayStr, session]) => ({
-        sessionId: session.sessionId,
-        scheduledDay: Number(scheduledDayStr),
-      })
-    );
-  
-    return sessions;
-  };
-  
+
+
+
+
 
   
   console.log(sessions_api_call);
@@ -103,7 +74,7 @@ call();
     [key: number]: any;
   }>({});
 
-  const filteredPlans = sessions_api_call.filter(
+  const filteredPlans = plans.sessions.filter(
     (plan) =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -304,9 +275,26 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
 }
 
 useEffect(() => {
-  console.log(gridAssignments);
-} , [gridAssignments])
+  const call = async () => {
+    const res = await getPlanByPlanId(plans.templateId);
+    console.log("plan", res);
 
+    await Promise.all(
+      res.sessions.map(async (session) => {
+        const updateSession = await getSessionById(session.sessionId);
+        gridAssignments[session.scheduledDay] = {
+          sessionId: session.sessionId,
+          title: updateSession.title,
+          description: updateSession.description,
+          category: updateSession.category,
+          activityIds: updateSession.activityIds,
+        };
+      })
+    );
+  };
+
+  call(); 
+}, []); 
 
   return (
     <div className="responses-root">
@@ -394,7 +382,7 @@ useEffect(() => {
                 </tr>
               </thead>
               <tbody>
-                {plans.sessions.map((plan, idx) => (
+                {filteredPlans.map((plan, idx) => (
                   <tr key={plan.sessionId} className="table-row">
                     <td>
                       <input
@@ -405,7 +393,7 @@ useEffect(() => {
                       />
                     </td>
 
-                    <td>{plan.title}</td>
+                    <td className="session-name-title">{plan.title}</td>
                     <td>{plan.category}</td>
                     <td className="p-icon">
                       <button onClick={() => handlePreviewClick(plan)}>

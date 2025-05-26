@@ -45,6 +45,8 @@ function SessionPage() {
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [sessionName, setSessionName] = useState("");
+    const [category, setCategory] = useState('');
 
   const {getSessions, getActivities , createPlan, getActivityById , patchSession} = useApiCalls();
   useEffect(() => {
@@ -126,9 +128,10 @@ function SessionPage() {
   const handleSaveSesion = async () => {
     try {
       await patchSession(previewSession.sessionId, {
-        title: previewSession.title,
+        title: sessionName == "" ?  previewSession.title : sessionName,
+        
         description: previewSession.description,
-        category: previewSession.category,
+        category: category == "" ? previewSession.category : category,
         activityIds: previewSession?.activityIds
       });
       console.log("Session updated successfully");
@@ -364,7 +367,7 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                       />
                     </td>
 
-                    <td>{plan.title}</td>
+                    <td className="plan-title">{plan.title}</td>
                     <td>{plan.category}</td>
                     <td className="p-icon">
                       <button onClick={() => handlePreviewClick(plan)}>
@@ -427,9 +430,7 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
 
             {/* Calendar */}
             <div className="calendar">
-              <div className="calendar-header">
-                <h2>My Personalised Plan</h2>
-              </div>
+              
               <div className="calendar-grid">
                 {weeks.map(( weekIndex) => (
                   <React.Fragment key={weekIndex}>
@@ -525,16 +526,27 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                 <div className="flex gap-6 ">
                   <input
                     type="text"
-                    
+                    value={sessionName}
+                    onChange={(e) => setSessionName(e.target.value)}
                     className="w-full border-b border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Session name"
                   />
-                  <select className="w-full border-b-1 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="FITNESS">Fitness</option>
-                    <option value="SPORTS">Sports</option>
-                    <option value="WELLNESS">Wellness</option>
-                    <option value="OTHER">Other</option>
-                  </select>
+                  <FormControl fullWidth>
+      <InputLabel id="category-label">Category</InputLabel>
+      <Select
+        labelId="category-label"
+        id="category-select"
+        value={category}
+        label="Category"
+        onChange={(e) => setCategory(e.target.value)}
+        
+      >
+        <MenuItem value="FITNESS">Fitness</MenuItem>
+        <MenuItem value="SPORTS">Sports</MenuItem>
+        <MenuItem value="WELLNESS">Wellness</MenuItem>
+        <MenuItem value="OTHER">Other</MenuItem>
+      </Select>
+    </FormControl>
                 </div>
                 <button onClick={handleSaveSesion} className="save-changes-button">Save changes</button>
               </div>

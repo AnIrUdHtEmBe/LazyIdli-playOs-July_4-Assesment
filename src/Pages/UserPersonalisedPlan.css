@@ -190,7 +190,7 @@
   border: 0;
   border-bottom: 1px solid #ddd; 
   border-top: 1px solid #ddd;
-  text-align: center;
+  text-align: left;
   vertical-align: middle;
   padding: 10px 15px;
   background-color:  #f9fafb;
@@ -224,6 +224,10 @@
   align-self: center;
 
 }
+.plans-table .session-name-title{
+  text-align: left;
+}
+
 .plans-table td {
   padding: 0.5rem;
   /* border: 1px solid #e5e7eb; */
@@ -233,6 +237,7 @@
   border: 0;
   /* border-bottom: 1px solid #ddd; */
 }
+
 .table-row:hover {
   background-color: #f9fafb;
 }

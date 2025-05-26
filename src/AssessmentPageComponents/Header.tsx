@@ -14,7 +14,7 @@ function Header() {
     <div className="header-con">
       <div className="header-t">
         <FileText size={35} className="text-gray-800" />
-        <span className="header-titl">Assignment Creation</span>
+        <span className="header-titl">Assesment Creation</span>
       </div>
       <div className="header-tabs-ass">
         <button

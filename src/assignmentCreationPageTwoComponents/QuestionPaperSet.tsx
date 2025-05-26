@@ -54,7 +54,7 @@ function QuestionPaperSet() {
 
       const newQuestions = finalQuestion
         .filter((question) => !existingIds.has(question.questionId))
-        .map((question) => ({
+        .map((question) => ({ 
           questionId: question.questionId,
           isRequired: false,
         }));
@@ -72,6 +72,8 @@ function QuestionPaperSet() {
 
     await submitAssesment(updatedTemplate);
   } catch (error) {
+    // Handle the error appropriately
+    // alert("An error occurred while submitting the assessment.");
     console.error("❌ Error submitting assessment:", error);
   }
 };
@@ -138,7 +140,7 @@ const isQuestionRequired = (id: string) => {
         <div className="qp-header-text">
           <input
             className="qp-title-assesment"
-            placeholder="Assignement Name"
+            placeholder="Assesment Name"
             value={assesmentName}
             onChange={(e) => setAssesmentName(e.target.value)}
           ></input>
