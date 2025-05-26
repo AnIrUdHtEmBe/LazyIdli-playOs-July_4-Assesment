@@ -44,7 +44,7 @@ const QuestionBank = () => {
   const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState([]);
 
-  console.log(selectComponent)
+ console.log(question)
 
   const handleApiCall = async () => {
     console.log("API call initiated");
@@ -54,16 +54,23 @@ const QuestionBank = () => {
         return;
       }
 
+      if(question.filter((q) => q.checked).length === 0){
+        alert("Please select at least one question to save.");
+        return;
+      }
+
       const response = await Question_creation_Api_call(question);
       console.log("API call successful:", response);
+      alert("Questions saved successfully!");
+      setQuestion([])
     } catch (error) {
       console.error("API call failed:", error);
     }
   };
 
   const handleAddQuestion = () => {
-    if (!value.trim() || !type.trim()) {
-      alert("Please enter a question and select a question type.");
+    if (!type.trim()) {
+      alert("Please select a question type.");
       return;
     }
 
