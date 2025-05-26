@@ -119,7 +119,7 @@ const Assessment: React.FC = () => {
             ) : !showTaken ? (
               <table className="assessment-table">
                 <thead>
-                  <tr>
+                  <tr className="assessment-table-header-assessment">
                     <th className="sl-header">Sl.No</th>
                     <th className="assess-header">Assessment</th>
                     <th className="ques-header">No.of Questions</th>
@@ -127,7 +127,7 @@ const Assessment: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {assessmentInstance_expanded_Api_call.map(
+                  {assessmentInstance_expanded_Api_call.length > 0  ?assessmentInstance_expanded_Api_call.map(
                     (assessment, index) => (
                       <tr
                         key={assessment.tempelateId}
@@ -157,7 +157,11 @@ const Assessment: React.FC = () => {
                         </td>
                       </tr>
                     )
-                  )}
+                  ) :  <tr>
+                  <td className="not-attemped-state" colSpan={4}>
+                    No assessments Attempted yet
+                  </td>
+                </tr>}
                 </tbody>
               </table>
             ) : (

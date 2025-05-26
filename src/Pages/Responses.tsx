@@ -70,8 +70,10 @@ function Responses() {
   };
 
   const latestAssessmentInstanceId = [
-    JSON.parse(localStorage.getItem("latestAssessmentTemplate")),
+    JSON.parse(localStorage.getItem("assessmentDetails")).assessmentInstanceId,
   ];
+
+  // console.log(JSON.parse(localStorage.getItem("latestAssessmentTemplate")))
   useEffect(() => {
     const fetchData = async () => {
       try {

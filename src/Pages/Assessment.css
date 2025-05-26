@@ -91,8 +91,6 @@
   table-layout: auto;
   border-collapse: collapse;
   text-align: left;
-  min-height: 700px;
-  /* background: white; */
 }
 
 .sl-header{
@@ -118,10 +116,19 @@
 .assessment-table tr {
   border-bottom: 1px solid #e5e7eb; /* gray-200 */
 }
+
+
+.assessment-table-header-assessment{
+  background-color: black;
+}
+
+
 .assessment-table th,
 .assessment-table td {
   padding: 1rem;
   font-family: 'roboto', sans-serif;
+  height: 40px;
+  max-height: 40px;
 }
 
 .assessment-table td {
@@ -157,6 +164,15 @@
 
 .preview-button:hover {
   color: #4b5563; /* gray-600 */
+}
+
+.not-attemped-state {
+  height: 650px; /* or the height of your table body */
+  text-align: center;
+  vertical-align: middle;
+  color: #6B7280;
+  font-weight: 500;
+  font-size: 1.2rem;
 }
 
 
@@ -332,30 +348,17 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ---------------------------------------------------------------------
    Responsive Adjustments
    --------------------------------------------------------------------- */
 
+
+
+
+
 /* Tablet and below */
+
+/*
 @media (max-width: 768px) {
   .assessment-container {
     padding: 1rem;
@@ -380,6 +383,11 @@
 
   .assessment-table-wrapper {
     overflow-x: auto;
+  }
+
+  .assessment-table tr{
+    height: 40px;
+    max-height: 40px;
   }
 
   .assessment-table th,
@@ -413,7 +421,6 @@
   }
 }
 
-/* Mobile phones */
 @media (max-width: 480px) {
   .assessment-container {
     padding: 0.75rem;
@@ -463,3 +470,4 @@
     font-size: 0.8125rem;
   }
 }
+*/

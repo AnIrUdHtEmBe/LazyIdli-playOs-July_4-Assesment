@@ -104,7 +104,6 @@ function QuestionPaper() {
     });
   };
 
-  console.log("answers", answers);
   const allAnswered = questions
     .filter((q) => q.isRequired)
     .every((q: any, index: any) => {
@@ -115,27 +114,33 @@ function QuestionPaper() {
       return val !== undefined && val !== "";
     });
 
-  console.log(notes);
-  const handleSubmit = () => {
-    const instanceId = JSON.parse(
-      localStorage.getItem("latestAssessmentTemplate")
-    );
-    const ans = questions.map((question: any, index: number) => {
-      let value = answers[index] || "";
-      if (question.answerType === "choose_many" && Array.isArray(value)) {
-        value = value.join(", ");
-      }
-      const noteObj = notes.find((n) => n.questionId === question.questionId);
-      return {
-        questionId: question.questionId,
-        value,
-        notes: noteObj ? noteObj.comment : null,
-      };
-    });
+  const handleSubmit = async () => {
+    try {
+      const instanceId = JSON.parse(
+        localStorage.getItem("assessmentDetails")
+      ).assessmentInstanceId;
+  
+      const ans = questions.map((question: any, index: number) => {
+        let value = answers[index] || "";
+        if (question.answerType === "choose_many" && Array.isArray(value)) {
+          value = value.join(", ");
+        }
+        const noteObj = notes.find((n) => n.questionId === question.questionId);
+        return {
+          questionId: question.questionId,
+          value,
+          notes: noteObj ? noteObj.comment : null,
+        };
+      });
+  
+      await assessmet_submission(instanceId, ans);
 
-    assessmet_submission(instanceId, ans);
-    setSelectComponent("responses");
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("An error occurred while submitting. Please try again.");
+    }
   };
+  
 
   return (
     <div className="dashboard-container">

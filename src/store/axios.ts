@@ -17,6 +17,7 @@ export const useApiCalls = () => {
     throw new Error("useApiCalls must be used within a DataProvider");
   }
   const {
+    setSelectComponent,
     setCustomers_Api_call,
     setAssessments_Api_call,
     setQuestionsForAPICall,
@@ -198,10 +199,13 @@ export const useApiCalls = () => {
           answers: answers,
         }
       );
-      console.log("Assessment submitted successfully:", (await res).status);
-      // console.log("Assessment submitted successfully:", (await res).data);
+      console.log("Assessment submitted successfully:", (await res).status);  
+      setSelectComponent("responses");
+      alert("Assessment submitted successfully!");
+ 
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
+      alert("Error submitting assessment. Please try again.");
     }
   };
   const Question_creation_Api_call = async (questions: object[]) => {
