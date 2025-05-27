@@ -112,7 +112,6 @@ export const useApiCalls = () => {
       );
       console.log("✅ Assessment submitted successfully:", res.data);
     } catch (error) {
-      alert("Please check if you have filled the assesment name");
       console.error("❌ Error submitting assessment:", error);
     }
   };
@@ -150,9 +149,16 @@ export const useApiCalls = () => {
     }
   };
 
-  const createPlanInstance = async (planTemplateId:string , userId:string , plan: Plan_Instance_Api_call) => {
+  const createPlanInstance = async (
+    planTemplateId: string,
+    userId: string,
+    plan: Plan_Instance_Api_call
+  ) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/plan-instances?planTemplateId=${planTemplateId}&userId=${userId}`, plan);
+      const res = await axios.post(
+        `${API_BASE_URL}/plan-instances?planTemplateId=${planTemplateId}&userId=${userId}`,
+        plan
+      );
       console.log("Plan instance created successfully:", res.data);
     } catch (error) {
       console.error("❌ Error creating plan instance:", error);
@@ -184,6 +190,10 @@ export const useApiCalls = () => {
         "latestAssessmentTemplate",
         JSON.stringify((await res).data.assessmentInstanceId)
       );
+      console.log(
+        "Latest Assessment Template ID stored in localStorage:",
+        (await res).data.assessmentInstanceId
+      );
     } catch (error) {
       console.error("❌ Error starting assessment:", error);
     }
@@ -200,15 +210,15 @@ export const useApiCalls = () => {
           answers: answers,
         }
       );
-      console.log("Assessment submitted successfully:", (await res).status);  
+      console.log("Assessment submitted successfully:", (await res).status);
       setSelectComponent("responses");
       alert("Assessment submitted successfully!");
- 
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
       alert("Error submitting assessment. Please try again.");
     }
   };
+
   const Question_creation_Api_call = async (questions: object[]) => {
     try {
       for (const question of questions) {
@@ -270,24 +280,39 @@ export const useApiCalls = () => {
     }
   };
 
-  const patchPlans = async (templateIds: string[]) => {
-    const updatePromises = templateIds.map((templateId) =>
-      axios
+  const patchPlans = async (templateIds: string[], btnValue: number) => {
+    console.time("patchPlans total");
+  
+    const updatePromises = templateIds.map((templateId) => {
+      console.time(`patch-${templateId}`);
+      let newStatus = btnValue === 0 ? "ACTIVE" : "INACTIVE";
+  
+      return axios
         .patch(`${API_BASE_URL}/plan-templates/${templateId}`, {
-          status: "INACTIVE",
+          status: newStatus,
         })
-        .then((res) => res.data)
+        .then((res) => {
+          console.timeEnd(`patch-${templateId}`);
+          return res.data;
+        })
         .catch((err) => {
+          console.timeEnd(`patch-${templateId}`);
           console.error(`Failed to patch ${templateId}`, err);
           return null;
-        })
-    );
-
+        });
+    });
+  
+    console.time("awaiting all patches");
     const results = await Promise.all(updatePromises);
-    getPlansFull(); // Refresh the plans after patching
-    return results;
-  };
+    console.timeEnd("awaiting all patches");
+  
+    console.timeEnd("patchPlans total");
 
+    // console.time("filtering results");
+    return results;
+    // console.timeEnd("filtering results");
+  };
+  
   return {
     customers_fetching,
     assessments_fetching,

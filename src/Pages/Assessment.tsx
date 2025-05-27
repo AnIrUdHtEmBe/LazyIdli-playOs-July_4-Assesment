@@ -32,13 +32,15 @@ const Assessment: React.FC = () => {
 
 
   const handleEditAssessment = () => {
-    setSelectComponent("Q&A");
     localStorage.setItem("assessmentDetails", JSON.stringify(selectedRow));
+    localStorage.setItem("type" , "edit");
+    setSelectComponent("Q&A");
   };
 
   const handleStartAssignment = () => {
-    setSelectComponent("Q&A");
     localStorage.setItem("assessmentDetails", JSON.stringify(selectedRow));
+    localStorage.setItem("type", "start");
+    setSelectComponent("Q&A");
     const user = JSON.parse(localStorage.getItem("user"));
     const userId = user?.userId;
     const templateId = selectedRow?.templateId; // handle both spellings

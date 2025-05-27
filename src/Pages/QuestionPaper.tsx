@@ -20,6 +20,7 @@ function QuestionPaper() {
   // console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
+  console.log(notes);
   const context = useContext(DataContext);
 
   if (!context) {
@@ -74,7 +75,21 @@ function QuestionPaper() {
     ? paperDetails.template.questions
     : [];
 
-  console.log(questions);
+    useEffect(() => {
+      if (
+        paperDetails &&
+        Array.isArray(paperDetails.answers) &&
+        paperDetails.answers.length > 0
+      ) {
+        const notesss: Notes[] = paperDetails.answers.map((item) => ({
+          questionId: item.questionId,
+          comment: item?.notes || "",
+        }));
+        setNotes(notesss);
+      }
+    }, []);
+    
+    
 
   const handleOptionSelect = (questionIndex: number, optionValue: string) => {
     setAnswers((prev) => ({
@@ -114,12 +129,32 @@ function QuestionPaper() {
       return val !== undefined && val !== "";
     });
 
+  console.log(JSON.parse(localStorage.getItem("latestAssessmentTemplate")));
+  console.log(
+    JSON.parse(localStorage.getItem("assessmentDetails")).assessmentInstanceId
+  );
+
+  console.log(localStorage.getItem("type"));
+
+  // console.log(JSON.parse(
+  //   localStorage.getItem("assessmentDetails")
+  // ))
+
   const handleSubmit = async () => {
     try {
-      const instanceId = JSON.parse(
-        localStorage.getItem("assessmentDetails")
-      ).assessmentInstanceId;
-  
+      let instanceId;
+      if (localStorage.getItem("type") === "start") {
+        instanceId = JSON.parse(
+          localStorage.getItem("latestAssessmentTemplate")
+        );
+      } else {
+        instanceId = JSON.parse(
+          localStorage.getItem("assessmentDetails")
+        ).assessmentInstanceId;
+      }
+
+      localStorage.setItem("assessmentInstanceId", JSON.stringify(instanceId));
+
       const ans = questions.map((question: any, index: number) => {
         let value = answers[index] || "";
         if (question.answerType === "choose_many" && Array.isArray(value)) {
@@ -132,15 +167,15 @@ function QuestionPaper() {
           notes: noteObj ? noteObj.comment : null,
         };
       });
-  
-      await assessmet_submission(instanceId, ans);
 
+      await assessmet_submission(instanceId, ans);
     } catch (error) {
       console.error("Submission error:", error);
       alert("An error occurred while submitting. Please try again.");
     }
   };
-  
+
+  console.log(answers);
 
   return (
     <div className="dashboard-container">
@@ -153,7 +188,7 @@ function QuestionPaper() {
           {/* Top Info */}
           <div className="top-info">
             <div className="paper-info">
-              <div className="paper-titless">{paperDetails.name}</div>
+              <div className="paper-titless">{paperDetails.name || paperDetails.template.name}</div>
               <div className="paper-subtitle">
                 For adults, optimizing strength, metabolism, and diet.{" "}
               </div>
@@ -229,7 +264,8 @@ function QuestionPaper() {
                       onClick={() => {
                         setActiveQuestionId(question.questionId);
                         const existingNote = notes.find(
-                          (n) => n.questionId === question.questionId
+                          (n) =>
+                            String(n.questionId) === String(question.questionId)
                         );
                         setComment(existingNote ? existingNote.comment : "");
                         setCommentModal(true);
@@ -238,8 +274,8 @@ function QuestionPaper() {
                       <StickyNote
                         className={`py-1 px-2 rounded-md stick-comment ${
                           notes.find(
-                            (n) => n.questionId === question.questionId
-                          )
+                            (n) => n.questionId === question.questionId && n.comment.trim() !== ""  
+                          ) 
                             ? "has-note"
                             : ""
                         }`}
@@ -352,6 +388,18 @@ function QuestionPaper() {
                         className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
                       />
                     </div>
+                  ) : question.answerType === "number_ws" ? (
+                    <div className="options-container">
+                      <input
+                        type="number"
+                        value={answers[questionIndex] || ""}
+                        onChange={(e) =>
+                          handleOptionSelect(questionIndex, e.target.value)
+                        }
+                        placeholder="Type your answer here..."
+                        className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
+                      />
+                    </div>
                   ) : question.answerType === "date" ? (
                     <div className="options-container">
                       <input
@@ -424,7 +472,9 @@ function QuestionPaper() {
                 onClick={() => {
                   if (activeQuestionId !== null) {
                     setNotes((prev) => [
-                      ...prev.filter((n) => n.questionId !== activeQuestionId),
+                      ...prev.filter(
+                        (n) => String(n.questionId) !== String(activeQuestionId)
+                      ),
                       { questionId: activeQuestionId, comment },
                     ]);
                     setCommentModal(false);

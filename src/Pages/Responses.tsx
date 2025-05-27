@@ -69,11 +69,12 @@ function Responses() {
     setSelectComponent("Q&A");
   };
 
-  const latestAssessmentInstanceId = [
-    JSON.parse(localStorage.getItem("assessmentDetails")).assessmentInstanceId,
+  let latestAssessmentInstanceId = [
+      JSON.parse(localStorage.getItem("assessmentInstanceId")),
   ];
+  
+  console.log(latestAssessmentInstanceId)
 
-  // console.log(JSON.parse(localStorage.getItem("latestAssessmentTemplate")))
   useEffect(() => {
     const fetchData = async () => {
       try {

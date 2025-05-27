@@ -6,6 +6,7 @@ import Header from "../planPageComponent/Header";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 import { useApiCalls } from "../store/axios";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
@@ -26,11 +27,20 @@ function AllPlans() {
   const [previewPlan, setPreviewPlan] = useState<any | null>(null);
   const [showPlanModal, setShowPlanModal] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPlans = async () => {
-      await getPlansFull();
+      try {
+        setLoading(true);
+        await getPlansFull();
+      } catch (error) {
+        console.error("Error in useEffect:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchPlans();
   }, []);
@@ -61,21 +71,34 @@ function AllPlans() {
     }
   }, [selectedSessionIds, filteredPlans.length]);
 
-  const handlePlanDeactivate = () => {
-    if (selectedPlanIds.length === plans_full_api_call.length) {
-      setPlans(plans_full_api_call);
-      const allTemplateIds = plans_full_api_call.map((plan) => plan.templateId);
-      patchPlans(allTemplateIds);
-    } else {
-      const selectedPlans = plans_full_api_call.filter((p) =>
-        selectedPlanIds.includes(p.templateId)
-      );
-      setPlans(selectedPlans);
-      const selectedTemplateIds = selectedPlans.map((plan) => plan.templateId);
-      patchPlans(selectedTemplateIds);
+  const handlePlanStatus = async (btnValue : number) => {
+    setLoading(true);
+    try {
+      let targetPlans = [];
+  
+      if (selectedPlanIds.length === plans_full_api_call.length) {
+        targetPlans = plans_full_api_call;
+      } else {
+        targetPlans = plans_full_api_call.filter((p) =>
+          selectedPlanIds.includes(p.templateId)
+        );
+      }
+  
+      const templateIds = targetPlans.map((plan) => plan.templateId);
+      await patchPlans(templateIds, btnValue);
+      
+      // Optionally wait for updated plans to be fetched
+      await getPlansFull();
+  
+      setPlans(targetPlans); // only update if needed
+      setSelectedPlanIds([]);
+    } catch (error) {
+      console.error("Error in handlePlanDeactivate:", error);
+    } finally {
+      setLoading(false);
     }
-    setSelectedPlanIds([]);
   };
+  
   console.log(plans);
   //  toggeling all plans
   const toggleSelectAllPlans = () => {
@@ -175,9 +198,16 @@ function AllPlans() {
           <div className="section-header">
             <h2 className="section-title">Plans</h2>
             <div className="section-buttons">
+            <button
+                className="activate-button"
+                onClick={() => handlePlanStatus(0)}
+                disabled={selectedPlanIds.length === 0}
+              >
+                Activate
+              </button>
               <button
                 className="icon-button"
-                onClick={handlePlanDeactivate}
+                onClick={()=> handlePlanStatus(1)}
                 disabled={selectedPlanIds.length === 0}
               >
                 De-activate
@@ -212,27 +242,37 @@ function AllPlans() {
                   <th>Preview</th>
                 </tr>
               </thead>
-              <tbody>
-                {plans_full_api_call.map((plan) => (
-                  <tr key={plan.templateId}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedPlanIds.includes(plan.templateId)}
-                        onChange={() => toggleSelectOnePlan(plan.templateId)}
-                      />
-                    </td>
-                    <td>{plan.title}</td>
-                    <td>{plan?.category || ""}</td>
-                    <td>{plan.status}</td>
-                    <td>
-                      <button onClick={() => handlePlanPreviewClick(plan)}>
-                        <EyeIcon />
-                      </button>
+              {loading ? (
+                <tbody>
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center">
+                      <CircularProgress />
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                </tbody>
+              ) : (
+                <tbody>
+                  {plans_full_api_call.map((plan) => (
+                    <tr key={plan.templateId}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedPlanIds.includes(plan.templateId)}
+                          onChange={() => toggleSelectOnePlan(plan.templateId)}
+                        />
+                      </td>
+                      <td>{plan.title}</td>
+                      <td>{plan?.category || ""}</td>
+                      <td>{plan.status}</td>
+                      <td>
+                        <button onClick={() => handlePlanPreviewClick(plan)}>
+                          <EyeIcon />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
             </table>
           </div>
         </div>

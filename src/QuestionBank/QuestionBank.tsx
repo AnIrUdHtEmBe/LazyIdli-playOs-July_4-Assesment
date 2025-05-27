@@ -23,6 +23,7 @@ import { DataContext } from "../store/DataContext";
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
+  { label: "Number Input with Score", value: "number_ws", icon: <NumbersIcon /> },
   {
     label: "Single Choice",
     value: "choose_one",

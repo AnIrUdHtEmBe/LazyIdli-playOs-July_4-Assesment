@@ -17,7 +17,6 @@ import {
 } from "../store/DataContext";
 
 function QuestionPaperSet() {
-
   const { questions, submitAssesment } = useApiCalls();
   useEffect(() => {
     questions();
@@ -40,44 +39,44 @@ function QuestionPaperSet() {
     });
   const [showOptions, setShowoptions] = useState(true);
 
-  const [required, setRequired] = useState(false);
-
   const [selectedQuestion, setSelectedQuestions] = useState<
     Question_Api_call[]
   >([]);
   const [finalQuestion, setFinalQuestion] = useState<Question_Api_call[]>([]);
 
   const formSubmission = async () => {
-  try {
-    const updatedTemplate = (() => {
-      const existingIds = new Set(assesmentTemplate.questions.map((q) => q.questionId));
-
-      const newQuestions = finalQuestion
-        .filter((question) => !existingIds.has(question.questionId))
-        .map((question) => ({ 
-          questionId: question.questionId,
-          isRequired: false,
-        }));
-
-      return {
+    try {
+      // Build the template directly from finalQuestion
+      const updatedTemplate = {
         name: assesmentName,
-        questions: [...assesmentTemplate.questions, ...newQuestions],
+        questions: finalQuestion.map((question) => ({
+          questionId: question.questionId,
+          isRequired: isQuestionRequired(question.questionId),
+        })),
       };
-    })();
-
-    // Optional: Update state if you still want to reflect it in the component
-    setAssesmentTemplate(updatedTemplate);
-
-    console.log("Assessment Template to submit:", updatedTemplate);
-
-    await submitAssesment(updatedTemplate);
-  } catch (error) {
-    // Handle the error appropriately
-    // alert("An error occurred while submitting the assessment.");
-    console.error("❌ Error submitting assessment:", error);
-  }
-};
-
+  
+      setAssesmentTemplate(updatedTemplate);
+  
+      console.log("Assessment Template to submit:", updatedTemplate);
+      if( !updatedTemplate.name || updatedTemplate.questions.length === 0) {
+        window.alert("Please provide a name and add at least one question.");
+        return;
+      }
+  
+      await submitAssesment(updatedTemplate);
+  
+      // Show success alert
+      window.alert("Assessment created successfully!");
+      // Optionally, you can navigate away or reset state here
+  
+    } catch (error) {
+      console.error("❌ Error submitting assessment:", error);
+      // Show failure alert
+      window.alert("Failed to create assessment. Please try again.");
+    }
+  };
+  
+  
 
   const handleSelect = (question: Question_Api_call) => {
     if (selectedQuestion.includes(question)) {
@@ -101,29 +100,29 @@ function QuestionPaperSet() {
     setSelectedQuestions([]);
   };
 
-const toggleRequired = (id: string) => {
-  setAssesmentTemplate((prev) => {
-    const exists = prev.questions.find((q) => q.questionId === id);
+  const toggleRequired = (id: string) => {
+    setAssesmentTemplate((prev) => {
+      const exists = prev.questions.find((q) => q.questionId === id);
 
-    const updatedQuestions = exists
-      ? prev.questions.map((question) =>
-          question.questionId === id
-            ? { ...question, isRequired: !question.isRequired }
-            : question
-        )
-      : [...prev.questions, { questionId: id, isRequired: true }];
+      const updatedQuestions = exists
+        ? prev.questions.map((question) =>
+            question.questionId === id
+              ? { ...question, isRequired: !question.isRequired }
+              : question
+          )
+        : [...prev.questions, { questionId: id, isRequired: true }];
 
-    return {
-      ...prev,
-      questions: updatedQuestions,
-    };
-  });
-};
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
+    });
+  };
 
-const isQuestionRequired = (id: string) => {
-  const found = assesmentTemplate.questions.find(q => q.questionId === id);
-  return found?.isRequired || false;
-};
+  const isQuestionRequired = (id: string) => {
+    const found = assesmentTemplate.questions.find((q) => q.questionId === id);
+    return found?.isRequired || false;
+  };
 
   let questionIdNumber = 1;
   const handleDelete = (question: Question_Api_call) => {
@@ -140,13 +139,15 @@ const isQuestionRequired = (id: string) => {
         <div className="qp-header-text">
           <input
             className="qp-title-assesment"
-            placeholder="Assesment Name"
+            placeholder="Assessment Name"
             value={assesmentName}
             onChange={(e) => setAssesmentName(e.target.value)}
           ></input>
           <p className="qp-description">Description</p>
         </div>
-        <button onClick={formSubmission} className="qp-finish-btn">Finish</button>
+        <button onClick={formSubmission} className="qp-finish-btn">
+          Finish
+        </button>
       </div>
 
       {/* Main Content */}
@@ -221,12 +222,14 @@ const isQuestionRequired = (id: string) => {
                       // onClick={() => toggleRequired(question.questionId)}
                     >
                       <Switch
-          checked={isQuestionRequired(question.questionId)}
-          onChange={() => toggleRequired(question.questionId)}
-        />
-        <span className="qp-required-text">
-          {isQuestionRequired(question.questionId) ? "Required" : "Not-Required"}
-        </span>
+                        checked={isQuestionRequired(question.questionId)}
+                        onChange={() => toggleRequired(question.questionId)}
+                      />
+                      <span className="qp-required-text">
+                        {isQuestionRequired(question.questionId)
+                          ? "Required"
+                          : "Not-Required"}
+                      </span>
                     </button>
                   </div>
 
