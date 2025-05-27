@@ -167,7 +167,9 @@
 
 /* Table container */
 .table-container {
-  overflow-x: auto;
+  max-height: 700px; /* Adjust this value to your desired height */
+  overflow-y:auto;
+  width: 100%; /* Ensure the table takes up the full width */
 }
 .plans-table tbody tr {
   height: 60px; /* Adjust the height value as needed */
@@ -176,6 +178,11 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
+}
+
+.plans-table tbody {
+  overflow-y: auto;
+  max-height: 60vh;
 }
 
 .inp-header{

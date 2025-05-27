@@ -15,7 +15,6 @@ import SessionsPage from "./Pages/SessionsPage";
 import AllSessionsPage from "./Pages/AllSessionsPage";
 import AllPlans from "./planPageComponent/AllPlans";
 import QuestionBank from "./QuestionBank/QuestionBank";
-import UserPersonlaisedPlan from "./Pages/UserPersonalisedPlan"
 import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
 
 function App() {
