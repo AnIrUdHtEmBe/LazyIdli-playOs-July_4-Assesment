@@ -12,7 +12,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { Activity_Api_call, DataContext, Plan_Api_call, Plan_Instance_Api_call, Session_Api_call } from "../store/DataContext";
+import {
+  Activity_Api_call,
+  DataContext,
+  Plan_Api_call,
+  Plan_Instance_Api_call,
+  Session_Api_call,
+} from "../store/DataContext";
 import {
   ArrowRight,
   CirclePlus,
@@ -35,50 +41,162 @@ import { useApiCalls } from "../store/axios";
 
 function SessionPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
-    useContext(DataContext)!;
+  const {
+    selectComponent,
+    sessions_api_call,
+    activities_api_call,
+    setSessions_api_call,
+    
+  } = useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-
-  const {getSessions, getActivities , createPlan, getActivityById , patchSession , getPlanByPlanId , getSessionById , createPlanInstance} = useApiCalls();
+  const [sessionName, setSessionName] = useState("");
+  const [category, setCategory] = useState("");
+  const {
+    getSessions,
+    getActivities,
+    createPlan,
+    getActivityById,
+    patchSession,
+    getPlanByPlanId,
+    getSessionById,
+    createPlanInstance,
+    getPlansFull,
+    getExpandedPlanByPlanId
+  } = useApiCalls();
+  
   useEffect(() => {
     getSessions();
     getActivities();
+    getPlansFull();
   }, []);
+  
 
-  const plans = JSON.parse(localStorage.getItem("selectedPlan"))
-  console.log(plans);
+// // Step 1: Get the existing plan from localStorage
+// const plans = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
 
-  const user = JSON.parse(localStorage.getItem("user"));
+// // Step 1: Ensure sessions is an array
+// const sessions = Array.isArray(plans.sessions) ? plans.sessions : [];
+
+// const uniqueSessionsMap = new Map();
+
+// // Step 2: Remove duplicate sessions based on sessionId
+// sessions.forEach((session) => {
+//   if (session?.sessionId && !uniqueSessionsMap.has(session.sessionId)) {
+//     uniqueSessionsMap.set(session.sessionId, session);
+//   }
+// });
+
+// // Step 3: Create a new plans object with unique sessions
+// const updatedPlans = {
+//   ...plans,
+//   sessions: Array.from(uniqueSessionsMap.values())
+// };
+
+// // Step 4: Save the updated object back to localStorage
+// localStorage.setItem("selectedPlan", JSON.stringify(updatedPlans));
+
+// // Optional: Console check
+// console.log("Updated plan saved to localStorage:", updatedPlans);
+
+function deduplicatePlanInLocalStorage() {
+  const plans = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+
+  const sessions = Array.isArray(plans.sessions) ? plans.sessions : [];
+
+  const uniqueSessionsMap = new Map();
+
+  sessions.forEach((session) => {
+    if (session?.sessionId && !uniqueSessionsMap.has(session.sessionId)) {
+      uniqueSessionsMap.set(session.sessionId, session);
+    }
+  });
+
+  const updatedPlans = {
+    ...plans,
+    sessions: Array.from(uniqueSessionsMap.values())
+  };
+
+  localStorage.setItem("selectedPlan", JSON.stringify(updatedPlans));
+
+  console.log("✅ Deduplicated and saved plan:", updatedPlans);
+}
+
+const plans = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+
+
+
+
+
+async function updateLocalStorage() {
+  const storedPlan = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+
+  if (!storedPlan.templateId) {
+    console.error("❌ No templateId found in localStorage.");
+    return;
+  }
+
+  const ans = [storedPlan.templateId];
+
+  const res = await getExpandedPlanByPlanId(ans);
+
+  if (res && Array.isArray(res) && res.length > 0) {
+    localStorage.setItem("selectedPlan", JSON.stringify(res[0]));
+
+    // Deduplicate
+    deduplicatePlanInLocalStorage();
+
+    // Update state
+    const updatedPlan = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+    setPlan(updatedPlan);
+  } else {
+    console.error("❌ No valid plan data received.");
+  }
+}
+
+ const [plan, setPlan] = useState(null);
+
+  
+//  useEffect(() => {
+//   const storedPlan = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+//   setPlan(storedPlan);
+// }, []);
+
+useEffect(() => {
+  deduplicatePlanInLocalStorage();
+
+  const storedPlan = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+  setPlan(storedPlan);
+}, []);
+
+  
+
+  const handleUpdatePlan = async () => {
+    await updateLocalStorage();
+    
+    const updatedPlan = JSON.parse(localStorage.getItem("selectedPlan"));
+    setPlan(updatedPlan); // This triggers re-render with updated plan
+  };
+
+
+
+  const user = JSON.parse(localStorage.getItem("user") || "error");
   console.log(user);
 
-  
-
-
-
-
-
-
-  
-  console.log(sessions_api_call);
-
-  // const plans = JSON.parse(localStorage.getItem("selectedPlan"))
-  // console.log(plans)
-  // console.log(sessions);
-  // grid and checked cell interaction
   const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
   const [gridAssignments, setGridAssignments] = useState<{
     [key: number]: any;
   }>({});
 
-  const filteredPlans = plans.sessions.filter(
-    (plan) =>
-      plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+ const filteredPlans = plan?.sessions?.filter(
+  (session) =>
+    session.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    session.category?.toLowerCase().includes(searchTerm.toLowerCase())
+) || [];
+
 
   const filterPlansAccordingTo = (category: string) => {
     if (activeFilter === category) {
@@ -91,34 +209,34 @@ function SessionPage() {
   };
 
   const isAllSelected =
-    filteredPlans.length > 0 && selectedIds.length === filteredPlans.length;
+    filteredPlans?.length > 0 && selectedIds.length === filteredPlans.length;
 
   useEffect(() => {
     if (checkboxRef.current) {
       checkboxRef.current.indeterminate =
         selectedIds.length > 0 && selectedIds.length < filteredPlans.length;
     }
-  }, [selectedIds, filteredPlans.length]);
+  }, [selectedIds, filteredPlans?.length]);
 
+  const createANewPlan = () => {
+    const sessionTemplateIds: string[] = [];
+    const scheduledDates: string[] = [];
 
- 
- const createANewPlan = () => {
-  const sessionTemplateIds: string[] = [];
-  const scheduledDates: string[] = [];
+    Object.entries(gridAssignments).forEach(([keyStr, value]) => {
+      const key = parseInt(keyStr, 10);
+      const dateForSession = dayjs(selectedDate).add(key, "day"); // Add days to base date
 
-  Object.entries(gridAssignments).forEach(([key, value]) => {
-    sessionTemplateIds.push(value.sessionId);
-    // Format selectedDate to "YYYY-MM-DD"
-    scheduledDates.push(dayjs(selectedDate).format("YYYY-MM-DD"));
-  });
+      sessionTemplateIds.push(value.sessionId);
+      scheduledDates.push(dateForSession.format("YYYY-MM-DD"));
+    });
 
-  const planToSubmit: Plan_Instance_Api_call = {
-    sessionTemplateIds,
-    scheduledDates
+    const planToSubmit: Plan_Instance_Api_call = {
+      sessionTemplateIds,
+      scheduledDates,
+    };
+
+    createPlanInstance(plans.templateId, user.userId, planToSubmit);
   };
-
-  createPlanInstance(plans.templateId, user.userId, planToSubmit);
-};
 
   const toggleSelectAll = () => {
     // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
@@ -134,20 +252,22 @@ function SessionPage() {
   const handleSaveSesion = async () => {
     try {
       await patchSession(previewSession.sessionId, {
-        title: previewSession.title,
+        title: sessionName == "" ?  previewSession.title : sessionName,
         description: previewSession.description,
-        category: previewSession.category,
-        activityIds: previewSession?.activityIds
+        category: category == "" ? previewSession.category : category,
+        activityIds: previewSession?.activityIds,
       });
       console.log("Session updated successfully");
     } catch (error) {
       console.error("❌ Error updating session:", error);
     }
     getSessions();
-  }
+    setPreviewModalOpen(false);
+    handleUpdatePlan();
+  };
   useEffect(() => {
     console.log("gridAssignments", gridAssignments);
-  }, [gridAssignments])
+  }, [gridAssignments]);
 
   const toggleSelectOne = (id: string) => {
     setSelectedIds((prev) => {
@@ -157,7 +277,9 @@ function SessionPage() {
       console.log(newSelected);
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
-        const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
+        const plan = sessions_api_call.find(
+          (p) => p.sessionId === newSelected[0]
+        );
         console.log(plan);
         setActivePlan(plan || null);
       } else {
@@ -177,7 +299,9 @@ function SessionPage() {
   };
 
   const handleDelete = () => {
-    setSessions_api_call((prev) => prev.filter((p) => !selectedIds.includes(p.sessionId)));
+    setSessions_api_call((prev) =>
+      prev.filter((p) => !selectedIds.includes(p.sessionId))
+    );
     setSelectedIds([]);
   };
 
@@ -188,55 +312,56 @@ function SessionPage() {
   const [previewSession, setPreviewSession] = useState<any>(null);
   const [selectedSession, setSelectedSession] = useState<any>(null);
 
- const handleRemoveWeek = (weekNumberToRemove: number) => {
-  // Step 1: Remove the actual week number
-  setWeeks((prevWeeks) => {
-    const filtered = prevWeeks.filter((w) => w !== weekNumberToRemove);
-    // Also reindex all week numbers after the removed one (to shift them down)
-    const updatedWeeks = filtered.map((w) => (w > weekNumberToRemove ? w - 1 : w));
-    return updatedWeeks;
-  });
-
-  // Step 2: Rebuild gridAssignments
-  setGridAssignments((prevAssignments) => {
-    const updatedAssignments: typeof gridAssignments = {};
-
-    Object.entries(prevAssignments).forEach(([keyStr, value]) => {
-      const key = parseInt(keyStr, 10);
-      const currentWeek = Math.floor(key / 7);
-      const day = key % 7;
-
-      if (currentWeek < weekNumberToRemove) {
-        // Keep entries before the deleted week
-        updatedAssignments[key] = value;
-      } else if (currentWeek > weekNumberToRemove) {
-        // Shift down week index by 1 for entries after the deleted week
-        const newKey = (currentWeek - 1) * 7 + day;
-        updatedAssignments[newKey] = value;
-      }
-      // Entries of the deleted week are skipped
+  const handleRemoveWeek = (weekNumberToRemove: number) => {
+    // Step 1: Remove the actual week number
+    setWeeks((prevWeeks) => {
+      const filtered = prevWeeks.filter((w) => w !== weekNumberToRemove);
+      // Also reindex all week numbers after the removed one (to shift them down)
+      const updatedWeeks = filtered.map((w) =>
+        w > weekNumberToRemove ? w - 1 : w
+      );
+      return updatedWeeks;
     });
 
-    return updatedAssignments;
-  });
-};
+    // Step 2: Rebuild gridAssignments
+    setGridAssignments((prevAssignments) => {
+      const updatedAssignments: typeof gridAssignments = {};
 
-const handleClearWeek = (weekNumberToClear: number) => {
-  setGridAssignments((prevAssignments) => {
-    const updatedAssignments: typeof gridAssignments = { ...prevAssignments };
+      Object.entries(prevAssignments).forEach(([keyStr, value]) => {
+        const key = parseInt(keyStr, 10);
+        const currentWeek = Math.floor(key / 7);
+        const day = key % 7;
 
-    // A week has 7 days, so delete keys from weekNumberToClear * 7 to weekNumberToClear * 7 + 6
-    for (let i = 0; i < 7; i++) {
-      const key = weekNumberToClear * 7 + i;
-      delete updatedAssignments[key];
-    }
+        if (currentWeek < weekNumberToRemove) {
+          // Keep entries before the deleted week
+          updatedAssignments[key] = value;
+        } else if (currentWeek > weekNumberToRemove) {
+          // Shift down week index by 1 for entries after the deleted week
+          const newKey = (currentWeek - 1) * 7 + day;
+          updatedAssignments[newKey] = value;
+        }
+        // Entries of the deleted week are skipped
+      });
 
-    return updatedAssignments;
-  });
-};
+      return updatedAssignments;
+    });
+  };
+
+  const handleClearWeek = (weekNumberToClear: number) => {
+    setGridAssignments((prevAssignments) => {
+      const updatedAssignments: typeof gridAssignments = { ...prevAssignments };
+
+      // A week has 7 days, so delete keys from weekNumberToClear * 7 to weekNumberToClear * 7 + 6
+      for (let i = 0; i < 7; i++) {
+        const key = weekNumberToClear * 7 + i;
+        delete updatedAssignments[key];
+      }
+
+      return updatedAssignments;
+    });
+  };
 
   const handlePreviewClick = (session: Session_Api_call) => {
-    
     setPreviewSession(session);
     setPreviewModalOpen(true);
     setSelectedSession(session);
@@ -244,57 +369,60 @@ const handleClearWeek = (weekNumberToClear: number) => {
     console.log("Previewing session:", session);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     console.log("preview session", previewSession);
   }, [previewSession]);
 
+  function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
+    const selectedValue = e.target.value;
+    console.log("Selected value:", selectedValue);
+    async function fetchActivityDetails() {
+      const activityDetails = await getActivityById(selectedValue);
+      console.log("Activity details:", activityDetails);
+      setPreviewSession((prev: any) => {
+        if (!prev) return prev;
+        const updatedActivities = [...prev.activities];
+        updatedActivities[idx] = activityDetails;
 
-function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
-  const selectedValue = e.target.value;
-  console.log("Selected value:", selectedValue);
-  async function fetchActivityDetails() {
-    const activityDetails = await getActivityById(selectedValue);
-    console.log("Activity details:", activityDetails);
-    setPreviewSession((prev: any) => {
-      if (!prev) return prev;
-      const updatedActivities = [...prev.activities];
-      updatedActivities[idx] = activityDetails;
+        const updatedActivityIds = [...prev.activityIds];
+        updatedActivityIds[idx] = selectedValue;
 
-      const updatedActivityIds = [...prev.activityIds];
-      updatedActivityIds[idx] = selectedValue;
-
-      return {
-        ...prev,
-        activityIds: updatedActivityIds,
-        activities: updatedActivities,
-      };
-    });
-  }
-  fetchActivityDetails();
-  console.log("preview session", previewSession);
-}
-
-useEffect(() => {
-  const call = async () => {
-    const res = await getPlanByPlanId(plans.templateId);
-    console.log("plan", res);
-
-    await Promise.all(
-      res.sessions.map(async (session) => {
-        const updateSession = await getSessionById(session.sessionId);
-        gridAssignments[session.scheduledDay] = {
-          sessionId: session.sessionId,
-          title: updateSession.title,
-          description: updateSession.description,
-          category: updateSession.category,
-          activityIds: updateSession.activityIds,
+        return {
+          ...prev,
+          activityIds: updatedActivityIds,
+          activities: updatedActivities,
         };
-      })
-    );
-  };
+      });
+    }
+    fetchActivityDetails();
+    console.log("preview session", previewSession);
+  }
 
-  call(); 
-}, []); 
+  useEffect(() => {
+    const call = async () => {
+      const res = await getPlanByPlanId(plans.templateId);
+      console.log("plan", res);
+
+      const updatedAssignments = {}; // <- build a new object
+
+      await Promise.all(
+        res.sessions.map(async (session) => {
+          const updateSession = await getSessionById(session.sessionId);
+          updatedAssignments[session.scheduledDay] = {
+            sessionId: session.sessionId,
+            title: updateSession.title,
+            description: updateSession.description,
+            category: updateSession.category,
+            activityIds: updateSession.activityIds,
+          };
+        })
+      );
+
+      setGridAssignments(updatedAssignments); // <- trigger React update
+    };
+
+    call();
+  }, []);
 
   return (
     <div className="responses-root">
@@ -383,7 +511,7 @@ useEffect(() => {
               </thead>
               <tbody>
                 {filteredPlans.map((plan, idx) => (
-                  <tr key={plan.sessionId} className="table-row">
+                  <tr key={idx} className="table-row">
                     <td>
                       <input
                         type="checkbox"
@@ -460,7 +588,7 @@ useEffect(() => {
                 <h2>My Personalised Plan</h2>
               </div>
               <div className="calendar-grid">
-                {weeks.map(( weekIndex) => (
+                {weeks.map((weekIndex) => (
                   <React.Fragment key={weekIndex}>
                     <div className="week Label flex justify-between items-center">
                       <span>Week {weekIndex + 1}</span>
@@ -501,7 +629,9 @@ useEffect(() => {
                     >
                       <MinusCircle size={20} className="text-red-500" />
                     </button>
-                    <button onClick={() => handleClearWeek(weekIndex)}>Clear Week</button>
+                    <button onClick={() => handleClearWeek(weekIndex)}>
+                      Clear Week
+                    </button>
                   </React.Fragment>
                 ))}
               </div>
@@ -522,7 +652,7 @@ useEffect(() => {
                 <span className="text-blue">Add Week</span>
               </button>
               <button
-                onClick={ createANewPlan }
+                onClick={createANewPlan}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
               >
                 <span>Confirm</span>
@@ -554,18 +684,36 @@ useEffect(() => {
                 <div className="flex gap-6 ">
                   <input
                     type="text"
-                    
+                    value={sessionName}
+                    onChange={(e) => setSessionName(e.target.value)}
                     className="w-full border-b border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Session name"
                   />
-                  <select className="w-full border-b-1 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="FITNESS">Fitness</option>
-                    <option value="SPORTS">Sports</option>
-                    <option value="WELLNESS">Wellness</option>
-                    <option value="OTHER">Other</option>
-                  </select>
+                  <FormControl fullWidth>
+                    <InputLabel id="category-label">Category</InputLabel>
+                    <Select
+                      labelId="category-label"
+                      id="category-select"
+                      value={category}
+                      label="Category"
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      <MenuItem value="FITNESS">Fitness</MenuItem>
+
+                      <MenuItem value="SPORTS">Sports</MenuItem>
+
+                      <MenuItem value="WELLNESS">Wellness</MenuItem>
+
+                      <MenuItem value="OTHER">Other</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
-                <button onClick={handleSaveSesion} className="save-changes-button">Save changes</button>
+                <button
+                  onClick={handleSaveSesion}
+                  className="save-changes-button"
+                >
+                  Save changes
+                </button>
               </div>
 
               {/* Activity Table */}
@@ -596,18 +744,22 @@ useEffect(() => {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.activityId|| ""}
+                                value={activity.activityId || ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
-
                                   setActivityInThePreviewSession(e, idx);
                                 }}
                               >
-                                {activities_api_call.map((item: Activity_Api_call, index) => (
-                                  <MenuItem key={index} value={item.activityId}>
-                                    {item.name}
-                                  </MenuItem>
-                                ))}
+                                {activities_api_call.map(
+                                  (item: Activity_Api_call, index) => (
+                                    <MenuItem
+                                      key={index}
+                                      value={item.activityId}
+                                    >
+                                      {item.name}
+                                    </MenuItem>
+                                  )
+                                )}
                               </Select>
                             </FormControl>
                           </td>
@@ -620,23 +772,23 @@ useEffect(() => {
                           <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                             <button
                               onClick={() => {
-                                
                                 setPreviewSession((prev: any) => {
-                                  const updatedActivities = prev.activities.filter(
-                                    (_: any, i: number) => i !== idx
-                                  );
+                                  const updatedActivities =
+                                    prev.activities.filter(
+                                      (_: any, i: number) => i !== idx
+                                    );
 
-                                  const updatedActivityIds = prev.activityIds.filter(
-                                    (_: any, i: number) => i !== idx
-                                  );
+                                  const updatedActivityIds =
+                                    prev.activityIds.filter(
+                                      (_: any, i: number) => i !== idx
+                                    );
 
                                   return {
                                     ...prev,
                                     activities: updatedActivities,
                                     activityIds: updatedActivityIds,
                                   };
-                                })
-
+                                });
                               }}
                             >
                               <LucideCircleMinus
@@ -654,19 +806,27 @@ useEffect(() => {
 
               {/* Footer */}
               <div className="flex pt-4 ">
-                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
+                <button
+                  className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
                   onClick={() => {
                     setPreviewSession((prev: any) => {
-                    const updatedActivities = [...(prev.activities || []), {}];
-                    const updatedActivityIds = [...(prev.activityIds || []), null]; // or "" or a default value
+                      const updatedActivities = [
+                        ...(prev.activities || []),
+                        {},
+                      ];
+                      const updatedActivityIds = [
+                        ...(prev.activityIds || []),
+                        null,
+                      ]; // or "" or a default value
 
-                    return {
-                      ...prev,
-                      activities: updatedActivities,
-                      activityIds: updatedActivityIds,
-                    }
+                      return {
+                        ...prev,
+                        activities: updatedActivities,
+                        activityIds: updatedActivityIds,
+                      };
                     });
-                  }}>
+                  }}
+                >
                   <Plus size={20} />
                   Add Activity
                 </button>

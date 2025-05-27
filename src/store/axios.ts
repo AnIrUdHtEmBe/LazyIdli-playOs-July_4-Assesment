@@ -44,7 +44,7 @@ export const useApiCalls = () => {
         `${API_BASE_URL}/session-templates/${sessionId}`,
         session
       );
-      console.log("Session updated successfully:", res.data);
+      console.log("Session updated successfully:      hi", res.data);
     } catch (error) {
       console.error("❌ Error updating session:", error);
     }
@@ -258,12 +258,23 @@ export const useApiCalls = () => {
 
   const getPlansFull = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/plan-templates/full`);
+      const res = await axios.get(`${API_BASE_URL}/plan-templates/All`);
       const data = res.data;
       setPlans_full_api_call(data);
       console.log("✅ Plans fetched successfully:", data);
     } catch (error) {
       console.error("❌ Error fetching plans:", error);
+    }
+  };
+
+  const getExpandedPlanByPlanId = async (planIds: string[]) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/plan-templates/full` , planIds);
+      const data = res.data;
+      console.log("✅ Plan fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching plan:", error);
     }
   };
 
@@ -334,5 +345,6 @@ export const useApiCalls = () => {
     getPlanByPlanId,
     getSessionById,
     createPlanInstance,
+    getExpandedPlanByPlanId
   };
 };
