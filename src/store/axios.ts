@@ -131,6 +131,10 @@ export const useApiCalls = () => {
     assessmentInstanceIdArray: string[]
   ) => {
     try {
+
+      if(!assessmentInstanceIdArray || assessmentInstanceIdArray.length === 0) {
+        setAssessmentInstance_expanded_Api_call([]);
+      }
       const requests = assessmentInstanceIdArray.map((id) =>
         axios.get(`${API_BASE_URL}/asssessmentinstances/${id}/expanded`)
       );

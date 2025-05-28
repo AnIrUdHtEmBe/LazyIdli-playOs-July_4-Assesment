@@ -53,6 +53,7 @@ const Assessment: React.FC = () => {
   };
 
   console.log(selectedRow);
+  console.log( JSON.parse(localStorage.getItem("user")).assessments);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,7 +63,7 @@ const Assessment: React.FC = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const assessmentInstanceIdArray = user.assessments;
 
-        if (assessmentInstanceIdArray.length > 0) {
+        if (assessmentInstanceIdArray.length >= 0) {
           await assessments_intsnce_fetching(assessmentInstanceIdArray);
         }
       } catch (error) {

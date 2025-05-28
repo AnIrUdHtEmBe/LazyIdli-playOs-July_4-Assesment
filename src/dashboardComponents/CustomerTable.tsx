@@ -25,16 +25,24 @@ const actions = ["Go to profile", "See plan", "Take Assessment"];
 
 interface ActionsContainerProps {
   takeAssessment: () => void;
+  seePlan: () => void;
 }
 
-const ActionsContainer = ({ takeAssessment }: ActionsContainerProps) => {
+const ActionsContainer = ({
+  takeAssessment,
+  seePlan,
+}: ActionsContainerProps) => {
   const [value, setValue] = useState(actions[0]);
 
   const changeHandler = (event: SelectChangeEvent) => {
-    if (event.target.value === actions[2]) {
+    const selectedAction = event.target.value;
+    setValue(selectedAction);
+
+    if (selectedAction === "Take Assessment") {
       takeAssessment();
+    } else if (selectedAction === "See plan") {
+      seePlan();
     }
-    setValue(event.target.value);
   };
 
   return (
@@ -90,6 +98,11 @@ const CustomerTable = () => {
     setSelectComponent("assessment");
   };
 
+  const seePlanHandler = (customer: Customers_Api_call) => {
+    localStorage.setItem("user", JSON.stringify(customer));
+    // setSelectComponent("seePlan"); 
+  };
+
   const dateChangeHandler = (date: any) => {
     const dateObj = new Date(date);
     return dateObj.toLocaleDateString("en-IN", {
@@ -116,9 +129,11 @@ const CustomerTable = () => {
         renderCell: (params: any) => (
           <ActionsContainer
             takeAssessment={() => assessmentHandler(params.row.customerData)}
+            seePlan={() => seePlanHandler(params.row.customerData)}
           />
         ),
-      },
+      }
+      
     ];
   };
 
@@ -176,23 +191,21 @@ const CustomerTable = () => {
     setFilteredRows(filtered);
   }, [term, rows]);
 
-
   useEffect(() => {
     if (!selectedDate) {
       setFilteredRows(rows);
       return;
     }
-  
+
     const targetDate = new Date(selectedDate).toDateString();
-  
+
     const filtered = rows.filter((row) => {
       const rowDate = new Date(row.joinedOn).toDateString();
       return rowDate === targetDate;
     });
-  
+
     setFilteredRows(filtered);
   }, [selectedDate, rows]);
-  
 
   const handleExport = () => {
     const csvContent =
@@ -217,14 +230,14 @@ const CustomerTable = () => {
   if (isLoading) {
     return (
       <div className="loading-state">
-        <CircularProgress style={{ color: "#1976d2" }} /> {/* Default MUI blue */}
+        <CircularProgress style={{ color: "#1976d2" }} />{" "}
+        {/* Default MUI blue */}
       </div>
     );
   }
   const neverAssessedCount = rows.filter(
     (row) => !row.lastAssessedOn || row.lastAssessedOn === "-"
   ).length;
-  
 
   return (
     <div className="customer-dashboard-outlay-container">
