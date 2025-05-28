@@ -324,6 +324,20 @@ export const useApiCalls = () => {
     return results;
     // console.timeEnd("filtering results");
   };
+
+
+  const getScore = async (questionId: string, userId: string, value: number) => {
+    const data = { questionId, userId, value };
+    try {
+      const res = await axios.post(`${API_BASE_URL}/score`, data);
+      // console.log("✅ Score fetched successfully:", res.data);
+      return res.data;
+    } catch (error) {
+      console.error("❌ Error fetching score:", error);
+      return null; // make sure to return something on error
+    }
+  };
+  
   
   return {
     customers_fetching,
@@ -346,6 +360,7 @@ export const useApiCalls = () => {
     getPlanByPlanId,
     getSessionById,
     createPlanInstance,
-    getExpandedPlanByPlanId
+    getExpandedPlanByPlanId,
+    getScore
   };
 };

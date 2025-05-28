@@ -17,10 +17,10 @@ function QuestionPaper() {
 
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user") || "{}");
-  // console.log(userDetail);
+  console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
-  console.log(notes);
+  // console.log(notes);
   const context = useContext(DataContext);
 
   if (!context) {
@@ -28,7 +28,7 @@ function QuestionPaper() {
   }
 
   const { setSelectComponent } = context;
-  const { assessmet_submission } = useApiCalls();
+  const { assessmet_submission, getScore } = useApiCalls();
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
@@ -75,21 +75,21 @@ function QuestionPaper() {
     ? paperDetails.template.questions
     : [];
 
-    useEffect(() => {
-      if (
-        paperDetails &&
-        Array.isArray(paperDetails.answers) &&
-        paperDetails.answers.length > 0
-      ) {
-        const notesss: Notes[] = paperDetails.answers.map((item) => ({
-          questionId: item.questionId,
-          comment: item?.notes || "",
-        }));
-        setNotes(notesss);
-      }
-    }, []);
-    
-    
+  console.log(questions);
+
+  useEffect(() => {
+    if (
+      paperDetails &&
+      Array.isArray(paperDetails.answers) &&
+      paperDetails.answers.length > 0
+    ) {
+      const notesss: Notes[] = paperDetails.answers.map((item) => ({
+        questionId: item.questionId,
+        comment: item?.notes || "",
+      }));
+      setNotes(notesss);
+    }
+  }, []);
 
   const handleOptionSelect = (questionIndex: number, optionValue: string) => {
     setAnswers((prev) => ({
@@ -155,18 +155,31 @@ function QuestionPaper() {
 
       localStorage.setItem("assessmentInstanceId", JSON.stringify(instanceId));
 
-      const ans = questions.map((question: any, index: number) => {
-        let value = answers[index] || "";
-        if (question.answerType === "choose_many" && Array.isArray(value)) {
-          value = value.join(", ");
-        }
-        const noteObj = notes.find((n) => n.questionId === question.questionId);
-        return {
-          questionId: question.questionId,
-          value,
-          notes: noteObj ? noteObj.comment : null,
-        };
-      });
+      const ans = await Promise.all(
+        questions.map(async (question: any, index: number) => {
+          let value = answers[index] || "";
+          if (question.answerType === "choose_many" && Array.isArray(value)) {
+            value = value.join(", ");
+          }
+          if (question.answerType === "number_ws") {
+            const value_score = await getScore(
+              question.questionId,
+              userDetail.userId,
+              Number(value)
+            );
+            console.log("✅ Extracted score:", value_score);
+            value = question.scoreZones[value_score?.scoreLevel];
+          }
+          const noteObj = notes.find(
+            (n) => n.questionId === question.questionId
+          );
+          return {
+            questionId: question.questionId,
+            value,
+            notes: noteObj ? noteObj.comment : null,
+          };
+        })
+      );
 
       await assessmet_submission(instanceId, ans);
     } catch (error) {
@@ -188,7 +201,9 @@ function QuestionPaper() {
           {/* Top Info */}
           <div className="top-info">
             <div className="paper-info">
-              <div className="paper-titless">{paperDetails.name || paperDetails.template.name}</div>
+              <div className="paper-titless">
+                {paperDetails.name || paperDetails.template.name}
+              </div>
               <div className="paper-subtitle">
                 For adults, optimizing strength, metabolism, and diet.{" "}
               </div>
@@ -274,8 +289,10 @@ function QuestionPaper() {
                       <StickyNote
                         className={`py-1 px-2 rounded-md stick-comment ${
                           notes.find(
-                            (n) => n.questionId === question.questionId && n.comment.trim() !== ""  
-                          ) 
+                            (n) =>
+                              n.questionId === question.questionId &&
+                              n.comment.trim() !== ""
+                          )
                             ? "has-note"
                             : ""
                         }`}
