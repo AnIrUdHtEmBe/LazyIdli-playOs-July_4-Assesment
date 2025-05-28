@@ -160,6 +160,7 @@ export const useApiCalls = () => {
         plan
       );
       console.log("Plan instance created successfully:", res.data);
+      alert("Plan instance created successfully! You can now view it in the Plans section.");
     } catch (error) {
       console.error("❌ Error creating plan instance:", error);
     }
