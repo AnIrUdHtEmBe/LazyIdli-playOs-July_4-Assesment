@@ -121,10 +121,11 @@
 .question-items .question-box {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px;
+  gap: 2px;
+  padding: 8px 0 16px 0;
   border-radius: 8px;
   cursor: pointer;
+
 }
 
 .question-row {
@@ -138,8 +139,9 @@
 }
 
 .question-row .question-text {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 400;
+
 }
 
 .question-box .question-answer {

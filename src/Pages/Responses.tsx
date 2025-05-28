@@ -37,7 +37,6 @@ function Responses() {
   const [tempComment, setTempComment] = useState<string>(summaryNote);
 
   const [plann, setPlan] = useState<any>(null);
-  console.log(plann);
 
   const {
     plans_full_api_call,
@@ -58,16 +57,18 @@ function Responses() {
   };
 
   const handleStartAssignment = () => {
-    const templateId = paperDetails.templateId;
-    const userId = userDetail.userId;
-    if (userId && templateId) {
-      starting_assessment_by_user(userId, templateId);
-    } else {
-      console.error("User ID or Template ID missing", { userId, templateId });
-    }
-
+    // const templateId = paperDetails.templateId;
+    // const userId = userDetail.userId;
+    // if (userId && templateId) {
+    //   starting_assessment_by_user(userId, templateId);
+    // } else {
+    //   console.error("User ID or Template ID missing", { userId, templateId });
+    // }
+    // localStorage.setItem('type' , 'start')
     setSelectComponent("Q&A");
   };
+
+
 
   let latestAssessmentInstanceId = [
       JSON.parse(localStorage.getItem("assessmentInstanceId")),
@@ -126,7 +127,7 @@ function Responses() {
           {/* Top Info */}
           <div className="top">
             <div>
-              <div className="paper-title">{paperDetails.name}</div>
+              <div className="paper-title">{paperDetails.name || paperDetails.template.name}</div>
               <div className="paper-subtitle">
                 For adults, optimizing strength, metabolism, and diet.
               </div>
@@ -162,10 +163,10 @@ function Responses() {
                         </span>
                       </div>
                       <div className="question-answer">
-                        ans-{" "}
+                        Ans-{" "}
                         <span className="font-normal">
                           {" "}
-                          {q.value ? q.value : "null"}
+                         <span className="font-semibold">{q.value ? q.value : "null"}</span>  and you are in <span className="font-semibold">{q.scoreZone}</span>  category
                         </span>{" "}
                       </div>
                     </div>

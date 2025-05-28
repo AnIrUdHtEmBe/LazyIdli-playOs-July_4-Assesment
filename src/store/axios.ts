@@ -209,13 +209,16 @@ export const useApiCalls = () => {
     answers: object[]
   ) => {
     try {
-      const res = axios.patch(
+
+      console.log(answers);
+      const res = await axios.patch(
         `${API_BASE_URL}/asssessmentinstances/${instanceId}/submit`,
         {
           answers: answers,
         }
       );
       console.log("Assessment submitted successfully:", (await res).status);
+    
       setSelectComponent("responses");
       alert("Assessment submitted successfully!");
     } catch (error) {
@@ -334,11 +337,10 @@ export const useApiCalls = () => {
     const data = { questionId, userId, value };
     try {
       const res = await axios.post(`${API_BASE_URL}/score`, data);
-      // console.log("✅ Score fetched successfully:", res.data);
       return res.data;
     } catch (error) {
       console.error("❌ Error fetching score:", error);
-      return null; // make sure to return something on error
+      return null; 
     }
   };
   

@@ -27,7 +27,7 @@ function QuestionPaper() {
     return <div>Loading...</div>;
   }
 
-  const { setSelectComponent } = context;
+  // const { setSelectComponent } = context;
   const { assessmet_submission, getScore } = useApiCalls();
 
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
@@ -35,6 +35,13 @@ function QuestionPaper() {
   const [commentModal, setCommentModal] = useState(false);
   const [comment, setComment] = useState<string>("");
   const [activeQuestionId, setActiveQuestionId] = useState<number | null>(null);
+
+  const [selectedScoreZones, setSelectedScoreZones] = useState<
+    Record<number, string>
+  >({});
+  const [scoreValues, setScoreValues] = useState<Record<number, number | null>>(
+    {}
+  );
 
   useEffect(() => {
     if (!paperDetails) return;
@@ -158,9 +165,14 @@ function QuestionPaper() {
       const ans = await Promise.all(
         questions.map(async (question: any, index: number) => {
           let value = answers[index] || "";
+          let scoreZone = null;
+          let scoreValue = null;
+          let scoreLevel = null;
+
           if (question.answerType === "choose_many" && Array.isArray(value)) {
             value = value.join(", ");
           }
+
           if (question.answerType === "number_ws") {
             const value_score = await getScore(
               question.questionId,
@@ -168,23 +180,67 @@ function QuestionPaper() {
               Number(value)
             );
             console.log("✅ Extracted score:", value_score);
-            value = question.scoreZones[value_score?.scoreLevel];
+            scoreZone = value_score?.scoreZone ?? null;
+            scoreValue = value_score?.scoreValue ?? null;
+            scoreLevel = value_score?.scoreLevel ?? null;
           }
+
           const noteObj = notes.find(
             (n) => n.questionId === question.questionId
           );
+
           return {
             questionId: question.questionId,
             value,
+            scoreLevel,
+            scoreValue,
+            scoreZone,
             notes: noteObj ? noteObj.comment : null,
           };
         })
       );
 
+      console.log("Submitting answers:", ans);
       await assessmet_submission(instanceId, ans);
     } catch (error) {
       console.error("Submission error:", error);
       alert("An error occurred while submitting. Please try again.");
+    }
+  };
+
+  const calculateScore = async (questionId: string, questionIndex: number) => {
+    const val = answers[questionIndex];
+    if (val === "" || val === undefined) {
+      alert("Please provide an answer before calculating the score.");
+      return;
+    }
+    try {
+      const value_score = await getScore(
+        questionId,
+        userDetail.userId,
+        Number(val)
+      );
+
+      console.log("✅ Extracted score:", value_score);
+      const scoreZone =
+        questions[questionIndex].scoreZones[value_score.scoreLevel];
+      console.log("Score Zone:", scoreZone);
+
+      const scoreValue = value_score.scoreValue;
+      console.log("Score Value:", scoreValue);
+
+      setSelectedScoreZones((prev) => ({
+        ...prev,
+        [questionIndex]: scoreZone,
+      }));
+
+      setScoreValues((prev) => ({
+        ...prev,
+        [questionIndex]: scoreValue,
+      }));
+    } catch (error) {
+      console.error("Error calculating score:", error);
+      alert("An error occurred while calculating the score. Please try again.");
     }
   };
 
@@ -406,16 +462,86 @@ function QuestionPaper() {
                       />
                     </div>
                   ) : question.answerType === "number_ws" ? (
-                    <div className="options-container">
-                      <input
-                        type="number"
-                        value={answers[questionIndex] || ""}
-                        onChange={(e) =>
-                          handleOptionSelect(questionIndex, e.target.value)
-                        }
-                        placeholder="Type your answer here..."
-                        className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
-                      />
+                    <div className="options-container space-y-4">
+                      <div className="options-container-top flex gap-4 items-center">
+                        <input
+                          type="number"
+                          value={answers[questionIndex] || ""}
+                          onChange={(e) =>
+                            handleOptionSelect(questionIndex, e.target.value)
+                          }
+                          placeholder="Type your answer here..."
+                          className="text-input border-2 border-gray-300 rounded-md p-2 w-full"
+                        />
+                        <button
+                          onClick={() =>
+                            calculateScore(question.questionId, questionIndex)
+                          }
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md transition duration-200"
+                        >
+                          Score
+                        </button>
+                      </div>
+
+                      <div className="options-container-bottom overflow-x-auto">
+                        <table className="min-w-full border border-gray-300 rounded-md shadow-sm">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              <th className="text-left px-4 py-2 border-b border-gray-300 text-sm font-semibold text-gray-700 flex items-center justify-between">
+                                <span>Score Zone</span>
+                                <span className="ml-2 font-normal font-semibold text-gray-900">
+                                  {selectedScoreZones[questionIndex]
+                                    ? `Score: ${
+                                        scoreValues[questionIndex] || ""
+                                      } `
+                                    : ""}
+                                </span>
+                              </th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {question.scoreZones.map(
+                              (zone: string, index: number) => {
+                                const isSelected =
+                                  selectedScoreZones[questionIndex] === zone;
+                                return (
+                                  <tr
+                                    key={index}
+                                    className={`even:bg-gray-50 ${
+                                      isSelected ? "font-semibold" : ""
+                                    }`}
+                                  >
+                                    <td className="px-4 py-2 border-b text-sm text-gray-600 flex items-center gap-2">
+                                      {/* Fixed width placeholder for tick icon */}
+                                      <span className="w-5 flex justify-center">
+                                        {isSelected && (
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-green-600"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            strokeWidth={2}
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              d="M5 13l4 4L19 7"
+                                            />
+                                          </svg>
+                                        )}
+                                      </span>
+                                      {/* Text content */}
+                                      <span>{zone}</span>
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   ) : question.answerType === "date" ? (
                     <div className="options-container">
