@@ -70,9 +70,11 @@ export const useApiCalls = () => {
         `${API_BASE_URL}/session-templates/${sessionId}`,
         session
       );
-      console.log("Session updated successfully:      hi", res.data);
+      console.log("Session updated successfully:", res.data);
+      alert("Session updated successfully!");
     } catch (error) {
       console.error("❌ Error updating session:", error);
+      alert("Error updating session");
     }
   };
   const getPlanByPlanId = async (planId: string) => {
@@ -102,8 +104,12 @@ export const useApiCalls = () => {
         session
       );
       console.log("Session created successfully:", res.data);
+      alert(
+        "Session created successfully! You can now view it in the Sessions section."
+      );
     } catch (error) {
       console.error("❌ Error creating session:", error);
+      alert("Error creating session. Please fill all details.");
     }
   };
 
@@ -217,8 +223,12 @@ export const useApiCalls = () => {
     try {
       const res = await axios.post(`${API_BASE_URL}/plan-templates`, plan);
       console.log("Plan created successfully:", res.data);
+      alert(
+        "Plan created successfully! You can now view it in the All Plans section."
+      );
     } catch (error) {
       console.error("❌ Error creating plan:", error);
+      alert("Error creating plan");
     }
   };
 
