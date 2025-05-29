@@ -144,8 +144,10 @@ export const useApiCalls = () => {
     assessmentInstanceIdArray: string[]
   ) => {
     try {
-
-      if(!assessmentInstanceIdArray || assessmentInstanceIdArray.length === 0) {
+      if (
+        !assessmentInstanceIdArray ||
+        assessmentInstanceIdArray.length === 0
+      ) {
         setAssessmentInstance_expanded_Api_call([]);
       }
       const requests = assessmentInstanceIdArray.map((id) =>
@@ -177,7 +179,9 @@ export const useApiCalls = () => {
         plan
       );
       console.log("Plan instance created successfully:", res.data);
-      alert("Plan instance created successfully! You can now view it in the Plans section.");
+      alert(
+        "Plan instance created successfully! You can now view it in the Plans section."
+      );
     } catch (error) {
       console.error("❌ Error creating plan instance:", error);
     }
@@ -222,7 +226,6 @@ export const useApiCalls = () => {
     answers: object[]
   ) => {
     try {
-
       console.log(answers);
       const res = await axios.patch(
         `${API_BASE_URL}/asssessmentinstances/${instanceId}/submit`,
@@ -231,7 +234,7 @@ export const useApiCalls = () => {
         }
       );
       console.log("Assessment submitted successfully:", (await res).status);
-    
+
       setSelectComponent("responses");
       alert("Assessment submitted successfully!");
     } catch (error) {
@@ -290,7 +293,10 @@ export const useApiCalls = () => {
 
   const getExpandedPlanByPlanId = async (planIds: string[]) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/plan-templates/full` , planIds);
+      const res = await axios.post(
+        `${API_BASE_URL}/plan-templates/full`,
+        planIds
+      );
       const data = res.data;
       console.log("✅ Plan fetched successfully:", data);
       return data;
@@ -327,11 +333,11 @@ export const useApiCalls = () => {
 
   const patchPlans = async (templateIds: string[], btnValue: number) => {
     console.time("patchPlans total");
-  
+
     const updatePromises = templateIds.map((templateId) => {
       console.time(`patch-${templateId}`);
       let newStatus = btnValue === 0 ? "ACTIVE" : "INACTIVE";
-  
+
       return axios
         .patch(`${API_BASE_URL}/plan-templates/${templateId}`, {
           status: newStatus,
@@ -346,11 +352,11 @@ export const useApiCalls = () => {
           return null;
         });
     });
-  
+
     console.time("awaiting all patches");
     const results = await Promise.all(updatePromises);
     console.timeEnd("awaiting all patches");
-  
+
     console.timeEnd("patchPlans total");
 
     // console.time("filtering results");
@@ -358,19 +364,42 @@ export const useApiCalls = () => {
     // console.timeEnd("filtering results");
   };
 
+  const OptimisedPatchPlan = async (
+    templateIds: string[],
+    btnValue: number
+  ) => {
+    const status = btnValue === 0 ? "ACTIVE" : "INACTIVE";
+    const payload = {
+      templateIds,
+      updates: templateIds.map(() => ({
+        status,
+      })),
+    };
 
-  const getScore = async (questionId: string, userId: string, value: number) => {
+    try{
+      const response = await axios.patch(`${API_BASE_URL}/plan-templates/batch`, payload);
+      console.log("✅ Patch successful:", response.data);
+      return response.data;
+    }catch(error){
+      console.error("❌ Error in OptimisedPatchPlan:", error);
+    }
+  };
+
+  const getScore = async (
+    questionId: string,
+    userId: string,
+    value: number
+  ) => {
     const data = { questionId, userId, value };
     try {
       const res = await axios.post(`${API_BASE_URL}/score`, data);
       return res.data;
     } catch (error) {
       console.error("❌ Error fetching score:", error);
-      return null; 
+      return null;
     }
   };
-  
-  
+
   return {
     customers_fetching,
     assessments_fetching,
@@ -395,6 +424,7 @@ export const useApiCalls = () => {
     getExpandedPlanByPlanId,
     getScore,
     getPlansForInterval,
-    updateSessionInPlanInstance
+    updateSessionInPlanInstance,
+    OptimisedPatchPlan
   };
 };

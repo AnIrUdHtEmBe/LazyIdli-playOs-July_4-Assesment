@@ -11,7 +11,7 @@ import { CircularProgress } from "@mui/material";
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
     useContext(DataContext)!;
-  const { getPlansFull, patchPlans, getSessions } = useApiCalls();
+  const { getPlansFull, patchPlans, getSessions , OptimisedPatchPlan } = useApiCalls();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const planCheckboxRef = useRef<HTMLInputElement>(null);
@@ -85,7 +85,7 @@ function AllPlans() {
       }
   
       const templateIds = targetPlans.map((plan) => plan.templateId);
-      await patchPlans(templateIds, btnValue);
+      await OptimisedPatchPlan(templateIds, btnValue);
       
       // Optionally wait for updated plans to be fetched
       await getPlansFull();
