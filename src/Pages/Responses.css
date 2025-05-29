@@ -161,18 +161,69 @@
   flex-direction: column;
 }
 
-.summary-header {
+.summary-header-wrapper{
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #d1d5db;
+}
+.summary-header {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   padding-bottom: 4%;
 }
 
+
 .summary-title {
   font-weight: 700;
   font-size: 1.50rem;
-  margin-bottom: 30px;
+  align-self: flex-start;
 }
+
+.summary-paper-title{
+  font-weight: 600;
+  font-size: 1rem;
+  align-self: flex-start;
+}
+
+.summary-table-wrapper {
+  padding-top: 2rem;
+}
+
+.assignment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.assignment-table thead {
+  background-color: #f5f5f5;
+}
+
+.assignment-table th,
+.assignment-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.assignment-table th {
+  font-weight: 600;
+  color: #333;
+}
+
+.assignment-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.highlight{
+  background-color: #e0f7fa;
+}
+
 
 /* Assignments */
 .assignment {

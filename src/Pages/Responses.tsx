@@ -14,11 +14,20 @@ import { StickyNote } from "lucide-react";
 import { useApiCalls } from "../store/axios";
 
 function Responses() {
+  const ScoreZoneData = [
+    { name: "Kick Start", from: 0, to: 30 },
+    { name: "Momentum", from: 31, to: 60 },
+    { name: "Performance", from: 61, to: 80 },
+    { name: "Elite", from: 81, to: 100 },
+  ];
+
   const paperDetails = JSON.parse(localStorage.getItem("assessmentDetails"));
   console.log(paperDetails);
   const userDetail = JSON.parse(localStorage.getItem("user"));
   console.log(userDetail);
   const [loading, setLoading] = useState(true);
+
+  const [score, setScore] = useState<object>({});
 
   const {
     starting_assessment_by_user,
@@ -68,13 +77,11 @@ function Responses() {
     setSelectComponent("Q&A");
   };
 
-
-
   let latestAssessmentInstanceId = [
-      JSON.parse(localStorage.getItem("assessmentInstanceId")),
+    JSON.parse(localStorage.getItem("assessmentInstanceId")),
   ];
-  
-  console.log(latestAssessmentInstanceId)
+
+  console.log(latestAssessmentInstanceId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +114,27 @@ function Responses() {
     localStorage.setItem("selectedPlan", JSON.stringify(plan));
   };
 
+  useEffect(() => {
+    let score = 0;
+    assessmentInstance_expanded_Api_call[0].answers?.forEach((answer) => {
+      if (answer.scoreValue) {
+        score += answer.scoreValue;
+        console.log("Total Score:", score);
+      }
+    });
+
+    if (score >= 0 && score <= 30) {
+      setScore({ score: score, index: 0 });
+    } else if (score >= 31 && score <= 60) {
+      setScore({ score: score, index: 1 });
+    } else if (score >= 61 && score <= 80) {
+      setScore({ score: score, index: 2 });
+    } else if (score >= 81 && score <= 100) {
+      setScore({ score: score, index: 3 });
+    }
+  }, []);
+
+  console.log("Total Score:", score);
   if (!context || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -127,7 +155,9 @@ function Responses() {
           {/* Top Info */}
           <div className="top">
             <div>
-              <div className="paper-title">{paperDetails.name || paperDetails.template.name}</div>
+              <div className="paper-title">
+                {paperDetails.name || paperDetails.template.name}
+              </div>
               <div className="paper-subtitle">
                 For adults, optimizing strength, metabolism, and diet.
               </div>
@@ -163,11 +193,21 @@ function Responses() {
                         </span>
                       </div>
                       <div className="question-answer">
-                        Ans-{" "}
+                        Ans -{" "}
                         <span className="font-normal">
-                          {" "}
-                         <span className="font-semibold">{q.value ? q.value : "null"}</span>  and you are in <span className="font-semibold">{q.scoreZone}</span>  category
-                        </span>{" "}
+                          <span className="font-semibold">
+                            {q.value ? q.value : "null"}
+                          </span>{" "}
+                          {q.scoreZone && (
+                            <>
+                              and you are in{" "}
+                              <span className="font-semibold">
+                                {q.scoreZone}
+                              </span>{" "}
+                              category
+                            </>
+                          )}
+                        </span>
                       </div>
                     </div>
                   )
@@ -177,35 +217,50 @@ function Responses() {
 
             {/* Right Summary */}
             <div className="summary-panel">
-              <div className="summary-header">
-                <div className="summary-title">Summary</div>
-                <button onClick={handleCommentModal}>
-                  {" "}
-                  <StickyNote
-                    size={40}
-                    className="p-2 rounded-md stick-comment"
-                  />
-                </button>
+              <div className="summary-header-wrapper">
+                <div className="summary-header">
+                  <div className="summary-title">Summary</div>
+                  <div className="summary-paper-title">
+                    {" "}
+                    {paperDetails.name || paperDetails.template.name}
+                  </div>
+                </div>
+                <div className="font-normal text-lg">
+                  Score = <span className="font-bold">{score?.score}</span>
+                </div>
               </div>
 
-              <div>
-                {["Assignment 1", "Assignment 2", "Assignment 3"].map(
-                  (label, i) => (
-                    <div className={`assignment assignment-${i}`} key={i}>
-                      <div className="label">{label} -</div>
-                      <div className={`score-card score-${i}`}>
-                        <div className={`score-icon icon-${i}`}>
-                          <Dumbbell />
-                          <span className={`score-card-text-${i}`}>
-                            Fitness
-                          </span>
-                        </div>
-                        <div>80 / 100</div>
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
+              {
+                (score.score === 0 ? (
+                  <div className="font-normal text-2xl flex items-center justify-center pt-[50px]">Welcome to Forge , Below are Your recommended Plans</div>
+                ) : (
+                  <div className="summary-table-wrapper">
+                    <table className="assignment-table">
+                      <thead>
+                        <tr>
+                          <th>ScoreZone</th>
+                          <th>From</th>
+                          <th>To</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ScoreZoneData.map((zone, index) => (
+                          <tr
+                            key={index}
+                            className={`${
+                              score.index === index ? "highlight" : ""
+                            }`}
+                          >
+                            <td>{zone.name}</td>
+                            <td>{zone.from}</td>
+                            <td>{zone.to}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ))
+              }
 
               <div className="plan-text">
                 The Recommended Plan for this assessment is ready! Please refer
