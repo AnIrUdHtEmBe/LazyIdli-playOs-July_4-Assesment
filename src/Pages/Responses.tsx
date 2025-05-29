@@ -27,7 +27,12 @@ function Responses() {
   console.log(userDetail);
   const [loading, setLoading] = useState(true);
 
-  const [score, setScore] = useState<object>({});
+  const [score, setScore] = useState<{ score: number; index: number }>({
+    score: 0,
+    index: -1,
+  });
+
+  const [calcLoading, setCalcLoading] = useState(true);
 
   const {
     starting_assessment_by_user,
@@ -66,14 +71,6 @@ function Responses() {
   };
 
   const handleStartAssignment = () => {
-    // const templateId = paperDetails.templateId;
-    // const userId = userDetail.userId;
-    // if (userId && templateId) {
-    //   starting_assessment_by_user(userId, templateId);
-    // } else {
-    //   console.error("User ID or Template ID missing", { userId, templateId });
-    // }
-    // localStorage.setItem('type' , 'start')
     setSelectComponent("Q&A");
   };
 
@@ -115,24 +112,32 @@ function Responses() {
   };
 
   useEffect(() => {
-    let score = 0;
-    assessmentInstance_expanded_Api_call[0].answers?.forEach((answer) => {
-      if (answer.scoreValue) {
-        score += answer.scoreValue;
-        console.log("Total Score:", score);
-      }
-    });
-
-    if (score >= 0 && score <= 30) {
-      setScore({ score: score, index: 0 });
-    } else if (score >= 31 && score <= 60) {
-      setScore({ score: score, index: 1 });
-    } else if (score >= 61 && score <= 80) {
-      setScore({ score: score, index: 2 });
-    } else if (score >= 81 && score <= 100) {
-      setScore({ score: score, index: 3 });
+    if (!assessmentInstance_expanded_Api_call?.[0]?.answers) {
+      setCalcLoading(true);
+      return;
     }
-  }, []);
+
+    let totalScore = 0;
+    try {
+      assessmentInstance_expanded_Api_call[0].answers.forEach((answer) => {
+        totalScore += answer.scoreValue || 0;
+      });
+    } catch (error) {
+      console.error("Score calculation error:", error);
+      setCalcLoading(false);
+      return;
+    }
+
+    // Determine score zone
+    let scoreIndex = -1;
+    if (totalScore >= 0 && totalScore <= 30) scoreIndex = 0;
+    else if (totalScore <= 60) scoreIndex = 1;
+    else if (totalScore <= 80) scoreIndex = 2;
+    else if (totalScore <= 100) scoreIndex = 3;
+
+    setScore({ score: totalScore, index: scoreIndex });
+    setCalcLoading(false);
+  }, [assessmentInstance_expanded_Api_call]); // Add proper dependency
 
   console.log("Total Score:", score);
   if (!context || loading) {
@@ -225,42 +230,46 @@ function Responses() {
                     {paperDetails.name || paperDetails.template.name}
                   </div>
                 </div>
-                <div className="font-normal text-lg">
-                  Score = <span className="font-bold">{score?.score}</span>
-                </div>
+                {calcLoading ? (
+                  <div>Calculating score...</div>
+                ) : (
+                  <div className="font-normal text-lg">
+                    Score = <span className="font-bold">{score.score}</span>
+                  </div>
+                )}
               </div>
 
-              {
-                (score.score === 0 ? (
-                  <div className="font-normal text-2xl flex items-center justify-center pt-[50px]">Welcome to Forge , Below are Your recommended Plans</div>
-                ) : (
-                  <div className="summary-table-wrapper">
-                    <table className="assignment-table">
-                      <thead>
-                        <tr>
-                          <th>ScoreZone</th>
-                          <th>From</th>
-                          <th>To</th>
+              {score.score === 0 ? (
+                <div className="font-normal text-2xl flex items-center justify-center pt-[50px]">
+                  Welcome to Forge , Below are Your recommended Plans
+                </div>
+              ) : (
+                <div className="summary-table-wrapper">
+                  <table className="assignment-table">
+                    <thead>
+                      <tr>
+                        <th>ScoreZone</th>
+                        <th>From</th>
+                        <th>To</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ScoreZoneData.map((zone, index) => (
+                        <tr
+                          key={index}
+                          className={`${
+                            score.index === index ? "highlight" : ""
+                          }`}
+                        >
+                          <td>{zone.name}</td>
+                          <td>{zone.from}</td>
+                          <td>{zone.to}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {ScoreZoneData.map((zone, index) => (
-                          <tr
-                            key={index}
-                            className={`${
-                              score.index === index ? "highlight" : ""
-                            }`}
-                          >
-                            <td>{zone.name}</td>
-                            <td>{zone.from}</td>
-                            <td>{zone.to}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ))
-              }
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
               <div className="plan-text">
                 The Recommended Plan for this assessment is ready! Please refer

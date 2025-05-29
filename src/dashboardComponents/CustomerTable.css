@@ -5,6 +5,13 @@
 	height: 100%;
 	
 }
+.--add-customer{
+	border: 1px solid lightgray;
+	display: flex;
+	justify-content: space-between;
+	padding:7px;
+	gap: 10px;
+}
 
 .customer-dashboard-outlay-container {
 	display: flex;

@@ -216,12 +216,12 @@
   color: #333;
 }
 
-.assignment-table tbody tr:nth-child(even) {
+/* .assignment-table tbody tr:nth-child(even) {
   background-color: #fafafa;
-}
+} */
 
 .highlight{
-  background-color: #e0f7fa;
+  background-color: lightgreen;
 }
 
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext } from "react";
 import {
   Activity_Api_call,
+  Customers_Api_call,
   DataContext,
   Plan_Api_call,
   Plan_Instance_Api_call,
@@ -26,6 +27,31 @@ export const useApiCalls = () => {
     setSessions_api_call,
     setPlans_full_api_call,
   } = context;
+
+  const customer_creation = async (customer :any) => {
+    try{
+      const res = await axios.post(`${API_BASE_URL}/humans`, customer);
+      console.log("Customer created successfully:", res.data);
+      alert("Customer created successfully!");
+      customers_fetching(); // Refresh the customer list after creation
+    }catch(error){
+      console.error("❌ Error creating customer:", error);
+    }
+  }
+  const patch_user = async (userId: string) => {
+    try {
+      // Send PATCH requests for each userId in parallel
+      await axios.patch(`${API_BASE_URL}/humans/${userId}`, {
+        membershipType: "inactive"
+      })
+      // alert("user deactivated successfully!");
+      // customers_fetching(); // Refresh the customer list
+    } catch (error) {
+      console.error("❌ Error deactivating users:", error);
+      alert("Failed to deactivate one or more users. Please try again.");
+    }
+  };
+  
 
   const customers_fetching = async () => {
     try {
@@ -425,6 +451,8 @@ export const useApiCalls = () => {
     getScore,
     getPlansForInterval,
     updateSessionInPlanInstance,
-    OptimisedPatchPlan
+    OptimisedPatchPlan,
+    customer_creation,
+    patch_user
   };
 };

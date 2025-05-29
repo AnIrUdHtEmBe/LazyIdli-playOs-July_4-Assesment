@@ -20,6 +20,8 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { People } from "@mui/icons-material";
+import Modal from "./Modal";
 
 const actions = ["Go to profile", "See plan", "Take Assessment"];
 
@@ -81,8 +83,84 @@ const CustomerTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [term, setTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState<any | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUserIDs, setSelectedUserIDs] = useState<Array<string>>([]);
 
-  const { customers_fetching } = useApiCalls();
+  const [formData, setFormData] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    membershipType: "",
+    height: "",
+    weight: "",
+    healthCondition: "",
+  });
+
+  const modalHeaderStyle: React.CSSProperties = {
+    margin: 0,
+    fontSize: "1.3rem",
+    fontWeight: 600,
+    color: "#222",
+    letterSpacing: "0.02em",
+    textAlign: "center",
+  };
+
+  const modalFormStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+  };
+
+  const modalInputStyle: React.CSSProperties = {
+    padding: "0.7rem 1rem",
+    borderRadius: "7px",
+    border: "1px solid #e0e0e0",
+    fontSize: "1rem",
+    outline: "none",
+    background: "#f8f9fa",
+  };
+
+  const modalButtonStyle: React.CSSProperties = {
+    marginTop: "0.5rem",
+    padding: "0.7rem 1rem",
+    borderRadius: "7px",
+    border: "none",
+    background: "#1976d2",
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: "1rem",
+    cursor: "pointer",
+    transition: "background 0.18s",
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Convert numeric fields
+    const payload = {
+      ...formData,
+      age: Number(formData.age),
+      height: Number(formData.height),
+      weight: Number(formData.weight),
+    };
+    await customer_creation(payload); // assuming this returns a promise
+    setModalOpen(false);
+    // Optionally, reset form fields here
+  };
+
+  // const handleAddCustomer = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
+  const { customers_fetching, customer_creation, patch_user } = useApiCalls();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,7 +178,7 @@ const CustomerTable = () => {
 
   const seePlanHandler = (customer: Customers_Api_call) => {
     localStorage.setItem("user", JSON.stringify(customer));
-    setSelectComponent("seePlan"); 
+    setSelectComponent("seePlan");
   };
 
   const dateChangeHandler = (date: any) => {
@@ -132,8 +210,7 @@ const CustomerTable = () => {
             seePlan={() => seePlanHandler(params.row.customerData)}
           />
         ),
-      }
-      
+      },
     ];
   };
 
@@ -227,6 +304,31 @@ const CustomerTable = () => {
     document.body.removeChild(link);
   };
 
+  const handleModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleDeactivate = async () => {
+    if (selectedUserIDs.length === 0 || !selectedUserIDs.ids) {
+      alert("Please select at least one user to deactivate.");
+      return;
+    }
+
+    try {
+      const selectedIdsArray = Array.from(selectedUserIDs.ids);
+      // Use Promise.all to wait for all patch_user requests in parallel
+      await Promise.all(selectedIdsArray.map((id) => patch_user(id)));
+      alert("user deactivated successfully!");
+      customers_fetching();
+      // Optional: refresh data or show success message
+      console.log("All users deactivated successfully.");
+    } catch (error) {
+      console.error("Deactivation failed:", error);
+    }
+  };
+
+  console.log("Selected User IDs:", selectedUserIDs);
+
   if (isLoading) {
     return (
       <div className="loading-state">
@@ -262,6 +364,12 @@ const CustomerTable = () => {
               />
             </div>
             <div className="customer-dashboard-filter-container">
+              <div className="--add-customer">
+                <People className="text-green-700"></People>
+                <button className="text-green-700" onClick={handleModal}>
+                  Add New Customer
+                </button>
+              </div>
               <div className="--date">
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
@@ -278,7 +386,7 @@ const CustomerTable = () => {
               </div>
               <div className="--delete">
                 <Button
-                  onClick={() => alert("Cannot delete")}
+                  onClick={() => handleDeactivate()}
                   variant="outlined"
                   color="error"
                   sx={{
@@ -288,7 +396,7 @@ const CustomerTable = () => {
                   startIcon={<DeleteIcon />}
                   size="small"
                 >
-                  Delete
+                  Deactivate
                 </Button>
               </div>
               <div className="--export">
@@ -316,6 +424,7 @@ const CustomerTable = () => {
               pageSizeOptions={[5, 10]}
               checkboxSelection
               sx={{ border: 0, maxHeight: "600px" }}
+              onRowSelectionModelChange={(ids) => setSelectedUserIDs(ids)}
             />
           </div>
         </div>
@@ -333,6 +442,85 @@ const CustomerTable = () => {
             <span className="--tail">Total Members</span>
           </div>
         </div>
+      </div>
+
+      <div>
+        <Modal isOpen={modalOpen} onClose={handleCloseModal}>
+          <h2 style={modalHeaderStyle}>Create New Customer</h2>
+          <form style={modalFormStyle} onSubmit={handleFormSubmit}>
+            <input
+              style={modalInputStyle}
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              style={modalInputStyle}
+              type="number"
+              name="age"
+              placeholder="Age"
+              value={formData.age}
+              onChange={handleInputChange}
+              required
+            />
+            <select
+              style={modalInputStyle}
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            <select
+              style={modalInputStyle}
+              name="membershipType"
+              value={formData.membershipType}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Membership</option>
+              <option value="premium">PREMIUM</option>
+              <option value="basic">BASIC</option>
+              <option value="vip">VIP</option>
+            </select>
+            <input
+              style={modalInputStyle}
+              type="number"
+              name="height"
+              placeholder="Height (cm)"
+              value={formData.height}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              style={modalInputStyle}
+              type="number"
+              step="0.1"
+              name="weight"
+              placeholder="Weight (kg)"
+              value={formData.weight}
+              onChange={handleInputChange}
+              required
+            />
+            <input
+              style={modalInputStyle}
+              type="text"
+              name="healthCondition"
+              placeholder="Health Condition"
+              value={formData.healthCondition}
+              onChange={handleInputChange}
+            />
+            <button style={modalButtonStyle} type="submit">
+              Create
+            </button>
+          </form>
+        </Modal>
       </div>
     </div>
   );
