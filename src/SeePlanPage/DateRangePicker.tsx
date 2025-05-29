@@ -1,0 +1,33 @@
+import * as React from 'react';
+import { TextField, Stack } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+export default function DateRangePicker({ startDate, setStartDate, endDate, setEndDate }) {
+  return (
+    <div className='p-4 flex justify-between'>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Stack spacing={5} direction="row">
+        
+        <DatePicker
+          label="Start Date"
+          value={startDate}
+          onChange={(newValue) => setStartDate(newValue)}
+          maxDate={endDate}
+          
+        />
+        
+        <DatePicker
+          label="End Date"
+          value={endDate}
+          onChange={(newValue) => setEndDate(newValue)}
+          minDate={startDate}
+          
+        />
+      
+      </Stack>
+    </LocalizationProvider>
+    </div>
+  );
+}

@@ -16,6 +16,7 @@ import AllSessionsPage from "./Pages/AllSessionsPage";
 import AllPlans from "./planPageComponent/AllPlans";
 import QuestionBank from "./QuestionBank/QuestionBank";
 import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
+import SeePlan from "./SeePlanPage/SeePlan";  
 
 function App() {
   const { selectComponent } = useContext(DataContext);
@@ -30,7 +31,11 @@ function App() {
             element={
               selectComponent === "assessment" ? (
                 <Assessment />
-              ) : selectComponent === "Q&A" ? (
+              ) :
+              selectComponent === "seePlan" ? (
+                <SeePlan />
+              ) : 
+              selectComponent === "Q&A" ? (
                 <QuestionPaper />
               ) : selectComponent === "responses" ? (
                 <Responses />
@@ -42,6 +47,12 @@ function App() {
               )
             }
           />
+          {/* <Route
+            path="/seePlan"
+            element={
+              <SeePlan></SeePlan>
+            }
+          /> */}
           <Route
             path="/assignment"
             element={

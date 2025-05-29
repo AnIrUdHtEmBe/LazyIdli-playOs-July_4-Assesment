@@ -92,7 +92,20 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching assessments:", error);
     }
   };
-
+  const updateSessionInPlanInstance = async (planInstanceId: string , sessionInstanceId: string , newDate : Date) => {
+    try {
+      const res = await axios.patch(
+        `${API_BASE_URL}/plan-instances/${planInstanceId}/reschedule-session`, {
+          sessionInstanceId: sessionInstanceId,
+          newDate: newDate.toISOString()
+        }
+      );
+      console.log("Session instance updated successfully:", res.data);
+    } 
+    catch (error) {
+      console.error("❌ Error updating session instance:", error);
+    }
+  };
   const questions = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/questions`);
@@ -299,6 +312,19 @@ export const useApiCalls = () => {
     }
   };
 
+  const getPlansForInterval = async (startDate: string, endDate: string , userId: string) => {
+     try {
+      const res = await axios.get(
+        `${API_BASE_URL}/humans/${userId}/plan-instances-within-date?start=${startDate}&end=${endDate}`
+      );
+      const data = res.data;
+      console.log("✅ Plans for interval fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching plans for interval:", error);
+    }
+  }
+
   const patchPlans = async (templateIds: string[], btnValue: number) => {
     console.time("patchPlans total");
   
@@ -367,6 +393,8 @@ export const useApiCalls = () => {
     getSessionById,
     createPlanInstance,
     getExpandedPlanByPlanId,
-    getScore
+    getScore,
+    getPlansForInterval,
+    updateSessionInPlanInstance
   };
 };

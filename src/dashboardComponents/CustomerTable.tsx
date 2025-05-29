@@ -100,7 +100,7 @@ const CustomerTable = () => {
 
   const seePlanHandler = (customer: Customers_Api_call) => {
     localStorage.setItem("user", JSON.stringify(customer));
-    // setSelectComponent("seePlan"); 
+    setSelectComponent("seePlan"); 
   };
 
   const dateChangeHandler = (date: any) => {
