@@ -17,8 +17,20 @@
 
 
 .plan-section.md {
-  width: 48%;
+  width: 42%;
   height: 85vh;
+}
+.session-section.md{
+  width: 56%;
+  height: 85vh;
+}
+
+.session-section {
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
 }
 
 .section-header {

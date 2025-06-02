@@ -11,7 +11,7 @@ import { CircularProgress } from "@mui/material";
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
     useContext(DataContext)!;
-  const { getPlansFull, patchPlans, getSessions , OptimisedPatchPlan } = useApiCalls();
+  const { getPlansFull, OptimisedPatchPlan } = useApiCalls();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const planCheckboxRef = useRef<HTMLInputElement>(null);
@@ -278,8 +278,8 @@ function AllPlans() {
         </div>
         {/* session */}
 
-        <div className="plan-section md">
-          <div className="controls">
+        <div className="session-section md">
+          {/* <div className="controls">
             <h2 className="section-title">
               Sessions <span className="badge">All</span>
             </h2>
@@ -371,7 +371,7 @@ function AllPlans() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -426,7 +426,7 @@ function AllPlans() {
         </div>
       )}
 
-      {showSessionModal && previewSession && (
+      {/* {showSessionModal && previewSession && (
         <div className="modal-overlay">
           <div className="modal-content">
             <button
@@ -477,7 +477,7 @@ function AllPlans() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
