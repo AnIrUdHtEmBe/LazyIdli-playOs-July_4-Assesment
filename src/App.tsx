@@ -47,12 +47,6 @@ function App() {
               )
             }
           />
-          {/* <Route
-            path="/seePlan"
-            element={
-              <SeePlan></SeePlan>
-            }
-          /> */}
           <Route
             path="/assignment"
             element={

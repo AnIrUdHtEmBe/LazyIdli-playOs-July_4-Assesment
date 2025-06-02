@@ -45,7 +45,7 @@ const QuestionBank = () => {
   const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState([]);
 
- console.log(question)
+ console.log(options)
 
   const handleApiCall = async () => {
     console.log("API call initiated");
@@ -81,7 +81,7 @@ const QuestionBank = () => {
             .map((opt) =>
               typeof opt === "string"
                 ? opt.trim()
-                : typeof opt === "object" && opt.value
+                : typeof opt === "object"
             )
             .filter((opt) => opt !== "")
         : [];
@@ -285,11 +285,13 @@ const QuestionBank = () => {
                           <TextField
                             label={`Option ${index + 1}`}
                             variant="standard"
+                            value={option}
                             onChange={(e) => {
                               const newOptions = [...options];
                               newOptions[index] = e.target.value;
                               setOptions(newOptions);
                             }}
+                            
                             InputProps={{
                               sx: {
                                 fontSize: "0.9rem", // input text size
@@ -313,6 +315,11 @@ const QuestionBank = () => {
                               const newOptions = options.filter(
                                 (_, i) => i !== index
                               );
+                              console.log(index);
+                              console.log(options);
+                              
+                              console.log(newOptions);
+                              
                               setOptions(newOptions);
                             }}
                           >
@@ -323,10 +330,7 @@ const QuestionBank = () => {
                       <button
                         className="add-option-button"
                         onClick={() => {
-                          const newOption = {
-                            label: `Option ${options.length + 1}`,
-                            value: `option${options.length + 1}`,
-                          };
+                          const newOption = "";
                           setOptions([...options, newOption]);
                         }}
                       >
