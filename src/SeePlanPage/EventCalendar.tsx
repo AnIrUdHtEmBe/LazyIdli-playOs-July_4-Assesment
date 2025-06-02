@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayjs from "dayjs";
 import { useApiCalls } from "../store/axios";
+import EventModal from "./EventModal"; 
 
 export default function EventCalendar({ data }) {
   const [events, setEvents] = useState([]);
@@ -73,6 +74,13 @@ useEffect(() => {
   // info.revert();
 };
 
+   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const handleEventClick = (info) => {
+    setSelectedEvent(info.event);
+    setIsModalOpen(true);
+  };
 
 
   return (
@@ -88,12 +96,15 @@ useEffect(() => {
       dateClick={(info) => {
         console.log("New event on:", info.dateStr);
       }}
-      eventClick={(info) => {
-        console.log("Edit event:", info.event);
-        
-      }}
+      eventClick={handleEventClick}
       eventDrop={handleEventDrop}
     />
+     <EventModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        eventData={selectedEvent}
+      />
+
     </div>
   );
 }
