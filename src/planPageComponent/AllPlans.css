@@ -42,6 +42,17 @@
   margin-bottom: 1rem;
 }
 
+.section-headerr {
+  display: flex;
+  font-family: 'roboto', sans-serif;
+  font-weight: 500;
+  font-size: 19px !important;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
 .section-title {
   display: flex;
   gap:10px;
@@ -74,6 +85,15 @@
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
+
+.all{
+  border-radius: px solid black;
+  /* background-color: #2563eb; */
+  padding: 2px 8px;
+  /* padding: 0.75rem; */
+  align-self: flex-start;
+}
+
 
 .activate-button {
   color: green;
@@ -109,7 +129,7 @@
   background: #fff;
 }
 
-/* Optional: make table min-width larger than container to force scroll */
+
 .table {
   min-width: 600px;
   width: 100%;
@@ -210,4 +230,61 @@
   min-height: 600px;
   max-height: 80vh;
   overflow-y: auto;
+}
+
+.grid-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+  padding-top: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.grid-section-header-title{
+  align-items: center;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.grid-section-header-button{
+  background-color: green;
+  border-radius: 6px;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+.grid-section-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.grid-section-footer-add-button{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #f3f4f6;
+  font-family: 'roboto', sans-serif;
+  font-weight: 500;
+}
+
+.grid-section-footer-edit-button{
+  gap: 0.5rem;
+  font-family: 'roboto', sans-serif;
+  font-weight: 500;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  padding: 0.5rem 1.55rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #f3f4f6;
 }
