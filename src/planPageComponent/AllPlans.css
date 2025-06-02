@@ -20,12 +20,12 @@
   width: 42%;
   height: 85vh;
 }
-.session-section.md{
+.grid-section.md{
   width: 56%;
   height: 85vh;
 }
 
-.session-section {
+.grid-section {
   width: 100%;
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -56,6 +56,10 @@
   font-size: 0.875rem;
   padding: 0.25rem 0.5rem;
   border-radius: 1rem;
+}
+
+.selected_plan{
+  background-color: aquamarine;
 }
 
 .section-buttons {
@@ -127,9 +131,6 @@
   font-size: 0.875rem;
 }
 
-.table tr:hover {
-  background-color: #f9fafb;
-}
 .filter-button-icons{
   display: flex;
   gap: 2rem;
