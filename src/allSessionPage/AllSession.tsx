@@ -48,7 +48,7 @@ function AllSession() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { activities_api_call, sessions, setSessions, sessions_api_call } =
+  const { activities_api_call, sessions, setSessions, sessions_api_call , setSelectComponent} =
     context;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -138,7 +138,7 @@ function AllSession() {
           <div className="header-tit">
             Sessions <span className="badge">All</span>
           </div>
-          <div className="h-i">
+          <div className="flex justify-between items-center gap-5">
             <button
               className={`filter-btn ${
                 activeFilter === "Fitness" ? "filter-btn-active" : ""
@@ -163,15 +163,10 @@ function AllSession() {
             >
               <NordicWalking style={{ fontSize: "20px" }} />
             </button>
-            <div className="bg-gray-200 text-gray-200">|</div>
-            <Rows></Rows>
-            <button>
-              <Switch></Switch>
-            </button>
-            <Calendar></Calendar>
+           
           </div>
 
-          <button className="new-button">
+          <button onClick={() => setSelectComponent("/sessions")}className="new-button">
             <Plus size={20} className="new-button-icon" />
             <span className="new-button-text">New</span>
           </button>
@@ -261,13 +256,13 @@ function AllSession() {
                       <td className="activity-cell font-bold">{slNo++}</td>
                       <td className="activity-cell">
                         <FormControl fullWidth>
-                          <InputLabel id={`activity-select-label-${index}`}>
+                          {/* <InputLabel id={`activity-select-label-${index}`}>
                             Activity
-                          </InputLabel>
+                          </InputLabel> */}
                           <Select
                             labelId={`activity-select-label-${index}`}
                             value={item.activityId}
-                            label="Activity"
+                            
                             onChange={async (e) => {
                               const selectedId = e.target.value;
                               console.log("Selected ID:", selectedId);

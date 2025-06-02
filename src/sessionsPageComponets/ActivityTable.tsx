@@ -47,7 +47,15 @@ function ActivityTable() {
   const [category, setCategory] = useState<string>("Fitness");
   const [activityForTable, setActivityForTable] = useState<Activity_Api_call>();
   const [showModal, setShowModal] = useState(false);
-  const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([]);
+  const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([
+    {
+    name: "",
+    description: "",
+    reps: "",
+    icon: "",
+    
+  }
+  ]);
     const [emptyArr, setEmptyArr] = useState<Activity_Api_call[]>([
   {
     name: "",
@@ -211,10 +219,13 @@ const addNewRow = () => {
             </FormControl>
           </div>
 
-          <div className="flex flex-col w-full " style={{ paddingTop: "16px" }}>
+          <div className="flex flex-col w-full ">
             <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+               <InputLabel id="demo-select-label"> Category</InputLabel>
               <Select
                 value={category}
+                label="Category"
+                
                 onChange={(e) => setCategory(e.target.value)}
                 displayEmpty
                 sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
@@ -379,6 +390,7 @@ const addNewRow = () => {
                       <th className="px-4 py-2">Activity Type</th>
                       <th className="px-4 py-2">Description</th>
                       <th className="px-4 py-2">Time/reps</th>
+                      <th className="px-4 py-2"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -413,7 +425,7 @@ const addNewRow = () => {
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
                           <input
-                            type="number"
+                            type="text"
                             value={activity.reps}
                             onChange={(e) => {
                               const updated = [...newActivities];
@@ -422,6 +434,17 @@ const addNewRow = () => {
                             }}
                             className="w-full border border-gray-400 rounded p-2"
                           />
+                        </td>
+                        <td className="px-4 py-2 border-b-2 border-gray-200 text-center">
+                          <button
+                            onClick={() => {
+                              const updated = [...newActivities];
+                              updated.splice(index, 1);
+                              setNewActivities(updated);
+                            }}
+                          >
+                            <LucideCircleMinus className="text-red-500" size={20} />
+                          </button>
                         </td>
                       </tr>
                     ))}
