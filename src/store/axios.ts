@@ -28,22 +28,22 @@ export const useApiCalls = () => {
     setPlans_full_api_call,
   } = context;
 
-  const customer_creation = async (customer :any) => {
-    try{
+  const customer_creation = async (customer: any) => {
+    try {
       const res = await axios.post(`${API_BASE_URL}/humans`, customer);
       console.log("Customer created successfully:", res.data);
       alert("Customer created successfully!");
       customers_fetching(); // Refresh the customer list after creation
-    }catch(error){
+    } catch (error) {
       console.error("❌ Error creating customer:", error);
     }
-  }
+  };
   const patch_user = async (userId: string) => {
     try {
       // Send PATCH requests for each userId in parallel
       await axios.patch(`${API_BASE_URL}/humans/${userId}`, {
-        membershipType: "inactive"
-      })
+        membershipType: "inactive",
+      });
       // alert("user deactivated successfully!");
       // customers_fetching(); // Refresh the customer list
     } catch (error) {
@@ -51,7 +51,6 @@ export const useApiCalls = () => {
       alert("Failed to deactivate one or more users. Please try again.");
     }
   };
-  
 
   const customers_fetching = async () => {
     try {
@@ -124,17 +123,21 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching assessments:", error);
     }
   };
-  const updateSessionInPlanInstance = async (planInstanceId: string , sessionInstanceId: string , newDate : Date) => {
+  const updateSessionInPlanInstance = async (
+    planInstanceId: string,
+    sessionInstanceId: string,
+    newDate: Date
+  ) => {
     try {
       const res = await axios.patch(
-        `${API_BASE_URL}/plan-instances/${planInstanceId}/reschedule-session`, {
+        `${API_BASE_URL}/plan-instances/${planInstanceId}/reschedule-session`,
+        {
           sessionInstanceId: sessionInstanceId,
-          newDate: newDate.toISOString()
+          newDate: newDate.toISOString(),
         }
       );
       console.log("Session instance updated successfully:", res.data);
-    } 
-    catch (error) {
+    } catch (error) {
       console.error("❌ Error updating session instance:", error);
     }
   };
@@ -354,8 +357,12 @@ export const useApiCalls = () => {
     }
   };
 
-  const getPlansForInterval = async (startDate: string, endDate: string , userId: string) => {
-     try {
+  const getPlansForInterval = async (
+    startDate: string,
+    endDate: string,
+    userId: string
+  ) => {
+    try {
       const res = await axios.get(
         `${API_BASE_URL}/humans/${userId}/plan-instances-within-date?start=${startDate}&end=${endDate}`
       );
@@ -365,39 +372,28 @@ export const useApiCalls = () => {
     } catch (error) {
       console.error("❌ Error fetching plans for interval:", error);
     }
-  }
+  };
 
-  const patchPlans = async (templateIds: string[], btnValue: number) => {
-    console.time("patchPlans total");
+  const patchPlans = async (templateIds: string, session: object[]) => {
+    const sessionData = session.map((s) => ({
+      sessionId: s.sessionId,
+      scheduledDay: s.scheduledDay,
+    }));
 
-    const updatePromises = templateIds.map((templateId) => {
-      console.time(`patch-${templateId}`);
-      let newStatus = btnValue === 0 ? "ACTIVE" : "INACTIVE";
+    console.log(sessionData);
+    try {
+      const res = await axios.patch(
+        `${API_BASE_URL}/plan-templates/${templateIds}`,
+        {
+          sessions: sessionData,
+        }
+      );
 
-      return axios
-        .patch(`${API_BASE_URL}/plan-templates/${templateId}`, {
-          status: newStatus,
-        })
-        .then((res) => {
-          console.timeEnd(`patch-${templateId}`);
-          return res.data;
-        })
-        .catch((err) => {
-          console.timeEnd(`patch-${templateId}`);
-          console.error(`Failed to patch ${templateId}`, err);
-          return null;
-        });
-    });
-
-    console.time("awaiting all patches");
-    const results = await Promise.all(updatePromises);
-    console.timeEnd("awaiting all patches");
-
-    console.timeEnd("patchPlans total");
-
-    // console.time("filtering results");
-    return results;
-    // console.timeEnd("filtering results");
+      console.log("✅ Patch successful:", res.data);
+      alert("Plan updated successfully!");
+    } catch (error) {
+      console.error("❌ Error in patchPlans:", error);
+    }
   };
 
   const OptimisedPatchPlan = async (
@@ -412,11 +408,14 @@ export const useApiCalls = () => {
       })),
     };
 
-    try{
-      const response = await axios.patch(`${API_BASE_URL}/plan-templates/batch`, payload);
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/plan-templates/batch`,
+        payload
+      );
       console.log("✅ Patch successful:", response.data);
       return response.data;
-    }catch(error){
+    } catch (error) {
       console.error("❌ Error in OptimisedPatchPlan:", error);
     }
   };
@@ -463,6 +462,6 @@ export const useApiCalls = () => {
     updateSessionInPlanInstance,
     OptimisedPatchPlan,
     customer_creation,
-    patch_user
+    patch_user,
   };
 };

@@ -10,13 +10,15 @@ import SessionGridAllPlans from "./SessionGridAllPlans";
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
     useContext(DataContext)!;
-  const { getPlansFull, OptimisedPatchPlan } = useApiCalls();
+  const { getPlansFull, OptimisedPatchPlan, patchPlans } = useApiCalls();
 
   const planCheckboxRef = useRef<HTMLInputElement>(null);
   const [selectedPlanIds, setSelectedPlanIds] = useState<string[]>([]);
 
   const [plans, setPlans] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
+
+  // console.log(sessions);
 
   const [selectedPlan, setSelectedPlan] = useState<string>("");
 
@@ -32,8 +34,6 @@ function AllPlans() {
   const [selectedSessionForPlacement, setSelectedSessionForPlacement] =
     useState<any | null>(null);
 
-  console.log(edit);
-  console.log(toggleSessions);
   useEffect(() => {
     const fetchPlans = async () => {
       try {
@@ -48,7 +48,7 @@ function AllPlans() {
     fetchPlans();
   }, []);
 
-  console.log(plans_full_api_call);
+  // console.log(plans_full_api_call);
 
   // plan cehckbox
   useEffect(() => {
@@ -104,7 +104,6 @@ function AllPlans() {
   };
 
   const handlePlanPreviewClick = (plan: any) => {
-    console.log("Plan clicked:", plan);
     setSelectedPlan(plan);
     setSessions(plan.sessions || []);
     setTitle(plan.title);
@@ -115,7 +114,7 @@ function AllPlans() {
     );
   };
 
-  console.log("Sessions:", sessions);
+  // console.log("Sessions:", sessions);
 
   useEffect(() => {
     if (
@@ -144,13 +143,33 @@ function AllPlans() {
 
   const assignSessionToDay = (day: number) => {
     if (!selectedSessionForPlacement) return;
+    const existingSession = sessions.find(
+      (session) => session.scheduledDay === day
+    );
+    if (existingSession) {
+      setSessions((prevSessions) =>
+        prevSessions.filter((session) => session.scheduledDay !== day)
+      );
+    }
     const newSession = { ...selectedSessionForPlacement, scheduledDay: day };
     setSessions((prevSessions) => [...prevSessions, newSession]);
-    setSelectedSessionForPlacement(null);
+    // setSelectedSessionForPlacement(null);
   };
 
-  const patchNewSession = async () => {};
+  const deleteSessionFormGrid = (day: number) => {
+    // console.log(day);
+    // console.log(sessions)
+    setSessions((prevSessions) =>
+      prevSessions.filter((session) => session.scheduledDay != day)
+    );
+  };
 
+  const patchNewSession = async () => {
+    await patchPlans(selectedPlan.templateId, sessions);
+    // console.log("Patching new session:", sessions);
+  };
+
+  console.log(sessions_api_call);
   return (
     <div className="all-plans-container">
       <Header />
@@ -183,8 +202,9 @@ function AllPlans() {
                   <tbody>
                     {sessions_api_call.map((plan) => (
                       <tr
-                        key={plan.templateId}
+                        key={plan.sessionId}
                         onClick={() => handleSelectedSession(plan)}
+                        className={`cursor-pointer hover:bg-gray-100 ${plan.sessionId === selectedSessionForPlacement?.sessionId ? "selected_session" : ""}`}
                       >
                         <td>{plan.title}</td>
                         <td>{plan?.category || ""}</td>
@@ -302,8 +322,15 @@ function AllPlans() {
               {title || "plan Name"}
             </div>
             <button
-              className="grid-section-header-button"
+              className={`px-4 py-2 rounded text-white transition
+    ${
+      !edit || sessions.length === 0
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-green-300 hover:bg-green-400"
+    }
+  `}
               onClick={patchNewSession}
+              disabled={!edit || sessions.length === 0}
             >
               Save
             </button>
@@ -314,6 +341,7 @@ function AllPlans() {
             editMode={edit}
             selectedSession={selectedSessionForPlacement}
             onAssignSession={assignSessionToDay}
+            deleteSessionFormGrid={deleteSessionFormGrid}
           />
 
           <div className="grid-section-footer">

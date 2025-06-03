@@ -70,7 +70,8 @@
 }
 
 .selected_plan{
-  background-color: aquamarine;
+  background-color: #e0f2fe; /* Light blue background for selected session */
+  border-left: 4px solid #2563eb; /* Blue left border for emphasis */
 }
 
 .section-buttons {
@@ -287,4 +288,9 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   background-color: #f3f4f6;
+}
+
+.selected_session {
+  background-color: #e0f2fe; /* Light blue background for selected session */
+  border-left: 4px solid #2563eb; /* Blue left border for emphasis */
 }

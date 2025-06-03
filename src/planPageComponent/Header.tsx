@@ -18,10 +18,10 @@ const Header: React.FC<HeaderProps> = () => {
 
   const { selectComponent, setSelectComponent } = context;
   const user = JSON.parse(localStorage.getItem("user"));
-  console.log(user);
+  // console.log(user);
 
   const plan = JSON.parse(localStorage.getItem("selectedPlan"));
-  console.log(plan);
+  // console.log(plan);
 
   return (
     <header className="header">
