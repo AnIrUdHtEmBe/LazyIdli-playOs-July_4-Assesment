@@ -286,8 +286,22 @@ export const useApiCalls = () => {
     try {
       for (const question of questions) {
         if (question.checked) {
-          const res = await axios.post(`${API_BASE_URL}/questions`, question);
-          console.log("✅ Question created successfully:", res.data);
+          if(question.questionId){
+            // If questionId exists, update the question
+            const res = await axios.patch(
+              `${API_BASE_URL}/questions/${question.questionId}`,
+              {
+                mainText: question.mainText,
+                options: question.options,
+                answerType: question.answerType,                
+              }
+            );
+            console.log("✅ Question updated successfully:", res.data);
+          } else {
+            
+            const res = await axios.post(`${API_BASE_URL}/questions`, question);
+            console.log("✅ Question created successfully:", res.data);
+          }
         }
       }
     } catch (error) {

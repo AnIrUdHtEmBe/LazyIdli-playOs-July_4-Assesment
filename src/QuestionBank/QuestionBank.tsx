@@ -16,14 +16,18 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import NumbersIcon from "@mui/icons-material/LooksOne";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "./QuestionBank.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { useApiCalls } from "../store/axios";
 import { DataContext } from "../store/DataContext";
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
-  { label: "Number Input with Score", value: "number_ws", icon: <NumbersIcon /> },
+  {
+    label: "Number Input with Score",
+    value: "number_ws",
+    icon: <NumbersIcon />,
+  },
   {
     label: "Single Choice",
     value: "choose_one",
@@ -36,16 +40,56 @@ const questionTypes = [
 ];
 
 const QuestionBank = () => {
-  const { Question_creation_Api_call } = useApiCalls();
+  
 
-  const { selectComponent } = useContext(DataContext);
+  const { selectComponent, questionsForAPICall } = useContext(DataContext);
+  useEffect(() => {
+  const fetchQuestions = async () => {
+    try {
+      await questions(); // likely sets questionsForAPICall inside context
+    } catch (error) {
+      console.error("Failed to fetch questions:", error);
+    }
+  };
+  fetchQuestions();
+}, []);
+
+useEffect(() => {
+  if (questionsForAPICall && questionsForAPICall.length > 0) {
+    // Replace instead of append to avoid duplication
+    const transformed = questionsForAPICall.map((q) => ({
+      checked: false,
+      mainText: q.mainText,
+      answerType: q.answerType,
+      options: q.options,
+      questionId: q.questionId,
+    }));
+    setQuestion(transformed); // replaces the state instead of appending
+  }
+}, [questionsForAPICall]);
+
+
+  const { Question_creation_Api_call, questions } = useApiCalls();
+
   const [question, setQuestion] = useState([]);
   const [type, setType] = useState("");
   const [value, setValue] = useState("");
   const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState([]);
 
- console.log(options)
+  console.log(question);
+
+  const transformAndAppendQuestions = (externalQuestions) => {
+    const cleanedQuestions = externalQuestions.map((q) => ({
+      checked: false,
+      mainText: q.mainText,
+      answerType: q.answerType,
+      options: q.options || null,
+      questionId: q.questionId,
+    }));
+
+    setQuestion((prev) => [...prev, ...cleanedQuestions]);
+  };
 
   const handleApiCall = async () => {
     console.log("API call initiated");
@@ -55,7 +99,7 @@ const QuestionBank = () => {
         return;
       }
 
-      if(question.filter((q) => q.checked).length === 0){
+      if (question.filter((q) => q.checked).length === 0) {
         alert("Please select at least one question to save.");
         return;
       }
@@ -63,11 +107,31 @@ const QuestionBank = () => {
       const response = await Question_creation_Api_call(question);
       console.log("API call successful:", response);
       alert("Questions saved successfully!");
-      setQuestion([])
+      setQuestion((prev) => prev.map(question => ({
+        ...question,
+        checked: false
+      })));
     } catch (error) {
       console.error("API call failed:", error);
     }
   };
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  const editQuestion = (index) => {
+    const selectedQuestion = question[index];
+    setValue(selectedQuestion.mainText);
+    setType(selectedQuestion.answerType);
+    setOptions(selectedQuestion.options || []);
+    setChecked(selectedQuestion.checked);
+    setEditingIndex(index); // track which question is being edited
+  };
+
+  const updateQuestion = (index, updatedData) => {
+    setQuestion((prevQuestions) =>
+      prevQuestions.map((q, i) => (i === index ? { ...q, ...updatedData } : q))
+    );
+  };
+ 
 
   const handleAddQuestion = () => {
     if (!type.trim()) {
@@ -79,9 +143,7 @@ const QuestionBank = () => {
       type === "choose_one" || type === "choose_many"
         ? options
             .map((opt) =>
-              typeof opt === "string"
-                ? opt.trim()
-                : typeof opt === "object"
+              typeof opt === "string" ? opt.trim() : typeof opt === "object"
             )
             .filter((opt) => opt !== "")
         : [];
@@ -90,18 +152,24 @@ const QuestionBank = () => {
       checked: checked,
       mainText: value,
       answerType: type,
-      options: filteredOptions, // this can be an empty array, it's fine
+      options: filteredOptions,
     };
 
-    setQuestion((prev) => [...prev, newQuestion]);
+    if (editingIndex !== null) {
+      newQuestion.checked = true;
+      updateQuestion(editingIndex, newQuestion);
+      setEditingIndex(null);
+    } else {
+      setQuestion((prev) => [...prev, newQuestion]);
+    }
 
-    // Reset fields if desired
+    // Reset fields
     setValue("");
     setType("");
     setOptions([]);
     setChecked(false);
   };
-
+  
   return (
     <div className="question-bank-container">
       {/* header */}
@@ -179,9 +247,11 @@ const QuestionBank = () => {
                         setQuestion(updatedQuestions);
                       }}
                     />
-
-                    <span>{index + 1} )</span>
-                    <span className="question-bank-main-body-left-item-text">
+                    <span>{index + 1})</span>
+                    <span
+                      onClick={() => editQuestion(index)}
+                      className="question-bank-main-body-left-item-text"
+                    >
                       {item.mainText}
                     </span>
                   </div>
@@ -192,8 +262,12 @@ const QuestionBank = () => {
                     className="question-bank-main-body-left-content-add-button"
                     onClick={handleAddQuestion}
                   >
-                    <Plus size={13}></Plus>
-                    <span>Add Question</span>
+                    {editingIndex == null ? <Plus size={13}></Plus> : ""}
+                    {editingIndex == null ? (
+                      <span>Add Question</span>
+                    ) : (
+                      <span>Update Question</span>
+                    )}
                   </button>
                 </div>
               </div>
@@ -203,9 +277,12 @@ const QuestionBank = () => {
             <div className="question-bank-main-body-right">
               <div className="question-bank-main-body-right-box">
                 <div className="question-bank-main-body-right-header">
-                  <span className="question-bank-main-body-right-header-title">
+                  {editingIndex !== null ? <span className="question-bank-main-body-right-header-title">
+                    Question {editingIndex + 1}
+                  </span>: <span className="question-bank-main-body-right-header-title">
                     Question {question.length + 1}
-                  </span>
+                  </span> }
+                 
                   <FormControl size="small" sx={{ width: "200px" }}>
                     <InputLabel id="question-type-label">
                       Select Question Type
@@ -291,7 +368,6 @@ const QuestionBank = () => {
                               newOptions[index] = e.target.value;
                               setOptions(newOptions);
                             }}
-                            
                             InputProps={{
                               sx: {
                                 fontSize: "0.9rem", // input text size
@@ -317,9 +393,9 @@ const QuestionBank = () => {
                               );
                               console.log(index);
                               console.log(options);
-                              
+
                               console.log(newOptions);
-                              
+
                               setOptions(newOptions);
                             }}
                           >

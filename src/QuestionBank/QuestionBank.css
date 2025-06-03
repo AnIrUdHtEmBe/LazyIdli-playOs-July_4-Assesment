@@ -148,6 +148,12 @@
   color: #101011;
   font-family: 'roboto', sans-serif;
 }
+
+
+.question-bank-main-body-left-item-text{
+  cursor: pointer;
+}
+
 .question-bank-main-body-left-content-add{
   display: flex;
   justify-content: center;
