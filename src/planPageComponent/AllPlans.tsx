@@ -112,9 +112,11 @@ function AllPlans() {
     setRows(
       sessions?.length > 0
         ? Math.max(...sessions.map((s) => s.scheduledDay))
-        : 0
+        : 28
     );
   };
+
+  console.log(rows)
 
   // console.log("Sessions:", sessions);
 

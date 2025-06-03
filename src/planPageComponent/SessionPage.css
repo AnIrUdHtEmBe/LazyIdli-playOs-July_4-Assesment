@@ -277,16 +277,7 @@
   gap: 1.5rem;
 }
 
-/* Plan name input */
-/* .plan-name-input label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #374151;
-} */
-
 .plan-name-input{
-  /* border-bottom: 1px solid #d1d5db; */
   height :94px;
   padding: 1rem;
 }
@@ -320,7 +311,7 @@
 }
 .calendar-grid {
   display: grid;
-  grid-template-columns: 1fr repeat(7, 1fr) 1fr 1fr;
+  grid-template-columns: repeat(7, 1fr);
   gap: 0.25rem;
   max-height: 60vh; /* Adjust this value as needed */
   overflow-y: auto;  /* Enables vertical scrolling */

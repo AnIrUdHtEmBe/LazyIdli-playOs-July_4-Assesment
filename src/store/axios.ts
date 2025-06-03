@@ -223,6 +223,10 @@ export const useApiCalls = () => {
   };
 
   const createPlan = async (plan: Plan_Api_call) => {
+    if(plan.title.trim() === "" || plan.sessions.length === 0) {
+      alert("Please enter a title for the plan and add session to your plan before creating it.");
+      return;
+    }
     try {
       const res = await axios.post(`${API_BASE_URL}/plan-templates`, plan);
       console.log("Plan created successfully:", res.data);

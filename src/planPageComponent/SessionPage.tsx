@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   FormControl,
   InputLabel,
@@ -6,79 +6,63 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { TextField } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-import { Activity_Api_call, DataContext, Plan_Api_call, Session_Api_call } from "../store/DataContext";
+import {
+  Activity_Api_call,
+  DataContext,
+  Plan_Api_call,
+  Session_Api_call,
+} from "../store/DataContext";
 import {
   ArrowRight,
-  ChevronRight,
   CirclePlus,
   Dumbbell,
-  EyeClosed,
   EyeIcon,
   LucideCircleMinus,
-  MinusCircle,
   Plus,
   Trash2,
 } from "lucide-react";
 import "./SessionPage.css"; // Import the CSS file
 
-import {
-  ArrowRightAlt,
-  DashboardCustomize,
-  Mediation,
-  NordicWalking,
-} from "@mui/icons-material";
+import { Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
+import PlanCreatorGrid from "./PlanCreatorGrid";
 
 function SessionPage() {
+  const [blocks, setBlocks] = useState(28);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const { sessions, setSessions, setSelectComponent, selectComponent , sessions_api_call , activities_api_call , setSessions_api_call} =
-    useContext(DataContext)!;
+  const {
+    selectComponent,
+    sessions_api_call,
+    activities_api_call,
+    setSessions_api_call,
+  } = useContext(DataContext)!;
   const [planName, setPlanName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const checkboxRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
   const [sessionName, setSessionName] = useState("");
-    const [category, setCategory] = useState('');
+  const [category, setCategory] = useState("");
 
-  const {getSessions, getActivities , createPlan, getActivityById , patchSession} = useApiCalls();
+  const {
+    getSessions,
+    getActivities,
+    createPlan,
+    getActivityById,
+    patchSession,
+  } = useApiCalls();
   useEffect(() => {
     getSessions();
     getActivities();
   }, []);
 
-  const convertGridAssignmentsToSessions = () => {
-    const sessions = Object.entries(gridAssignments).map(
-      ([scheduledDayStr, session]) => ({
-        sessionId: session.sessionId,
-        scheduledDay: Number(scheduledDayStr),
-      })
-    );
-  
-    return sessions;
-  };
-  
-
-  
   console.log(sessions_api_call);
-
-  // const plans = JSON.parse(localStorage.getItem("selectedPlan"))
-  // console.log(plans)
-  // console.log(sessions);
   // grid and checked cell interaction
   const [activePlan, setActivePlan] = useState<Session_Api_call | null>(null);
-  const [gridAssignments, setGridAssignments] = useState<{
-    [key: number]: any;
-  }>({});
 
-  const filteredPlans = sessions_api_call.filter(
+  const filteredSessions = sessions_api_call.filter(
     (plan) =>
       plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plan.category?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -95,54 +79,55 @@ function SessionPage() {
   };
 
   const isAllSelected =
-    filteredPlans.length > 0 && selectedIds.length === filteredPlans.length;
+    filteredSessions.length > 0 &&
+    selectedIds.length === filteredSessions.length;
 
   useEffect(() => {
     if (checkboxRef.current) {
       checkboxRef.current.indeterminate =
-        selectedIds.length > 0 && selectedIds.length < filteredPlans.length;
+        selectedIds.length > 0 && selectedIds.length < filteredSessions.length;
     }
-  }, [selectedIds, filteredPlans.length]);
+  }, [selectedIds, filteredSessions.length]);
 
-  
   const createANewPlan = () => {
     const planToSubmit: Plan_Api_call = {
       title: planName,
       description: "",
       category: "FITNESS",
-      sessions: convertGridAssignmentsToSessions(),
+      sessions: sessions.map((session) => ({
+        sessionId: session.sessionId,
+        scheduledDay: session.scheduledDay,
+      })),
     };
     createPlan(planToSubmit);
-  }
+  };
+
   const toggleSelectAll = () => {
-    // setSelectedIds(isAllSelected ? [] : filteredPlans.map((p) => p.id));
+    // setSelectedIds(isAllSelected ? [] : filteredSessions.map((p) => p.id));
 
     if (isAllSelected) {
       setSelectedIds([]);
       setActivePlan(null);
     } else {
-      setSelectedIds(filteredPlans.map((p) => p.sessionId));
+      setSelectedIds(filteredSessions.map((p) => p.sessionId));
     }
   };
 
   const handleSaveSesion = async () => {
     try {
       await patchSession(previewSession.sessionId, {
-        title: sessionName == "" ?  previewSession.title : sessionName,
-        
+        title: sessionName == "" ? previewSession.title : sessionName,
+
         description: previewSession.description,
         category: category == "" ? previewSession.category : category,
-        activityIds: previewSession?.activityIds
+        activityIds: previewSession?.activityIds,
       });
       console.log("Session updated successfully");
     } catch (error) {
       console.error("❌ Error updating session:", error);
     }
     getSessions();
-  }
-  useEffect(() => {
-    console.log("gridAssignments", gridAssignments);
-  }, [gridAssignments])
+  };
 
   const toggleSelectOne = (id: string) => {
     setSelectedIds((prev) => {
@@ -152,7 +137,9 @@ function SessionPage() {
       console.log(newSelected);
       // setting active plan for the communication of grid and colums
       if (newSelected.length === 1) {
-        const plan = sessions_api_call.find((p) => p.sessionId === newSelected[0]);
+        const plan = sessions_api_call.find(
+          (p) => p.sessionId === newSelected[0]
+        );
         console.log(plan);
         setActivePlan(plan || null);
       } else {
@@ -162,76 +149,18 @@ function SessionPage() {
     });
   };
 
-  const handleGridCellClick = (index: number) => {
-    if (!activePlan) return; // If no plan is selected, do nothing
-
-    setGridAssignments((prev) => ({
-      ...prev,
-      [index]: activePlan,
-    }));
-  };
-
   const handleDelete = () => {
-    setSessions_api_call((prev) => prev.filter((p) => !selectedIds.includes(p.sessionId)));
+    setSessions_api_call((prev) =>
+      prev.filter((p) => !selectedIds.includes(p.sessionId))
+    );
     setSelectedIds([]);
   };
-
-  const [len, setLen] = useState(30);
-  const [weeks, setWeeks] = useState([0, 1, 2, 3]); // represents 4 weeks initially
 
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewSession, setPreviewSession] = useState<any>(null);
   const [selectedSession, setSelectedSession] = useState<any>(null);
 
- const handleRemoveWeek = (weekNumberToRemove: number) => {
-  // Step 1: Remove the actual week number
-  setWeeks((prevWeeks) => {
-    const filtered = prevWeeks.filter((w) => w !== weekNumberToRemove);
-    // Also reindex all week numbers after the removed one (to shift them down)
-    const updatedWeeks = filtered.map((w) => (w > weekNumberToRemove ? w - 1 : w));
-    return updatedWeeks;
-  });
-
-  // Step 2: Rebuild gridAssignments
-  setGridAssignments((prevAssignments) => {
-    const updatedAssignments: typeof gridAssignments = {};
-
-    Object.entries(prevAssignments).forEach(([keyStr, value]) => {
-      const key = parseInt(keyStr, 10);
-      const currentWeek = Math.floor(key / 7);
-      const day = key % 7;
-
-      if (currentWeek < weekNumberToRemove) {
-        // Keep entries before the deleted week
-        updatedAssignments[key] = value;
-      } else if (currentWeek > weekNumberToRemove) {
-        // Shift down week index by 1 for entries after the deleted week
-        const newKey = (currentWeek - 1) * 7 + day;
-        updatedAssignments[newKey] = value;
-      }
-      // Entries of the deleted week are skipped
-    });
-
-    return updatedAssignments;
-  });
-};
-
-const handleClearWeek = (weekNumberToClear: number) => {
-  setGridAssignments((prevAssignments) => {
-    const updatedAssignments: typeof gridAssignments = { ...prevAssignments };
-
-    // A week has 7 days, so delete keys from weekNumberToClear * 7 to weekNumberToClear * 7 + 6
-    for (let i = 0; i < 7; i++) {
-      const key = weekNumberToClear * 7 + i;
-      delete updatedAssignments[key];
-    }
-
-    return updatedAssignments;
-  });
-};
-
   const handlePreviewClick = (session: Session_Api_call) => {
-    
     setPreviewSession(session);
     setPreviewModalOpen(true);
     setSelectedSession(session);
@@ -239,37 +168,65 @@ const handleClearWeek = (weekNumberToClear: number) => {
     console.log("Previewing session:", session);
   };
 
-    useEffect(() => {
+
+  function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
+    const selectedValue = e.target.value;
+    console.log("Selected value:", selectedValue);
+    async function fetchActivityDetails() {
+      const activityDetails = await getActivityById(selectedValue);
+      console.log("Activity details:", activityDetails);
+      setPreviewSession((prev: any) => {
+        if (!prev) return prev;
+        const updatedActivities = [...prev.activities];
+        updatedActivities[idx] = activityDetails;
+
+        const updatedActivityIds = [...prev.activityIds];
+        updatedActivityIds[idx] = selectedValue;
+
+        return {
+          ...prev,
+          activityIds: updatedActivityIds,
+          activities: updatedActivities,
+        };
+      });
+    }
+    fetchActivityDetails();
     console.log("preview session", previewSession);
-  }, [previewSession]);
-
-
-function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
-  const selectedValue = e.target.value;
-  console.log("Selected value:", selectedValue);
-  async function fetchActivityDetails() {
-    const activityDetails = await getActivityById(selectedValue);
-    console.log("Activity details:", activityDetails);
-    setPreviewSession((prev: any) => {
-      if (!prev) return prev;
-      const updatedActivities = [...prev.activities];
-      updatedActivities[idx] = activityDetails;
-
-      const updatedActivityIds = [...prev.activityIds];
-      updatedActivityIds[idx] = selectedValue;
-
-      return {
-        ...prev,
-        activityIds: updatedActivityIds,
-        activities: updatedActivities,
-      };
-    });
   }
-  fetchActivityDetails();
-  console.log("preview session", previewSession);
-}
+
+  // new states
+  const [sessions, setSessions] = useState<any>([]);
+  const [sessionSelected, setSessionSelected] = useState<any>(null);
+
+  // new functions
+
+  const sessionConverter = (session: Session_Api_call) => {
+    const convertSession = {
+      ...session,
+      scheduledDay: undefined,
+    };
+    console.log(convertSession);
+    setSessionSelected(convertSession);
+    // setSessions((prev) => [...prev, convertSession]);
+  };
+
+  const addingSessionToGrid = (day: number) => {
+    if (!sessionSelected) return;
+    const newSession = {
+      ...sessionSelected,
+      scheduledDay: day,
+    };
+    setSessions((sessions) => [...sessions, newSession]);
+  };
+
+  const deletingSessionFromGrid = (day: number) => {
+    setSessions((sessions) =>
+      sessions.filter((session) => session.scheduledDay !== day)
+    );
+  }
 
 
+  console.log(sessions);
   return (
     <div className="responses-root">
       <Header />
@@ -279,21 +236,10 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
         <div className="left-panel">
           {/* Top Bar */}
           <div className="top-bar">
-            {selectComponent === "/plans" || selectComponent === "dashboard" ? (
-              <div className="flex items-center justify-center gap-1">
-                <span className="sessions-text-header">Sessions</span>
-                <span className="all-button"> All</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-1">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            )}
+            <div className="flex items-center justify-center gap-1">
+              <span className="sessions-text-header">Sessions</span>
+              <span className="all-button"> All</span>
+            </div>
 
             <div className="button-group">
               <button
@@ -356,21 +302,25 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                 </tr>
               </thead>
               <tbody>
-                {filteredPlans.map((plan, idx) => (
-                  <tr key={plan.sessionId} className="table-row">
+                {filteredSessions.map((session, idx) => (
+                  <tr
+                    onClick={() => sessionConverter(session)}
+                    key={session.sessionId}
+                    className="table-row"
+                  >
                     <td>
                       <input
                         type="checkbox"
                         className="session-checkbox"
-                        checked={selectedIds.includes(plan.sessionId)}
-                        onChange={() => toggleSelectOne(plan.sessionId)}
+                        checked={selectedIds.includes(session.sessionId)}
+                        onChange={() => toggleSelectOne(session.sessionId)}
                       />
                     </td>
 
-                    <td className="plan-title">{plan.title}</td>
-                    <td>{plan.category}</td>
+                    <td className="plan-title">{session.title}</td>
+                    <td>{session.category}</td>
                     <td className="p-icon">
-                      <button onClick={() => handlePreviewClick(plan)}>
+                      <button onClick={() => handlePreviewClick(session)}>
                         <EyeIcon />
                       </button>
                     </td>
@@ -396,111 +346,37 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                   className="placeholder:font-semibold placeholder:text-gray-950"
                 />
               </div>
-
-              {selectComponent === "planCreation" ? (
-                <div className="right-panel-header-right-side-component">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Select a date"
-                      value={selectedDate}
-                      onChange={(newDate) => setSelectedDate(newDate)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          sx={{
-                            height: 50,
-                            "& .MuiInputBase-root": {
-                              height: 50,
-                              boxSizing: "border-box",
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-
-                  <button className="holder-right-sode">
-                    <DashboardCustomize size={20} className="text-blue-500" />
-                    <span className="customise-text">Customize</span>{" "}
-                  </button>
-                </div>
-              ) : null}
             </div>
             {/* Plan Name Input */}
 
             {/* Calendar */}
-            <div className="calendar">
-              
-              <div className="calendar-grid">
-                {weeks.map(( weekIndex) => (
-                  <React.Fragment key={weekIndex}>
-                    <div className="week Label flex justify-between items-center">
-                      <span>Week {weekIndex + 1}</span>
-                    </div>
-                    {Array.from({ length: 7 }, (_, dayIndex) => {
-                      const index = weekIndex * 7 + dayIndex;
-                      const assignedPlan = gridAssignments[index];
-
-                      return (
-                        <div
-                          key={index}
-                          className={`calendar-cell ${
-                            activePlan && !(selectedIds.length > 1)
-                              ? "clickable"
-                              : ""
-                          } ${selectedIds.length > 1 ? "disabled" : ""}`}
-                          onClick={() => {
-                            if (!(selectedIds.length > 1)) {
-                              handleGridCellClick(index);
-                              console.log("assignedPlan", assignedPlan);
-                            }
-                          }}
-                        >
-                          {assignedPlan ? (
-                            <div className="assigned-plan">
-                              <strong>{assignedPlan.title}</strong>
-                              <div className="small">
-                                {assignedPlan.category}
-                              </div>
-                            </div>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                    <button
-                      className="flex justify-center items-center"
-                      onClick={() => handleRemoveWeek(weekIndex)}
-                    >
-                      <MinusCircle size={20} className="text-red-500" />
-                    </button>
-                    <button onClick={() => handleClearWeek(weekIndex)}>Clear Week</button>
-                  </React.Fragment>
-                ))}
-              </div>
+            <div className="pl-5 pr-5 pb-5">
+              <PlanCreatorGrid
+                sessions={sessions}
+                blocks={blocks}
+                selectedSession={sessionSelected}
+                addingSessionToGrid={addingSessionToGrid}
+                deletingSessionFromGrid={deletingSessionFromGrid}
+              ></PlanCreatorGrid>
             </div>
+          </div>
 
-            {/* Confirm Button */}
-            <div className="flex px-6 justify-between">
-              <button
-                className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
-                onClick={() =>
-                  setWeeks((prev) => [
-                    ...prev,
-                    prev.length > 0 ? Math.max(...prev) + 1 : 0,
-                  ])
-                }
-              >
-                <CirclePlus size={25} />
-                <span className="text-blue">Add Week</span>
-              </button>
-              <button
-                onClick={ createANewPlan }
-                className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
-              >
-                <span>Confirm</span>
-                <ArrowRight size={20} />
-              </button>
-            </div>
+          {/* Footer Buttons */}
+          <div className="flex px-6 justify-between">
+            <button
+              className="bg-white text-blue-700 rounded-md px-4 py-2 flex space-x-3"
+              onClick={() => setBlocks((prev) => prev + 7)}
+            >
+              <CirclePlus size={25} />
+              <span className="text-blue">Add Week</span>
+            </button>
+            <button
+              onClick={createANewPlan}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center space-x-10"
+            >
+              <span>Confirm</span>
+              <ArrowRight size={20} />
+            </button>
           </div>
         </div>
       </div>
@@ -532,23 +408,27 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                     placeholder="Session name"
                   />
                   <FormControl fullWidth>
-      <InputLabel id="category-label">Category</InputLabel>
-      <Select
-        labelId="category-label"
-        id="category-select"
-        value={category}
-        label="Category"
-        onChange={(e) => setCategory(e.target.value)}
-        
-      >
-        <MenuItem value="FITNESS">Fitness</MenuItem>
-        <MenuItem value="SPORTS">Sports</MenuItem>
-        <MenuItem value="WELLNESS">Wellness</MenuItem>
-        <MenuItem value="OTHER">Other</MenuItem>
-      </Select>
-    </FormControl>
+                    <InputLabel id="category-label">Category</InputLabel>
+                    <Select
+                      labelId="category-label"
+                      id="category-select"
+                      value={category}
+                      label="Category"
+                      onChange={(e) => setCategory(e.target.value)}
+                    >
+                      <MenuItem value="FITNESS">Fitness</MenuItem>
+                      <MenuItem value="SPORTS">Sports</MenuItem>
+                      <MenuItem value="WELLNESS">Wellness</MenuItem>
+                      <MenuItem value="OTHER">Other</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
-                <button onClick={handleSaveSesion} className="save-changes-button">Save changes</button>
+                <button
+                  onClick={handleSaveSesion}
+                  className="save-changes-button"
+                >
+                  Save changes
+                </button>
               </div>
 
               {/* Activity Table */}
@@ -579,18 +459,22 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                               <Select
                                 labelId={`activity-select-label-${idx}`}
                                 id={`activity-select-${idx}`}
-                                value={activity.activityId|| ""}
+                                value={activity.activityId || ""}
                                 label="Activity"
                                 onChange={(e: SelectChangeEvent) => {
-
                                   setActivityInThePreviewSession(e, idx);
                                 }}
                               >
-                                {activities_api_call.map((item: Activity_Api_call, index) => (
-                                  <MenuItem key={index} value={item.activityId}>
-                                    {item.name}
-                                  </MenuItem>
-                                ))}
+                                {activities_api_call.map(
+                                  (item: Activity_Api_call, index) => (
+                                    <MenuItem
+                                      key={index}
+                                      value={item.activityId}
+                                    >
+                                      {item.name}
+                                    </MenuItem>
+                                  )
+                                )}
                               </Select>
                             </FormControl>
                           </td>
@@ -614,21 +498,22 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
                                 //   };
                                 // });
                                 setPreviewSession((prev: any) => {
-                                  const updatedActivities = prev.activities.filter(
-                                    (_: any, i: number) => i !== idx
-                                  );
+                                  const updatedActivities =
+                                    prev.activities.filter(
+                                      (_: any, i: number) => i !== idx
+                                    );
 
-                                  const updatedActivityIds = prev.activityIds.filter(
-                                    (_: any, i: number) => i !== idx
-                                  );
+                                  const updatedActivityIds =
+                                    prev.activityIds.filter(
+                                      (_: any, i: number) => i !== idx
+                                    );
 
                                   return {
                                     ...prev,
                                     activities: updatedActivities,
                                     activityIds: updatedActivityIds,
                                   };
-                                })
-
+                                });
                               }}
                             >
                               <LucideCircleMinus
@@ -646,19 +531,27 @@ function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
 
               {/* Footer */}
               <div className="flex pt-4 ">
-                <button className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
+                <button
+                  className="bg-white border border-blue-500 text-blue-500 px-6 py-2 cursor-pointer rounded-lg transition duration-200 flex justify-center items-center space-x-2"
                   onClick={() => {
                     setPreviewSession((prev: any) => {
-                    const updatedActivities = [...(prev.activities || []), {}];
-                    const updatedActivityIds = [...(prev.activityIds || []), null]; // or "" or a default value
+                      const updatedActivities = [
+                        ...(prev.activities || []),
+                        {},
+                      ];
+                      const updatedActivityIds = [
+                        ...(prev.activityIds || []),
+                        null,
+                      ]; // or "" or a default value
 
-                    return {
-                      ...prev,
-                      activities: updatedActivities,
-                      activityIds: updatedActivityIds,
-                    }
+                      return {
+                        ...prev,
+                        activities: updatedActivities,
+                        activityIds: updatedActivityIds,
+                      };
                     });
-                  }}>
+                  }}
+                >
                   <Plus size={20} />
                   Add Activity
                 </button>
