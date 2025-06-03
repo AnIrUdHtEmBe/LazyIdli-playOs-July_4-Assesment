@@ -1,4 +1,14 @@
-import { Cross, FileText, Plus, Save, Trash, Trash2, X } from "lucide-react";
+import {
+  Cross,
+  Crosshair,
+  CrossIcon,
+  FileText,
+  Plus,
+  Save,
+  Trash,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   MenuItem,
   Select,
@@ -20,6 +30,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { useApiCalls } from "../store/axios";
 import { DataContext } from "../store/DataContext";
+import { Refresh, WrongLocation } from "@mui/icons-material";
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
@@ -40,10 +51,6 @@ const questionTypes = [
 ];
 
 const QuestionBank = () => {
-  
-
-  const { selectComponent, questionsForAPICall } = useContext(DataContext);
-  useEffect(() => {
   const fetchQuestions = async () => {
     try {
       await questions(); // likely sets questionsForAPICall inside context
@@ -51,23 +58,24 @@ const QuestionBank = () => {
       console.error("Failed to fetch questions:", error);
     }
   };
-  fetchQuestions();
-}, []);
+  const { selectComponent, questionsForAPICall } = useContext(DataContext);
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
-useEffect(() => {
-  if (questionsForAPICall && questionsForAPICall.length > 0) {
-    // Replace instead of append to avoid duplication
-    const transformed = questionsForAPICall.map((q) => ({
-      checked: false,
-      mainText: q.mainText,
-      answerType: q.answerType,
-      options: q.options,
-      questionId: q.questionId,
-    }));
-    setQuestion(transformed); // replaces the state instead of appending
-  }
-}, [questionsForAPICall]);
-
+  useEffect(() => {
+    if (questionsForAPICall && questionsForAPICall.length > 0) {
+      // Replace instead of append to avoid duplication
+      const transformed = questionsForAPICall.map((q) => ({
+        checked: false,
+        mainText: q.mainText,
+        answerType: q.answerType,
+        options: q.options,
+        questionId: q.questionId,
+      }));
+      setQuestion(transformed); // replaces the state instead of appending
+    }
+  }, [questionsForAPICall]);
 
   const { Question_creation_Api_call, questions } = useApiCalls();
 
@@ -107,10 +115,7 @@ useEffect(() => {
       const response = await Question_creation_Api_call(question);
       console.log("API call successful:", response);
       alert("Questions saved successfully!");
-      setQuestion((prev) => prev.map(question => ({
-        ...question,
-        checked: false
-      })));
+      fetchQuestions(); // Refresh the questions after saving
     } catch (error) {
       console.error("API call failed:", error);
     }
@@ -119,6 +124,7 @@ useEffect(() => {
 
   const editQuestion = (index) => {
     const selectedQuestion = question[index];
+    selectedQuestion.checked = true; // Ensure the question is checked when editing
     setValue(selectedQuestion.mainText);
     setType(selectedQuestion.answerType);
     setOptions(selectedQuestion.options || []);
@@ -131,7 +137,6 @@ useEffect(() => {
       prevQuestions.map((q, i) => (i === index ? { ...q, ...updatedData } : q))
     );
   };
- 
 
   const handleAddQuestion = () => {
     if (!type.trim()) {
@@ -149,14 +154,13 @@ useEffect(() => {
         : [];
 
     const newQuestion = {
-      checked: checked,
+      checked: true,
       mainText: value,
       answerType: type,
       options: filteredOptions,
     };
 
     if (editingIndex !== null) {
-      newQuestion.checked = true;
       updateQuestion(editingIndex, newQuestion);
       setEditingIndex(null);
     } else {
@@ -169,7 +173,42 @@ useEffect(() => {
     setOptions([]);
     setChecked(false);
   };
-  
+
+  const handleEditDone = () => {
+    setValue("");
+    setType("");
+    setOptions([]);
+    setChecked(false);
+    if (editingIndex !== null) {
+      const updatedQuestions = [...question];
+      updatedQuestions[editingIndex].checked = false;
+      setQuestion(updatedQuestions);
+      setEditingIndex(null);
+    }
+  };
+
+  //   useEffect(() => {
+  //   // Reorder the questions: checked first, then unchecked
+  //   setQuestion((prevQuestions) => {
+  //     const sorted = [...prevQuestions].sort((a, b) => {
+  //       return (b.checked === true) - (a.checked === true);
+  //     });
+  //     return sorted;
+  //   });
+  // }, [question]);
+
+  useEffect(() => {
+    setQuestion((prevQuestions) => {
+      const sorted = [...prevQuestions].sort((a, b) => {
+        return (b.checked === true) - (a.checked === true);
+      });
+
+      // Avoid unnecessary updates
+      const isDifferent = sorted.some((q, i) => q !== prevQuestions[i]);
+      return isDifferent ? sorted : prevQuestions;
+    });
+  }, [question]);
+
   return (
     <div className="question-bank-container">
       {/* header */}
@@ -201,7 +240,7 @@ useEffect(() => {
           {/* main conatiner header */}
           <div className="question-bank-main-header">
             <span className="question-bank-main-header-title">
-              Create Question Bank
+              Question Bank
             </span>
             <button
               className="question-bank-main-header-button"
@@ -220,14 +259,25 @@ useEffect(() => {
                 <span className="question-bank-main-body-left-header-title">
                   Questions
                 </span>
-                <button
-                  className="question-bank-main-body-left-header-button"
-                  onClick={() => {
-                    setQuestion([]);
-                  }}
-                >
-                  <Trash2 size={20}></Trash2>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="question-bank-main-body-left-content-add-button"
+                    onClick={handleAddQuestion}
+                  >
+                    {editingIndex == null ? <Plus size={13}></Plus> : ""}
+                    {editingIndex == null ? (
+                      <span>Add Question</span>
+                    ) : (
+                      <span>Update Question</span>
+                    )}
+                  </button>
+                  <button
+                    className="question-bank-main-body-left-header-button"
+                    onClick={handleEditDone}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
               <div className="question-bank-main-body-left-content">
@@ -256,20 +306,6 @@ useEffect(() => {
                     </span>
                   </div>
                 ))}
-
-                <div className="question-bank-main-body-left-content-add">
-                  <button
-                    className="question-bank-main-body-left-content-add-button"
-                    onClick={handleAddQuestion}
-                  >
-                    {editingIndex == null ? <Plus size={13}></Plus> : ""}
-                    {editingIndex == null ? (
-                      <span>Add Question</span>
-                    ) : (
-                      <span>Update Question</span>
-                    )}
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -277,12 +313,16 @@ useEffect(() => {
             <div className="question-bank-main-body-right">
               <div className="question-bank-main-body-right-box">
                 <div className="question-bank-main-body-right-header">
-                  {editingIndex !== null ? <span className="question-bank-main-body-right-header-title">
-                    Question {editingIndex + 1}
-                  </span>: <span className="question-bank-main-body-right-header-title">
-                    Question {question.length + 1}
-                  </span> }
-                 
+                  {editingIndex !== null ? (
+                    <span className="question-bank-main-body-right-header-title">
+                      Question {editingIndex + 1}
+                    </span>
+                  ) : (
+                    <span className="question-bank-main-body-right-header-title">
+                      Question {question.length + 1}
+                    </span>
+                  )}
+
                   <FormControl size="small" sx={{ width: "200px" }}>
                     <InputLabel id="question-type-label">
                       Select Question Type
@@ -332,7 +372,7 @@ useEffect(() => {
 
                 <div className="question-bank-main-body-right-content">
                   <TextField
-                    label="Question..."
+                    label=""
                     value={value}
                     variant="standard"
                     onChange={(e) => setValue(e.target.value)}
@@ -350,7 +390,7 @@ useEffect(() => {
                       },
                     }}
                     sx={{
-                      width: "250px", // control the overall width
+                      width: "100%", // Makes the TextField shrink to fit
                     }}
                   />
 
@@ -358,7 +398,11 @@ useEffect(() => {
                     <div className="question-option-container">
                       {options.map((option, index) => (
                         <div key={index} className="question-option">
-                          <input type="Checkbox" />
+                          {type === "choose_one" ? (
+                            <input type="radio" />
+                          ) : (
+                            <input type="Checkbox" />
+                          )}
                           <TextField
                             label={`Option ${index + 1}`}
                             variant="standard"

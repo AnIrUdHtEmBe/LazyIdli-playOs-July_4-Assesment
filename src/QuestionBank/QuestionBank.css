@@ -110,7 +110,7 @@
 .question-bank-main-body-left-header{
   display: flex;
   justify-content: space-between;
-  /* align-items: center; */
+  align-items: center;
   height: 10%;
   font-family: 'roboto', sans-serif;
 }
@@ -118,9 +118,12 @@
   font-size: 17px;
   font-weight: 400;
   color: #2563EB;
+  align-items: center;
+  justify-content: center;
 }
 
 .question-bank-main-body-left-header-button{
+  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -203,7 +206,7 @@
 }
 
 .question-option-container{
-  max-height: 250px;
+  max-height: 348px;
   overflow: auto;
 }
 
