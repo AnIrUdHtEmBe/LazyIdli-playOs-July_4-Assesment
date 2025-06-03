@@ -30,7 +30,7 @@ const PlanCreatorGrid = ({
   blocks,
   selectedSession,
   addingSessionToGrid,
-  deletingSessionFromGrid
+  deletingSessionFromGrid,
 }: PlanCreatorGridProps) => {
   const calculatedRows = Math.ceil(blocks / 7);
   const gridData = Array.from({ length: calculatedRows * 7 }, (_, index) => {
@@ -45,7 +45,12 @@ const PlanCreatorGrid = ({
   return (
     <div className="session-grid">
       {gridData.map(({ boxNumber, session }) => (
-        <div key={boxNumber} className="session-grid-box">
+        <div
+          key={boxNumber}
+          className={`session-grid-box ${session ? "has-session" : ""} ${
+            session?.status.toLowerCase() || ""
+          }`}
+        >
           {/* box header */}
           <div className="box-header">
             <div className="box-number">Day {boxNumber} </div>
@@ -62,7 +67,14 @@ const PlanCreatorGrid = ({
 
           {/* box content */}
           {session ? (
-            <div className="session-details">
+            <div
+              className="session-details"
+              onClick={() => {
+                if (selectedSession) {
+                  addingSessionToGrid(boxNumber);
+                }
+              }}
+            >
               <div className="session-title">{session.title}</div>
               <div className="session-category">
                 <span></span> {session.category}

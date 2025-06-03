@@ -168,7 +168,6 @@ function SessionPage() {
     console.log("Previewing session:", session);
   };
 
-
   function setActivityInThePreviewSession(e: SelectChangeEvent, idx: number) {
     const selectedValue = e.target.value;
     console.log("Selected value:", selectedValue);
@@ -197,6 +196,7 @@ function SessionPage() {
   // new states
   const [sessions, setSessions] = useState<any>([]);
   const [sessionSelected, setSessionSelected] = useState<any>(null);
+  const [updateModal, setUpdateModal] = useState<number | null>(null);
 
   // new functions
 
@@ -212,21 +212,40 @@ function SessionPage() {
 
   const addingSessionToGrid = (day: number) => {
     if (!sessionSelected) return;
+
+    const existingSession = sessions.find(
+      (session) => session.scheduledDay === day
+    );
+    console.log(existingSession)
+
+    if (existingSession) {
+      setUpdateModal(day);
+    } else {
+      const newSession = { ...sessionSelected, scheduledDay: day };
+      setSessions((prevSessions) => [...prevSessions, newSession]);
+    }
+  };
+
+  const handleUpdateExistingSession = () => {
+    setSessions((prevSessions) =>
+      prevSessions.filter((session) => session.scheduledDay !== updateModal)
+    );
+
     const newSession = {
       ...sessionSelected,
-      scheduledDay: day,
+      scheduledDay: updateModal,
     };
-    setSessions((sessions) => [...sessions, newSession]);
+    setSessions((prevSessions) => [...prevSessions, newSession]);
   };
 
   const deletingSessionFromGrid = (day: number) => {
     setSessions((sessions) =>
       sessions.filter((session) => session.scheduledDay !== day)
     );
-  }
-
+  };
 
   console.log(sessions);
+  console.log(updateModal);
   return (
     <div className="responses-root">
       <Header />
@@ -306,7 +325,11 @@ function SessionPage() {
                   <tr
                     onClick={() => sessionConverter(session)}
                     key={session.sessionId}
-                    className="table-row"
+                    className={`table-row ${
+                      session.sessionId === sessionSelected?.sessionId
+                        ? "selected_plan"
+                        : ""
+                    }`}
                   >
                     <td>
                       <input
@@ -556,6 +579,34 @@ function SessionPage() {
                   Add Activity
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {updateModal !== null && (
+        <div className="update-modal-overlay">
+          <div className="update-modal">
+            <p className="update-modal-text">
+              Are you sure you want to replace the session for day {updateModal}
+              ?
+            </p>
+            <div className="update-modal-actions">
+              <button
+                className="update-modal-btn yes"
+                onClick={() => {
+                  handleUpdateExistingSession();
+                  setUpdateModal(null);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="update-modal-btn no"
+                onClick={() => setUpdateModal(null)}
+              >
+                No
+              </button>
             </div>
           </div>
         </div>
