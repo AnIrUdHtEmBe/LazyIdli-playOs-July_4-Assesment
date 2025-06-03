@@ -34,6 +34,8 @@ function AllPlans() {
   const [selectedSessionForPlacement, setSelectedSessionForPlacement] =
     useState<any | null>(null);
 
+  const [updateModal, setUpdateModal] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchPlans = async () => {
       try {
@@ -147,18 +149,26 @@ function AllPlans() {
       (session) => session.scheduledDay === day
     );
     if (existingSession) {
-      setSessions((prevSessions) =>
-        prevSessions.filter((session) => session.scheduledDay !== day)
-      );
+      setUpdateModal(day);
+    } else {
+      const newSession = { ...selectedSessionForPlacement, scheduledDay: day };
+      setSessions((prevSessions) => [...prevSessions, newSession]);
     }
-    const newSession = { ...selectedSessionForPlacement, scheduledDay: day };
-    setSessions((prevSessions) => [...prevSessions, newSession]);
-    // setSelectedSessionForPlacement(null);
+  };
+  console.log(updateModal)
+  const handleUpdateExistingSession = () => {
+      setSessions((prevSessions) =>
+        prevSessions.filter((session) => session.scheduledDay !== updateModal)
+      );
+
+      const newSession = {
+        ...selectedSessionForPlacement,
+        scheduledDay: updateModal,
+      };
+      setSessions((prevSessions) => [...prevSessions, newSession]);
   };
 
   const deleteSessionFormGrid = (day: number) => {
-    // console.log(day);
-    // console.log(sessions)
     setSessions((prevSessions) =>
       prevSessions.filter((session) => session.scheduledDay != day)
     );
@@ -168,7 +178,7 @@ function AllPlans() {
     await patchPlans(selectedPlan.templateId, sessions);
     // console.log("Patching new session:", sessions);
   };
-
+  console.log(sessions)
   console.log(sessions_api_call);
   return (
     <div className="all-plans-container">
@@ -204,7 +214,12 @@ function AllPlans() {
                       <tr
                         key={plan.sessionId}
                         onClick={() => handleSelectedSession(plan)}
-                        className={`cursor-pointer hover:bg-gray-100 ${plan.sessionId === selectedSessionForPlacement?.sessionId ? "selected_session" : ""}`}
+                        className={`cursor-pointer hover:bg-gray-100 ${
+                          plan.sessionId ===
+                          selectedSessionForPlacement?.sessionId
+                            ? "selected_session"
+                            : ""
+                        }`}
                       >
                         <td>{plan.title}</td>
                         <td>{plan?.category || ""}</td>
@@ -368,6 +383,33 @@ function AllPlans() {
           </div>
         </div>
       </div>
+
+      {updateModal !== null && (
+        <div className="update-modal-overlay">
+          <div className="update-modal">
+            <p className="update-modal-text">
+              Are you sure you want to replace the session for day {updateModal}?
+            </p>
+            <div className="update-modal-actions">
+              <button
+                className="update-modal-btn yes"
+                onClick={() => {
+                  handleUpdateExistingSession();
+                  setUpdateModal(null);
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="update-modal-btn no"
+                onClick={() => setUpdateModal(null)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

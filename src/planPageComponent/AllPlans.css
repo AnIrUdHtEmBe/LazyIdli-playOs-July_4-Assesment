@@ -294,3 +294,63 @@
   background-color: #e0f2fe; /* Light blue background for selected session */
   border-left: 4px solid #2563eb; /* Blue left border for emphasis */
 }
+
+
+.update-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.update-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.update-modal-text {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.update-modal-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.update-modal-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.update-modal-btn.yes {
+  background-color: #e53e3e;
+  color: white;
+}
+
+.update-modal-btn.yes:hover {
+  background-color: #c53030;
+}
+
+.update-modal-btn.no {
+  background-color: #e2e8f0;
+}
+
+.update-modal-btn.no:hover {
+  background-color: #cbd5e0;
+}
