@@ -279,7 +279,29 @@ function QuestionPaperSet() {
                       </div>
                     ) : question.answerType === "number_ws" ? (
                       <div>
-                        
+                        <table className="min-w-full border border-gray-300 rounded-md shadow-sm">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              <th className="text-left px-4 py-2 border-b border-gray-300 text-sm font-semibold text-gray-700 flex items-center justify-between">
+                                <span>Score Zone</span>
+                              </th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {question.scoreZones.map(
+                              (zone: string, index: number) => {
+                                return (
+                                  <tr key={index} className={`even:bg-gray-50`}>
+                                    <td className="px-4 py-2 border-b text-sm text-gray-600 flex items-center gap-2">
+                                      <span>{zone}</span>
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
+                          </tbody>
+                        </table>
                       </div>
                     ) : (
                       ""
