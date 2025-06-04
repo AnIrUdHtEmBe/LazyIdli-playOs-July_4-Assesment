@@ -26,11 +26,12 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import NumbersIcon from "@mui/icons-material/LooksOne";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "./QuestionBank.css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState ,useRef} from "react";
 
 import { useApiCalls } from "../store/axios";
 import { DataContext } from "../store/DataContext";
-import { Refresh, WrongLocation } from "@mui/icons-material";
+import { LowPriority } from "@mui/icons-material";
+
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
@@ -62,7 +63,7 @@ const QuestionBank = () => {
   useEffect(() => {
     fetchQuestions();
   }, []);
-
+const [shouldEdit, setShouldEdit] = useState(false);
   useEffect(() => {
     if (questionsForAPICall && questionsForAPICall.length > 0) {
       // Replace instead of append to avoid duplication
@@ -72,12 +73,20 @@ const QuestionBank = () => {
         answerType: q.answerType,
         options: q.options,
         questionId: q.questionId,
+        scorezones: q.scoreZones
       }));
       setQuestion(transformed); // replaces the state instead of appending
-    }
+      
+      
+      setShouldEdit(true); // trigger edit after question state updates
+    } 
   }, [questionsForAPICall]);
 
-  const { Question_creation_Api_call, questions } = useApiCalls();
+
+
+
+
+  const { Question_creation_Api_call, questions , question_Updation , questionCreation} = useApiCalls();
 
   const [question, setQuestion] = useState([]);
   const [type, setType] = useState("");
@@ -87,17 +96,7 @@ const QuestionBank = () => {
 
   console.log(question);
 
-  const transformAndAppendQuestions = (externalQuestions) => {
-    const cleanedQuestions = externalQuestions.map((q) => ({
-      checked: false,
-      mainText: q.mainText,
-      answerType: q.answerType,
-      options: q.options || null,
-      questionId: q.questionId,
-    }));
-
-    setQuestion((prev) => [...prev, ...cleanedQuestions]);
-  };
+  const inputRef = useRef(null);
 
   const handleApiCall = async () => {
     console.log("API call initiated");
@@ -124,6 +123,7 @@ const QuestionBank = () => {
 
   const editQuestion = (index) => {
     const selectedQuestion = question[index];
+  
     selectedQuestion.checked = true; // Ensure the question is checked when editing
     setValue(selectedQuestion.mainText);
     setType(selectedQuestion.answerType);
@@ -137,6 +137,28 @@ const QuestionBank = () => {
       prevQuestions.map((q, i) => (i === index ? { ...q, ...updatedData } : q))
     );
   };
+
+  const addQuestion = () => {
+    if(question[question.length - 1].mainText === "" && question[question.length - 1].answerType === ""){
+      editQuestion(question.length - 1);
+      inputRef.current.focus();
+      alert("Please fill the last question before adding a new one.");
+      return;
+    }
+    question.push({
+      checked: false,
+      mainText: "",
+      answerType: "",
+      options: [],
+    });
+    setQuestion([...question]);
+    setEditingIndex(question.length - 1); // Set the last question as the one being edited
+    setValue("");
+    setType("");  
+    setOptions([]);
+    setChecked(false);
+    inputRef.current.focus();
+  }
 
   const handleAddQuestion = () => {
     if (!type.trim()) {
@@ -162,6 +184,13 @@ const QuestionBank = () => {
 
     if (editingIndex !== null) {
       updateQuestion(editingIndex, newQuestion);
+      const questionId = question[editingIndex].questionId;
+      if(questionId){
+        question_Updation(questionId, newQuestion);
+      }
+      else{
+        questionCreation(newQuestion);
+      }
       setEditingIndex(null);
     } else {
       setQuestion((prev) => [...prev, newQuestion]);
@@ -172,6 +201,8 @@ const QuestionBank = () => {
     setType("");
     setOptions([]);
     setChecked(false);
+    setShouldEdit(true); // Trigger edit mode for the newly added question
+    
   };
 
   const handleEditDone = () => {
@@ -186,28 +217,16 @@ const QuestionBank = () => {
       setEditingIndex(null);
     }
   };
-
-  //   useEffect(() => {
-  //   // Reorder the questions: checked first, then unchecked
-  //   setQuestion((prevQuestions) => {
-  //     const sorted = [...prevQuestions].sort((a, b) => {
-  //       return (b.checked === true) - (a.checked === true);
-  //     });
-  //     return sorted;
-  //   });
-  // }, [question]);
-
   useEffect(() => {
-    setQuestion((prevQuestions) => {
-      const sorted = [...prevQuestions].sort((a, b) => {
-        return (b.checked === true) - (a.checked === true);
-      });
-
-      // Avoid unnecessary updates
-      const isDifferent = sorted.some((q, i) => q !== prevQuestions[i]);
-      return isDifferent ? sorted : prevQuestions;
-    });
-  }, [question]);
+  if (shouldEdit && question.length > 0) {
+    editQuestion(0);
+    console.log("works");
+    setShouldEdit(false);
+  } else {
+    console.log("hi");
+    console.log(question.length);
+  }
+}, [shouldEdit, question]); // 👈 Add questions to the dependency array
 
   return (
     <div className="question-bank-container">
@@ -242,13 +261,13 @@ const QuestionBank = () => {
             <span className="question-bank-main-header-title">
               Question Bank
             </span>
-            <button
+            {/* <button
               className="question-bank-main-header-button"
               onClick={handleApiCall}
             >
               <Save></Save>
               <span>Save</span>
-            </button>
+            </button> */}
           </div>
 
           {/* main conatianer body */}
@@ -262,14 +281,10 @@ const QuestionBank = () => {
                 <div className="flex items-center gap-2">
                   <button
                     className="question-bank-main-body-left-content-add-button"
-                    onClick={handleAddQuestion}
+                    onClick={addQuestion}
                   >
-                    {editingIndex == null ? <Plus size={13}></Plus> : ""}
-                    {editingIndex == null ? (
+                     <Plus size={13}></Plus>
                       <span>Add Question</span>
-                    ) : (
-                      <span>Update Question</span>
-                    )}
                   </button>
                   <button
                     className="question-bank-main-body-left-header-button"
@@ -286,20 +301,16 @@ const QuestionBank = () => {
                     key={index}
                     className="question-bank-main-body-left-item"
                   >
+                    
                     <input
-                      type="checkbox"
-                      className="question-bank-main-body-left-item-checkbox"
-                      checked={item.checked}
-                      onChange={() => {
-                        const updatedQuestions = [...question];
-                        updatedQuestions[index].checked =
-                          !updatedQuestions[index].checked;
-                        setQuestion(updatedQuestions);
-                      }}
+                      type="radio"
+                      name="question-select"
+                      checked={editingIndex === index}
+                      onChange={() => editQuestion(index)}
                     />
                     <span>{index + 1})</span>
                     <span
-                      onClick={() => editQuestion(index)}
+                      // onClick={() => editQuestion(index)}
                       className="question-bank-main-body-left-item-text"
                     >
                       {item.mainText}
@@ -315,11 +326,11 @@ const QuestionBank = () => {
                 <div className="question-bank-main-body-right-header">
                   {editingIndex !== null ? (
                     <span className="question-bank-main-body-right-header-title">
-                      Question {editingIndex + 1}
+                      {editingIndex + 1})
                     </span>
                   ) : (
                     <span className="question-bank-main-body-right-header-title">
-                      Question {question.length + 1}
+                      {question.length + 1})
                     </span>
                   )}
 
@@ -372,6 +383,7 @@ const QuestionBank = () => {
 
                 <div className="question-bank-main-body-right-content">
                   <TextField
+                    inputRef={inputRef}
                     label=""
                     value={value}
                     variant="standard"
@@ -399,7 +411,11 @@ const QuestionBank = () => {
                       {options.map((option, index) => (
                         <div key={index} className="question-option">
                           {type === "choose_one" ? (
-                            <input type="radio" />
+                            <input
+                              type="radio"
+                              name="question" // Make sure all radio buttons share the same name
+                              value={option}
+                            />
                           ) : (
                             <input type="Checkbox" />
                           )}
@@ -461,7 +477,20 @@ const QuestionBank = () => {
                   ) : (
                     ""
                   )}
+
+
+                 
+              
+
+
                 </div>
+              { question[editingIndex]?.questionId ?
+              <div className="flex justify-end mt-4">
+                <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Update changes</button>
+              </div> : 
+              <div className="flex justify-end mt-4">
+                <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Add a new Question</button>
+              </div>}
               </div>
             </div>
           </div>

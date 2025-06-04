@@ -285,7 +285,33 @@ export const useApiCalls = () => {
       alert("Error submitting assessment. Please try again.");
     }
   };
+  const question_Updation = async (questionId, question ) =>  {
+    try{
+      const res = await axios.patch(
+              `${API_BASE_URL}/questions/${questionId}`,{
+                answerType: question.answerType,
+                mainText: question.mainText,
+                options: question.options,
+              }
+              
+            );
+            console.log("✅ Question updated successfully:", res.data);
+    
+  }
+  catch (error) {
+    console.error("❌ Error updating question:", error);
+  }
 
+  }
+
+  const questionCreation = async (question: object) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/questions`, question);
+      console.log("✅ Question created successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error creating question:", error); 
+    }   
+  }
   const Question_creation_Api_call = async (questions: object[]) => {
     try {
       for (const question of questions) {
@@ -481,5 +507,7 @@ export const useApiCalls = () => {
     OptimisedPatchPlan,
     customer_creation,
     patch_user,
+    question_Updation,
+    questionCreation
   };
 };
