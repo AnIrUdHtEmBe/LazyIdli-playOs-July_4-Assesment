@@ -178,14 +178,14 @@ function QuestionPaperSet() {
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
           <div className="qp-toggle-section">
-            <span className="qp-toggle-text">Q only</span>
+            {/* <span className="qp-toggle-text">Q only</span>
             <button
               className="qp-toggle-options"
               onClick={() => setShowoptions(!showOptions)}
             >
               <Switch defaultChecked></Switch>
             </button>
-            <span className="qp-toggle-text">Q & A</span>
+            <span className="qp-toggle-text">Q & A</span> */}
           </div>
 
           {finalQuestion.length !== 0 ? (
