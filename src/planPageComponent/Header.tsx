@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="header">
       {/* Top Row */}
-      {selectComponent === "planCreation" || selectComponent === "dashboard" ? (
+      {selectComponent === "planCreation" ? (
         <div className="header-topp">
           <div className="header-row">
             <Person2 className="header-icon" />

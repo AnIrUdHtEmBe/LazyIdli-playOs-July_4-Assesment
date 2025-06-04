@@ -1,15 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../store/DataContext";
-import {
-  ChevronRight,
-  CrossIcon,
-  ToggleLeft,
-  ToggleRight,
-  X,
-} from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { useApiCalls } from "../store/axios";
-import "./QuestionPaperSet.css"; // Import the CSS
-import { Switch, ToggleButtonGroup } from "@mui/material";
+import "./QuestionPaperSet.css";
+import { Switch } from "@mui/material";
 
 import {
   Question_Api_call,
@@ -44,6 +38,8 @@ function QuestionPaperSet() {
   >([]);
   const [finalQuestion, setFinalQuestion] = useState<Question_Api_call[]>([]);
 
+  console.log(finalQuestion);
+
   const formSubmission = async () => {
     try {
       // Build the template directly from finalQuestion
@@ -54,29 +50,26 @@ function QuestionPaperSet() {
           isRequired: isQuestionRequired(question.questionId),
         })),
       };
-  
+
       setAssesmentTemplate(updatedTemplate);
-  
+
       console.log("Assessment Template to submit:", updatedTemplate);
-      if( !updatedTemplate.name || updatedTemplate.questions.length === 0) {
+      if (!updatedTemplate.name || updatedTemplate.questions.length === 0) {
         window.alert("Please provide a name and add at least one question.");
         return;
       }
-  
+
       await submitAssesment(updatedTemplate);
-  
+
       // Show success alert
       window.alert("Assessment created successfully!");
       // Optionally, you can navigate away or reset state here
-  
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
       // Show failure alert
       window.alert("Failed to create assessment. Please try again.");
     }
   };
-  
-  
 
   const handleSelect = (question: Question_Api_call) => {
     if (selectedQuestion.includes(question)) {
@@ -190,12 +183,6 @@ function QuestionPaperSet() {
               className="qp-toggle-options"
               onClick={() => setShowoptions(!showOptions)}
             >
-              {/* {showOptions ? (
-                <ToggleLeft className="text-blue-500" size={50}></ToggleLeft>
-              ) : (
-                <ToggleRight className="text-blue-500" size={50}></ToggleRight>
-              )} */}
-
               <Switch defaultChecked></Switch>
             </button>
             <span className="qp-toggle-text">Q & A</span>
@@ -217,10 +204,7 @@ function QuestionPaperSet() {
                         {finalQuestion.length}
                       </span>
                     </span>
-                    <button
-                      className="qp-required-toggle"
-                      // onClick={() => toggleRequired(question.questionId)}
-                    >
+                    <button className="qp-required-toggle">
                       <Switch
                         checked={isQuestionRequired(question.questionId)}
                         onChange={() => toggleRequired(question.questionId)}
@@ -244,14 +228,63 @@ function QuestionPaperSet() {
                 <p className="qp-question-text">{question.mainText}</p>
 
                 {showOptions && (
-                  <div className="qp-options">
-                    {question.options?.map((item, i) => (
-                      <div key={i} className="qp-option">
-                        <input className="qp-checkbox" type="checkbox" />
-                        <span>{item}</span>
+                  <>
+                    {question.answerType === "choose_one" ||
+                    question.answerType === "choose_many" ? (
+                      <div className="qp-options">
+                        {question.options?.map((item, i) => (
+                          <div key={i} className="qp-option">
+                            <input className="qp-checkbox" type="checkbox" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    ) : question.answerType === "text" ? (
+                      <div>
+                        <textarea
+                          className="qp-textarea"
+                          placeholder="Type will be Typing your answer here... "
+                        ></textarea>
+                      </div>
+                    ) : question.answerType === "number" ? (
+                      <div>
+                        <input
+                          type="number"
+                          className="qp-number-input"
+                          placeholder="You Will be Type your answer(Number) here..."
+                        />
+                      </div>
+                    ) : question.answerType === "date" ? (
+                      <div>
+                        <input
+                          type="date"
+                          className="qp-date-input"
+                          placeholder="You Will be Type your answer(Date) here..."
+                        />
+                      </div>
+                    ) : question.answerType === "yesno" ? (
+                      <div className="qp-radio">
+                        <input
+                          type="radio"
+                          name={`yesno-${question.questionId}`}
+                          value="yes"
+                        />
+                        <label>Yes</label>
+                        <input
+                          type="radio"
+                          name={`yesno-${question.questionId}`}
+                          value="no"
+                        />
+                        <label>No</label>
+                      </div>
+                    ) : question.answerType === "number_ws" ? (
+                      <div>
+                        
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </>
                 )}
               </div>
             ))
