@@ -9,6 +9,7 @@ import {
   Question_Api_call,
   createAssessmentTemplate,
 } from "../store/DataContext";
+import { enqueueSnackbar } from "notistack";
 
 function QuestionPaperSet() {
   const { questions, submitAssesment } = useApiCalls();
@@ -55,19 +56,31 @@ function QuestionPaperSet() {
 
       console.log("Assessment Template to submit:", updatedTemplate);
       if (!updatedTemplate.name || updatedTemplate.questions.length === 0) {
-        window.alert("Please provide a name and add at least one question.");
+        // window.alert("Please provide a name and add at least one question.");
+        enqueueSnackbar(
+          "Please provide a name and add at least one question.",
+          {
+            variant: "warning",
+            autoHideDuration: 3000,
+          }
+        );
         return;
       }
 
       await submitAssesment(updatedTemplate);
 
-      // Show success alert
-      window.alert("Assessment created successfully!");
+      enqueueSnackbar("Assessment created successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
       // Optionally, you can navigate away or reset state here
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
       // Show failure alert
-      window.alert("Failed to create assessment. Please try again.");
+      enqueueSnackbar("Failed to create assessment. Please try again.", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -178,7 +191,7 @@ function QuestionPaperSet() {
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
           <div className="qp-toggle-section">
-{/* NOTE THE BELOW CODE IS NO TO BE REMOVED , THIS IS AN IMPORTANT PIECE OF CODE  */}
+            {/* NOTE THE BELOW CODE IS NO TO BE REMOVED , THIS IS AN IMPORTANT PIECE OF CODE  */}
 
             {/* <span className="qp-toggle-text">Q only</span>
             <button

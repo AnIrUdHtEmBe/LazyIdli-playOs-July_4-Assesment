@@ -6,6 +6,7 @@ import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
 import { CircularProgress } from "@mui/material";
 import SessionGridAllPlans from "./SessionGridAllPlans";
+import { enqueueSnackbar } from "notistack";
 
 function AllPlans() {
   const { setSelectComponent, plans_full_api_call, sessions_api_call } =
@@ -116,7 +117,7 @@ function AllPlans() {
     );
   };
 
-  console.log(rows)
+  console.log(rows);
 
   // console.log("Sessions:", sessions);
 
@@ -127,6 +128,10 @@ function AllPlans() {
       (!previewPlan.sessions || previewPlan.sessions.length === 0)
     ) {
       alert("No sessions found for this plan.");
+      enqueueSnackbar("No Sessions found for this plan", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
       setShowPlanModal(false);
     }
   }, [showPlanModal, previewPlan]);
@@ -157,17 +162,17 @@ function AllPlans() {
       setSessions((prevSessions) => [...prevSessions, newSession]);
     }
   };
-  console.log(updateModal)
+  console.log(updateModal);
   const handleUpdateExistingSession = () => {
-      setSessions((prevSessions) =>
-        prevSessions.filter((session) => session.scheduledDay !== updateModal)
-      );
+    setSessions((prevSessions) =>
+      prevSessions.filter((session) => session.scheduledDay !== updateModal)
+    );
 
-      const newSession = {
-        ...selectedSessionForPlacement,
-        scheduledDay: updateModal,
-      };
-      setSessions((prevSessions) => [...prevSessions, newSession]);
+    const newSession = {
+      ...selectedSessionForPlacement,
+      scheduledDay: updateModal,
+    };
+    setSessions((prevSessions) => [...prevSessions, newSession]);
   };
 
   const deleteSessionFormGrid = (day: number) => {
@@ -180,7 +185,7 @@ function AllPlans() {
     await patchPlans(selectedPlan.templateId, sessions);
     // console.log("Patching new session:", sessions);
   };
-  console.log(sessions)
+  console.log(sessions);
   console.log(sessions_api_call);
   return (
     <div className="all-plans-container">
@@ -390,7 +395,8 @@ function AllPlans() {
         <div className="update-modal-overlay">
           <div className="update-modal">
             <p className="update-modal-text">
-              Are you sure you want to replace the session for day {updateModal}?
+              Are you sure you want to replace the session for day {updateModal}
+              ?
             </p>
             <div className="update-modal-actions">
               <button

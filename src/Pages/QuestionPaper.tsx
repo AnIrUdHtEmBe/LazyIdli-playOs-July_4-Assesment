@@ -205,17 +205,24 @@ function QuestionPaper() {
       await assessmet_submission(instanceId, ans);
     } catch (error) {
       console.error("Submission error:", error);
-      alert("An error occurred while submitting. Please try again.");
+
+      enqueueSnackbar("Failed to submit assessment. Please try again.", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
   const calculateScore = async (questionId: string, questionIndex: number) => {
     const val = answers[questionIndex];
     if (val === "" || val === undefined) {
-    enqueueSnackbar("Please provide an answer before calculating the score.", {
-      variant: "warning",
-      autoHideDuration: 3000,
-    });
+      enqueueSnackbar(
+        "Please provide an answer before calculating the score.",
+        {
+          variant: "warning",
+          autoHideDuration: 3000,
+        }
+      );
       return;
     }
     try {
@@ -244,10 +251,13 @@ function QuestionPaper() {
       }));
     } catch (error) {
       console.error("Error calculating score:", error);
-      enqueueSnackbar("An error occurred while calculating the score. Please try again." ,{
-        variant: "warning",
-        autoHideDuration: 3000,
-      });
+      enqueueSnackbar(
+        "An error occurred while calculating the score. Please try again.",
+        {
+          variant: "error",
+          autoHideDuration: 3000,
+        }
+      );
     }
   };
 

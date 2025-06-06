@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext} from "react";
+import { useContext } from "react";
 import Layout from "./components/Layout";
 import Dashboard from "./Pages/Dashboard";
 import { DataContext } from "./store/DataContext";
@@ -16,8 +16,7 @@ import AllSessionsPage from "./Pages/AllSessionsPage";
 import AllPlans from "./planPageComponent/AllPlans";
 import QuestionBank from "./QuestionBank/QuestionBank";
 import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
-import SeePlan from "./SeePlanPage/SeePlan";  
-import { Snackbar } from "@mui/material";
+import SeePlan from "./SeePlanPage/SeePlan";
 import { SnackbarProvider } from "notistack";
 
 function App() {
@@ -26,63 +25,61 @@ function App() {
   console.log(selectComponent);
   return (
     <SnackbarProvider>
-    <Router>
-      <Layout>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              selectComponent === "assessment" ? (
-                <Assessment />
-              ) :
-              selectComponent === "seePlan" ? (
-                <SeePlan />
-              ) : 
-              selectComponent === "Q&A" ? (
-                <QuestionPaper />
-              ) : selectComponent === "responses" ? (
-                <Responses />
-              ) : selectComponent === "planCreation" ? (
-                // <PlansPage />
-                <UserPersonalisedPlan></UserPersonalisedPlan>
-              ) : (
-                <Dashboard />
-              )
-            }
-          />
-          <Route
-            path="/assignment"
-            element={
-              selectComponent === "AssessmentCreationPage2" ? (
-                <AssignmetnCreationPageTwo></AssignmetnCreationPageTwo>
-              ) : (
-                <AssessmentPage />
-              )
-            }
-          />
-          <Route
-            path="/sessions"
-            element={
-              selectComponent === "AllSessions" ? (
-                <AllSessionsPage />
-              ) : (
-                <SessionsPage />
-              )
-            }
-          />
-          <Route
-            path="/question-bank"
-            element={<QuestionBank></QuestionBank>}
-          />
-          <Route
-            path="/plans"
-            element={
-              selectComponent === "AllPlans" ? <AllPlans /> : <PlansPage />
-            }
-          />
-        </Routes>
-      </Layout>
-    </Router>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                selectComponent === "assessment" ? (
+                  <Assessment />
+                ) : selectComponent === "seePlan" ? (
+                  <SeePlan />
+                ) : selectComponent === "Q&A" ? (
+                  <QuestionPaper />
+                ) : selectComponent === "responses" ? (
+                  <Responses />
+                ) : selectComponent === "planCreation" ? (
+                  // <PlansPage />
+                  <UserPersonalisedPlan></UserPersonalisedPlan>
+                ) : (
+                  <Dashboard />
+                )
+              }
+            />
+            <Route
+              path="/assignment"
+              element={
+                selectComponent === "AssessmentCreationPage2" ? (
+                  <AssignmetnCreationPageTwo></AssignmetnCreationPageTwo>
+                ) : (
+                  <AssessmentPage />
+                )
+              }
+            />
+            <Route
+              path="/sessions"
+              element={
+                selectComponent === "AllSessions" ? (
+                  <AllSessionsPage />
+                ) : (
+                  <SessionsPage />
+                )
+              }
+            />
+            <Route
+              path="/question-bank"
+              element={<QuestionBank></QuestionBank>}
+            />
+            <Route
+              path="/plans"
+              element={
+                selectComponent === "AllPlans" ? <AllPlans /> : <PlansPage />
+              }
+            />
+          </Routes>
+        </Layout>
+      </Router>
     </SnackbarProvider>
   );
 }

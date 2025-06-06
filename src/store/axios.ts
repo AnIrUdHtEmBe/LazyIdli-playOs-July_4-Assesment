@@ -10,6 +10,7 @@ import {
 } from "./DataContext";
 // import { Dispatch, SetStateAction } from 'react';
 import { createAssessmentTemplate } from "./DataContext";
+import { enqueueSnackbar } from "notistack";
 const API_BASE_URL = "http://3.111.32.88:8080";
 
 export const useApiCalls = () => {
@@ -32,7 +33,12 @@ export const useApiCalls = () => {
     try {
       const res = await axios.post(`${API_BASE_URL}/humans`, customer);
       console.log("Customer created successfully:", res.data);
-      alert("Customer created successfully!");
+      // alert("Customer created successfully!");
+      enqueueSnackbar("Customer created successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+
       customers_fetching(); // Refresh the customer list after creation
     } catch (error) {
       console.error("❌ Error creating customer:", error);
@@ -48,7 +54,11 @@ export const useApiCalls = () => {
       // customers_fetching(); // Refresh the customer list
     } catch (error) {
       console.error("❌ Error deactivating users:", error);
-      alert("Failed to deactivate one or more users. Please try again.");
+      // alert("Failed to deactivate one or more users. Please try again.");
+      enqueueSnackbar("Failed to deactivate one or more users. Please try again.", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -70,10 +80,19 @@ export const useApiCalls = () => {
         session
       );
       console.log("Session updated successfully:", res.data);
-      alert("Session updated successfully!");
+      // alert("Session updated successfully!");
+      enqueueSnackbar("Session updated successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+
     } catch (error) {
       console.error("❌ Error updating session:", error);
-      alert("Error updating session");
+      // alert("Error updating session");
+      enqueueSnackbar("Error updating session", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
   const getPlanByPlanId = async (planId: string) => {
@@ -103,12 +122,20 @@ export const useApiCalls = () => {
         session
       );
       console.log("Session created successfully:", res.data);
-      alert(
-        "Session created successfully! You can now view it in the Sessions section."
-      );
+      // alert(
+      //   "Session created successfully! You can now view it in the Sessions section."
+      // );
+      enqueueSnackbar("Session created successfully! You can now view it in the Sessions section.", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       console.error("❌ Error creating session:", error);
-      alert("Error creating session. Please fill all details.");
+      // alert("Error creating session. Please fill all details.");
+      enqueueSnackbar("Error creating session. Please fill all details.", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -214,28 +241,46 @@ export const useApiCalls = () => {
         plan
       );
       console.log("Plan instance created successfully:", res.data);
-      alert(
-        "Plan instance created successfully! You can now view it in the Plans section."
-      );
+      // alert(
+      //   "Plan instance created successfully! You can now view it in the Plans section."
+      // );
+      enqueueSnackbar("Plan instance created successfully! You can now view it in the Plans section.", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       console.error("❌ Error creating plan instance:", error);
     }
   };
 
   const createPlan = async (plan: Plan_Api_call) => {
-    if(plan.title.trim() === "" || plan.sessions.length === 0) {
-      alert("Please enter a title for the plan and add session to your plan before creating it.");
+    if (plan.title.trim() === "" || plan.sessions.length === 0) {
+      // alert(
+      //   "Please enter a title for the plan and add session to your plan before creating it."
+      // );
+      enqueueSnackbar("Please enter a title for the plan and add session to your plan before creating it.", {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
       return;
     }
     try {
       const res = await axios.post(`${API_BASE_URL}/plan-templates`, plan);
       console.log("Plan created successfully:", res.data);
-      alert(
-        "Plan created successfully! You can now view it in the All Plans section."
-      );
+      // alert(
+      //   "Plan created successfully! You can now view it in the All Plans section."
+      // );
+      enqueueSnackbar("Plan created successfully! You can now view it in the All Plans section.", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       console.error("❌ Error creating plan:", error);
-      alert("Error creating plan");
+      // alert("Error creating plan");
+      enqueueSnackbar("Error creating plan", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
@@ -279,57 +324,58 @@ export const useApiCalls = () => {
       console.log("Assessment submitted successfully:", (await res).status);
 
       setSelectComponent("responses");
-      alert("Assessment submitted successfully!");
+      // alert("Assessment submitted successfully!");
+      enqueueSnackbar("Assessment submitted successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       console.error("❌ Error submitting assessment:", error);
-      alert("Error submitting assessment. Please try again.");
+      // alert("Error submitting assessment. Please try again.");
+      enqueueSnackbar("Error submitting assessment. Please try again.", {
+        variant: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
-  const question_Updation = async (questionId, question ) =>  {
-    try{
-      const res = await axios.patch(
-              `${API_BASE_URL}/questions/${questionId}`,{
-                answerType: question.answerType,
-                mainText: question.mainText,
-                options: question.options,
-                scoreZones: question.scoreZones || null,
-              }
-              
-            );
-            console.log("✅ Question updated successfully:", res.data);
-    
-  }
-  catch (error) {
-    console.error("❌ Error updating question:", error);
-  }
-
-  }
+  const question_Updation = async (questionId, question) => {
+    try {
+      const res = await axios.patch(`${API_BASE_URL}/questions/${questionId}`, {
+        answerType: question.answerType,
+        mainText: question.mainText,
+        options: question.options,
+        scoreZones: question.scoreZones || null,
+      });
+      console.log("✅ Question updated successfully:", res.data);
+    } catch (error) {
+      console.error("❌ Error updating question:", error);
+    }
+  };
 
   const questionCreation = async (question: object) => {
     try {
       const res = await axios.post(`${API_BASE_URL}/questions`, question);
       console.log("✅ Question created successfully:", res.data);
     } catch (error) {
-      console.error("❌ Error creating question:", error); 
-    }   
-  }
+      console.error("❌ Error creating question:", error);
+    }
+  };
   const Question_creation_Api_call = async (questions: object[]) => {
     try {
       for (const question of questions) {
         if (question.checked) {
-          if(question.questionId){
+          if (question.questionId) {
             // If questionId exists, update the question
             const res = await axios.patch(
               `${API_BASE_URL}/questions/${question.questionId}`,
               {
                 mainText: question.mainText,
                 options: question.options,
-                answerType: question.answerType,                
+                answerType: question.answerType,
               }
             );
             console.log("✅ Question updated successfully:", res.data);
           } else {
-            
             const res = await axios.post(`${API_BASE_URL}/questions`, question);
             console.log("✅ Question created successfully:", res.data);
           }
@@ -435,7 +481,10 @@ export const useApiCalls = () => {
       );
 
       console.log("✅ Patch successful:", res.data);
-      alert("Plan updated successfully!");
+      enqueueSnackbar("Plan updated successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
     } catch (error) {
       console.error("❌ Error in patchPlans:", error);
     }
@@ -509,6 +558,6 @@ export const useApiCalls = () => {
     customer_creation,
     patch_user,
     question_Updation,
-    questionCreation
+    questionCreation,
   };
 };

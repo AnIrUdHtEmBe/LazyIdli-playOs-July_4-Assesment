@@ -26,12 +26,11 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import NumbersIcon from "@mui/icons-material/LooksOne";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import "./QuestionBank.css";
-import { useContext, useEffect, useState ,useRef} from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 
 import { useApiCalls } from "../store/axios";
 import { DataContext } from "../store/DataContext";
 import { LowPriority } from "@mui/icons-material";
-
 
 const questionTypes = [
   { label: "Text Input", value: "text", icon: <ShortTextIcon /> },
@@ -63,7 +62,7 @@ const QuestionBank = () => {
   useEffect(() => {
     fetchQuestions();
   }, []);
-const [shouldEdit, setShouldEdit] = useState(false);
+  const [shouldEdit, setShouldEdit] = useState(false);
   useEffect(() => {
     if (questionsForAPICall && questionsForAPICall.length > 0) {
       // Replace instead of append to avoid duplication
@@ -73,20 +72,20 @@ const [shouldEdit, setShouldEdit] = useState(false);
         answerType: q.answerType,
         options: q.options,
         questionId: q.questionId,
-        scoreZones: q.scoreZones
+        scoreZones: q.scoreZones,
       }));
       setQuestion(transformed); // replaces the state instead of appending
-      
-      
+
       setShouldEdit(true); // trigger edit after question state updates
-    } 
+    }
   }, [questionsForAPICall]);
 
-
-
-
-
-  const { Question_creation_Api_call, questions , question_Updation , questionCreation} = useApiCalls();
+  const {
+    Question_creation_Api_call,
+    questions,
+    question_Updation,
+    questionCreation,
+  } = useApiCalls();
 
   const [question, setQuestion] = useState([]);
   const [type, setType] = useState("");
@@ -123,7 +122,7 @@ const [shouldEdit, setShouldEdit] = useState(false);
 
   const editQuestion = (index) => {
     const selectedQuestion = question[index];
-  
+
     selectedQuestion.checked = true; // Ensure the question is checked when editing
     setValue(selectedQuestion.mainText);
     setType(selectedQuestion.answerType);
@@ -140,7 +139,10 @@ const [shouldEdit, setShouldEdit] = useState(false);
   };
 
   const addQuestion = () => {
-    if(question[question.length - 1].mainText === "" && question[question.length - 1].answerType === ""){
+    if (
+      question[question.length - 1].mainText === "" &&
+      question[question.length - 1].answerType === ""
+    ) {
       editQuestion(question.length - 1);
       inputRef.current.focus();
       alert("Please fill the last question before adding a new one.");
@@ -155,11 +157,11 @@ const [shouldEdit, setShouldEdit] = useState(false);
     setQuestion([...question]);
     setEditingIndex(question.length - 1); // Set the last question as the one being edited
     setValue("");
-    setType("");  
+    setType("");
     setOptions([]);
     setChecked(false);
     inputRef.current.focus();
-  }
+  };
 
   const handleAddQuestion = () => {
     if (!type.trim()) {
@@ -187,10 +189,9 @@ const [shouldEdit, setShouldEdit] = useState(false);
     if (editingIndex !== null) {
       updateQuestion(editingIndex, newQuestion);
       const questionId = question[editingIndex].questionId;
-      if(questionId){
+      if (questionId) {
         question_Updation(questionId, newQuestion);
-      }
-      else{
+      } else {
         questionCreation(newQuestion);
       }
       setEditingIndex(null);
@@ -204,7 +205,6 @@ const [shouldEdit, setShouldEdit] = useState(false);
     setOptions([]);
     setChecked(false);
     setShouldEdit(true); // Trigger edit mode for the newly added question
-    
   };
 
   const handleEditDone = () => {
@@ -220,15 +220,15 @@ const [shouldEdit, setShouldEdit] = useState(false);
     }
   };
   useEffect(() => {
-  if (shouldEdit && question.length > 0) {
-    editQuestion(0);
-    console.log("works");
-    setShouldEdit(false);
-  } else {
-    console.log("hi");
-    console.log(question.length);
-  }
-}, [shouldEdit, question]); // 👈 Add questions to the dependency array
+    if (shouldEdit && question.length > 0) {
+      editQuestion(0);
+      console.log("works");
+      setShouldEdit(false);
+    } else {
+      console.log("hi");
+      console.log(question.length);
+    }
+  }, [shouldEdit, question]); // 👈 Add questions to the dependency array
 
   return (
     <div className="question-bank-container">
@@ -285,8 +285,8 @@ const [shouldEdit, setShouldEdit] = useState(false);
                     className="question-bank-main-body-left-content-add-button"
                     onClick={addQuestion}
                   >
-                     <Plus size={13}></Plus>
-                      <span>Add Question</span>
+                    <Plus size={13}></Plus>
+                    <span>Add Question</span>
                   </button>
                   <button
                     className="question-bank-main-body-left-header-button"
@@ -303,7 +303,6 @@ const [shouldEdit, setShouldEdit] = useState(false);
                     key={index}
                     className="question-bank-main-body-left-item"
                   >
-                    
                     <input
                       type="radio"
                       name="question-select"
@@ -480,73 +479,83 @@ const [shouldEdit, setShouldEdit] = useState(false);
                     ""
                   )}
 
-                {type === "number_ws" ? (
-  <div className="question-option-container">
-    {scoreZones.map((option, index) => (
-      <div key={index} className="question-option">
-        <input type="checkbox" />
-        <TextField
-          label={`ScoreZone ${index + 1}`}
-          variant="standard"
-          value={option}
-          onChange={(e) => {
-            const newOptions = [...scoreZones];
-            newOptions[index] = e.target.value;
-            setScoreZones(newOptions);
-          }}
-          InputProps={{
-            sx: {
-              fontSize: "0.9rem",
-              fontWeight: 500,
-              paddingY: 0.5,
-            },
-          }}
-          InputLabelProps={{
-            sx: {
-              fontSize: "1rem",
-              fontWeight: 400,
-            },
-          }}
-          sx={{ width: "200px" }}
-        />
-        <button
-          className="remove-option-button"
-          onClick={() => {
-            const newOptions = scoreZones.filter((_, i) => i !== index);
-            setScoreZones(newOptions);
-          }}
-        >
-          <X className="border-2 rounded-full" size={16} />
-        </button>
-      </div>
-    ))}
-    <button
-      className="add-option-button"
-      onClick={() => {
-        const newOption = "";
-        setScoreZones([...scoreZones, newOption]);
-      }}
-    >
-      <Plus size={13}></Plus>
-      <span>Add</span>
-    </button>
-  </div>
-) : (
-  ""
-)}
-
-
-
+                  {type === "number_ws" ? (
+                    <div className="question-option-container">
+                      {scoreZones.map((option, index) => (
+                        <div key={index} className="question-option">
+                          <input type="checkbox" />
+                          <TextField
+                            label={`ScoreZone ${index + 1}`}
+                            variant="standard"
+                            value={option}
+                            onChange={(e) => {
+                              const newOptions = [...scoreZones];
+                              newOptions[index] = e.target.value;
+                              setScoreZones(newOptions);
+                            }}
+                            InputProps={{
+                              sx: {
+                                fontSize: "0.9rem",
+                                fontWeight: 500,
+                                paddingY: 0.5,
+                              },
+                            }}
+                            InputLabelProps={{
+                              sx: {
+                                fontSize: "1rem",
+                                fontWeight: 400,
+                              },
+                            }}
+                            sx={{ width: "200px" }}
+                          />
+                          <button
+                            className="remove-option-button"
+                            onClick={() => {
+                              const newOptions = scoreZones.filter(
+                                (_, i) => i !== index
+                              );
+                              setScoreZones(newOptions);
+                            }}
+                          >
+                            <X className="border-2 rounded-full" size={16} />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        className="add-option-button"
+                        onClick={() => {
+                          const newOption = "";
+                          setScoreZones([...scoreZones, newOption]);
+                        }}
+                      >
+                        <Plus size={13}></Plus>
+                        <span>Add</span>
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
-              
               </div>
-              { question[editingIndex]?.questionId ?
-              <div className="flex justify-end mt-4">
-                <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Update changes</button>
-              </div> : 
-              <div className="flex justify-end mt-4">
-                <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Add a new Question</button>
-              </div>}
+              {question[editingIndex]?.questionId ? (
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={handleAddQuestion}
+                    className="question-bank-main-body-left-content-add-button"
+                  >
+                    Update changes
+                  </button>
+                </div>
+              ) : (
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={handleAddQuestion}
+                    className="question-bank-main-body-left-content-add-button"
+                  >
+                    Add a new Question
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

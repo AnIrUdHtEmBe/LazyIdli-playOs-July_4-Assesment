@@ -22,6 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { People } from "@mui/icons-material";
 import Modal from "./Modal";
+import { enqueueSnackbar } from "notistack";
 
 const actions = ["Go to profile", "See plan", "Take Assessment"];
 
@@ -310,7 +311,10 @@ const CustomerTable = () => {
 
   const handleDeactivate = async () => {
     if (selectedUserIDs.length === 0 || !selectedUserIDs.ids) {
-      alert("Please select at least one user to deactivate.");
+      enqueueSnackbar("Please select at least one user to deactivate.", {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
       return;
     }
 
@@ -318,7 +322,10 @@ const CustomerTable = () => {
       const selectedIdsArray = Array.from(selectedUserIDs.ids);
       // Use Promise.all to wait for all patch_user requests in parallel
       await Promise.all(selectedIdsArray.map((id) => patch_user(id)));
-      alert("user deactivated successfully!");
+      enqueueSnackbar("user deactivated successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
       customers_fetching();
       // Optional: refresh data or show success message
       console.log("All users deactivated successfully.");
