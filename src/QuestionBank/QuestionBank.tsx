@@ -73,7 +73,7 @@ const [shouldEdit, setShouldEdit] = useState(false);
         answerType: q.answerType,
         options: q.options,
         questionId: q.questionId,
-        scorezones: q.scoreZones
+        scoreZones: q.scoreZones
       }));
       setQuestion(transformed); // replaces the state instead of appending
       
@@ -93,7 +93,7 @@ const [shouldEdit, setShouldEdit] = useState(false);
   const [value, setValue] = useState("");
   const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState([]);
-
+  const [scoreZones, setScoreZones] = useState([]);
   console.log(question);
 
   const inputRef = useRef(null);
@@ -128,6 +128,7 @@ const [shouldEdit, setShouldEdit] = useState(false);
     setValue(selectedQuestion.mainText);
     setType(selectedQuestion.answerType);
     setOptions(selectedQuestion.options || []);
+    setScoreZones(selectedQuestion.scoreZones || []);
     setChecked(selectedQuestion.checked);
     setEditingIndex(index); // track which question is being edited
   };
@@ -180,6 +181,7 @@ const [shouldEdit, setShouldEdit] = useState(false);
       mainText: value,
       answerType: type,
       options: filteredOptions,
+      scoreZones: type === "number_ws" ? scoreZones : null,
     };
 
     if (editingIndex !== null) {
@@ -478,12 +480,66 @@ const [shouldEdit, setShouldEdit] = useState(false);
                     ""
                   )}
 
+                {type === "number_ws" ? (
+  <div className="question-option-container">
+    {scoreZones.map((option, index) => (
+      <div key={index} className="question-option">
+        <input type="checkbox" />
+        <TextField
+          label={`ScoreZone ${index + 1}`}
+          variant="standard"
+          value={option}
+          onChange={(e) => {
+            const newOptions = [...scoreZones];
+            newOptions[index] = e.target.value;
+            setScoreZones(newOptions);
+          }}
+          InputProps={{
+            sx: {
+              fontSize: "0.9rem",
+              fontWeight: 500,
+              paddingY: 0.5,
+            },
+          }}
+          InputLabelProps={{
+            sx: {
+              fontSize: "1rem",
+              fontWeight: 400,
+            },
+          }}
+          sx={{ width: "200px" }}
+        />
+        <button
+          className="remove-option-button"
+          onClick={() => {
+            const newOptions = scoreZones.filter((_, i) => i !== index);
+            setScoreZones(newOptions);
+          }}
+        >
+          <X className="border-2 rounded-full" size={16} />
+        </button>
+      </div>
+    ))}
+    <button
+      className="add-option-button"
+      onClick={() => {
+        const newOption = "";
+        setScoreZones([...scoreZones, newOption]);
+      }}
+    >
+      <Plus size={13}></Plus>
+      <span>Add</span>
+    </button>
+  </div>
+) : (
+  ""
+)}
 
-                 
-              
 
 
                 </div>
+              
+              </div>
               { question[editingIndex]?.questionId ?
               <div className="flex justify-end mt-4">
                 <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Update changes</button>
@@ -491,7 +547,6 @@ const [shouldEdit, setShouldEdit] = useState(false);
               <div className="flex justify-end mt-4">
                 <button onClick={handleAddQuestion} className="question-bank-main-body-left-content-add-button">Add a new Question</button>
               </div>}
-              </div>
             </div>
           </div>
         </div>

@@ -292,6 +292,7 @@ export const useApiCalls = () => {
                 answerType: question.answerType,
                 mainText: question.mainText,
                 options: question.options,
+                scoreZones: question.scoreZones || null,
               }
               
             );
