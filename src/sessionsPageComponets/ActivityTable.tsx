@@ -74,9 +74,9 @@ function ActivityTable() {
   }, [emptyArr]);
 
 
-  // useEffect(() => {
-  //   console.log(activities_api_call);
-  // }, [activities_api_call]);
+  useEffect(() => {
+    console.log(activities_api_call);
+  }, [activities_api_call]);
   const handlePlanSaving = () => {
     setSelectComponent("AllSessions");
   };
@@ -137,14 +137,20 @@ const addNewRow = () => {
 
     const postEachActivity = async () => {
       try {
-        await Promise.all(
-          newItems.map((item) => createActivity(item))
-        );
-        console.log("All activities posted successfully.");
+        // await Promise.all(
+        //   newItems.map((item) => createActivity(item))
+        // );
+        for (const item of newItems) {
+          await createActivity(item);
+        }
+        // console.log("All activities posted successfully.");
       } catch (error) {
         console.error("Error posting some activities:", error);
       }
     };
+
+    
+
   
     // ✅ Wait for posting to finish
     await postEachActivity();
