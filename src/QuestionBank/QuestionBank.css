@@ -38,16 +38,15 @@
 }
 
 .header-tab {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 500;
-  /* border-bottom: 4px solid transparent; */
-  background: none;
-  /* border: none; */
+  /* border-bottom: 4px solid black; */
   cursor: pointer;
 }
 
 .header-tab.active-tab {
-  border-color: black;
+  border-bottom: #101011 4px solid;
+  /* border-color: black; */
 }
 
 

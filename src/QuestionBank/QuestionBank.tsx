@@ -230,6 +230,7 @@ const QuestionBank = () => {
     }
   }, [shouldEdit, question]); // 👈 Add questions to the dependency array
 
+  console.log("selectComponent:", selectComponent);
   return (
     <div className="question-bank-container">
       {/* header */}
@@ -240,11 +241,11 @@ const QuestionBank = () => {
         </div>
         <div className="header-tabs">
           <button
-            className={`header-tab pb-2 ${
+            className={`header-tab ${
               selectComponent === "/question-bank" ||
               selectComponent === "dashboard"
-                ? "border-b-4 border-black"
-                : "border-b-4 border-transparent"
+                ? "border-b-4 active-tab"
+                : ""
             }`}
           >
             Questions
