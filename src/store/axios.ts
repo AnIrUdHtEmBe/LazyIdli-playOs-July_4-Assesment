@@ -485,6 +485,7 @@ export const useApiCalls = () => {
         variant: "success",
         autoHideDuration: 3000,
       });
+      getPlansFull(); // Refresh the plans after patching
     } catch (error) {
       console.error("❌ Error in patchPlans:", error);
     }

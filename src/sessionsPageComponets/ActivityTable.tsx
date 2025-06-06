@@ -249,9 +249,9 @@ const addNewRow = () => {
             <Plus />
             <span>Create New Activity</span>
           </button>
-          <div className="p-2 border border-gray-300 rounded-xl">
+          {/* <div className="p-2 border border-gray-300 rounded-xl">
             <ReplayOutlined></ReplayOutlined>
-          </div>
+          </div> */}
           <button
             className="flex items-center space-x-2 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2 "
             onClick={handleSessionCreation}

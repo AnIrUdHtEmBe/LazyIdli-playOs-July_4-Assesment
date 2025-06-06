@@ -74,34 +74,6 @@ function SessionPage() {
     getPlansFull();
   }, []);
   
-
-// // Step 1: Get the existing plan from localStorage
-// const plans = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
-
-// // Step 1: Ensure sessions is an array
-// const sessions = Array.isArray(plans.sessions) ? plans.sessions : [];
-
-// const uniqueSessionsMap = new Map();
-
-// // Step 2: Remove duplicate sessions based on sessionId
-// sessions.forEach((session) => {
-//   if (session?.sessionId && !uniqueSessionsMap.has(session.sessionId)) {
-//     uniqueSessionsMap.set(session.sessionId, session);
-//   }
-// });
-
-// // Step 3: Create a new plans object with unique sessions
-// const updatedPlans = {
-//   ...plans,
-//   sessions: Array.from(uniqueSessionsMap.values())
-// };
-
-// // Step 4: Save the updated object back to localStorage
-// localStorage.setItem("selectedPlan", JSON.stringify(updatedPlans));
-
-// // Optional: Console check
-// console.log("Updated plan saved to localStorage:", updatedPlans);
-
 function deduplicatePlanInLocalStorage() {
   const plans = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
 
@@ -160,11 +132,6 @@ async function updateLocalStorage() {
  const [plan, setPlan] = useState(null);
 
   
-//  useEffect(() => {
-//   const storedPlan = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
-//   setPlan(storedPlan);
-// }, []);
-
 useEffect(() => {
   deduplicatePlanInLocalStorage();
 
@@ -306,7 +273,7 @@ useEffect(() => {
   };
 
   const [len, setLen] = useState(30);
-  const [weeks, setWeeks] = useState([0, 1, 2, 3]); // represents 4 weeks initially
+  const [weeks, setWeeks] = useState([0, 1, 2, 3 ,4 ,5]); // represents 4 weeks initially
 
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewSession, setPreviewSession] = useState<any>(null);
@@ -573,10 +540,10 @@ useEffect(() => {
                     />
                   </LocalizationProvider>
 
-                  <button className="holder-right-sode">
+                  {/* <button className="holder-right-sode">
                     <DashboardCustomize size={20} className="text-blue-500" />
                     <span className="customise-text">Customize</span>{" "}
-                  </button>
+                  </button> */}
                 </div>
               ) : null}
             </div>
