@@ -161,7 +161,7 @@ const CustomerTable = () => {
   // const handleAddCustomer = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
-  const { customers_fetching, customer_creation, patch_user } = useApiCalls();
+  const { customers_fetching, customer_creation, patch_user , getPlanInstanceByPlanID } = useApiCalls();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -215,21 +215,51 @@ const CustomerTable = () => {
     ];
   };
 
-  const generateRows = () => {
-    return customers_Api_call.map((customer, i) => ({
-      no: i + 1,
-      id: customer.userId,
-      name: customer.name,
-      age: customer.age,
-      gender: customer.gender || "-",
-      joinedOn: dateChangeHandler(customer.created_on),
-      phoneNumber: customer.mobile || "-",
-      memberShip: customer.membershipType,
-      lastAssessedOn: customer.lastAssessed || "-",
-      planAllocated: customer.plansAllocated?.[0] || "-",
-      customerData: customer,
-    }));
-  };
+  // const generateRows = () => {
+  //   return customers_Api_call.map((customer, i) => ({
+  //     no: i + 1,
+  //     id: customer.userId,
+  //     name: customer.name,
+  //     age: customer.age,
+  //     gender: customer.gender || "-",
+  //     joinedOn: dateChangeHandler(customer.created_on),
+  //     phoneNumber: customer.mobile || "-",
+  //     memberShip: customer.membershipType,
+  //     lastAssessedOn: customer.lastAssessed || "-",
+  //     planAllocated: customer.plansAllocated?.[0] || "-",
+  //     customerData: customer,
+  //   }));
+  // };
+
+  const generateRows = async () => {
+  const rows = await Promise.all(
+    customers_Api_call.map(async (customer, i) => {
+      const plan = customer.plansAllocated?.[0]
+        ? await getPlanInstanceByPlanID(customer.plansAllocated[0]).then(
+            (plan) => plan?.PlanTemplateName || "-"
+          )
+        : "-";
+
+      return {
+        no: i + 1,
+        id: customer.userId,
+        name: customer.name,
+        age: customer.age,
+        gender: customer.gender || "-",
+        joinedOn: dateChangeHandler(customer.created_on),
+        phoneNumber: customer.mobile || "-",
+        memberShip: customer.membershipType,
+        lastAssessedOn: customer.lastAssessed || "-",
+        planAllocated: plan || "-",
+        customerData: customer,
+      };
+    })
+  );
+
+  return rows;
+};
+
+
 
   const formatColumns = (columns: GridColDef[]) => {
     const width = ref.current?.clientWidth || 900;
@@ -249,14 +279,30 @@ const CustomerTable = () => {
     });
   };
 
+  // useEffect(() => {
+  //   if (!ref.current) return;
+  //   const _rows = generateRows();
+  //   const _columns = formatColumns(generateColumns());
+  //   setRows(_rows);
+  //   setFilteredRows(_rows); // initially same as full list
+  //   setColumns(_columns);
+  // }, [customers_Api_call]);
+
   useEffect(() => {
-    if (!ref.current) return;
-    const _rows = generateRows();
+  if (!ref.current) return;
+
+  const fetchData = async () => {
+    const _rows = await generateRows(); // ✅ Wait for async rows
     const _columns = formatColumns(generateColumns());
+
     setRows(_rows);
-    setFilteredRows(_rows); // initially same as full list
+    setFilteredRows(_rows);
     setColumns(_columns);
-  }, [customers_Api_call]);
+  };
+
+  fetchData(); // ✅ Call the async wrapper
+}, [customers_Api_call]);
+
 
   useEffect(() => {
     const lowerTerm = term.toLowerCase();

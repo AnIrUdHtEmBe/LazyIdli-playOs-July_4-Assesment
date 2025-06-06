@@ -10,7 +10,7 @@ const Header = ({userData}) => {
         <FileText size={28} className="text-gray-800" />
         
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 text-center sm:text-left">
-          All Sessions {userData?.name ? `for ${userData.name}` : ''}
+          {userData?.name ? ` ${userData.name}'s` : ''} Calendar 
         </h1>
         
       </div>

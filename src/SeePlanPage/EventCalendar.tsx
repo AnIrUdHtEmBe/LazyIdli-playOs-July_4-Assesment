@@ -5,6 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayjs from "dayjs";
 import { useApiCalls } from "../store/axios";
 import EventModal from "./EventModal"; 
+import AddPlanInstance from "./AddPlanInstance"; // Adjust the path if needed
 
 export default function EventCalendar({ data }) {
   const [events, setEvents] = useState([]);
@@ -19,17 +20,20 @@ export default function EventCalendar({ data }) {
       //     session => session.sessionTemplateId && session.scheduledDate
       //   )
       // );
-
+      console.log(data);
+      
       const validSessions = data.flatMap(plan =>
           (plan.sessionInstances || [])
             .filter(session => session.sessionTemplateId && session.scheduledDate)
             .map(session => ({
               ...session,
               planInstanceId: plan.planInstanceId,
-              
+              planTitle: plan.planTitle,
             }))
         );
 
+        console.log(validSessions);
+        
       const fetchedEvents = await Promise.all(
         validSessions.map(async (session) => {
           try {
@@ -40,6 +44,7 @@ export default function EventCalendar({ data }) {
               start: dayjs(session.scheduledDate).format("YYYY-MM-DD"),
               sessionInstanceId: session.sessionInstanceId,
               planInstanceId: session.planInstanceId,
+              planTitle: session.planTitle,
             };
           } catch (err) {
             console.error("Error fetching session:", session.sessionTemplateId, err);
@@ -69,6 +74,8 @@ useEffect(() => {
   console.log("Plan ID:", planInstanceId);
   console.log("Session ID:", sessionInstanceId);
   console.log("New Date:", newDate);
+  console.log("Plan Title:", event.extendedProps.planTitle);
+  
   await updateSessionInPlanInstance(planInstanceId, sessionInstanceId, newDate);
   // Optionally revert the drop on failure
   // info.revert();

@@ -529,6 +529,32 @@ export const useApiCalls = () => {
     }
   };
 
+  const getPlans  = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/plan-templates`);
+      const data = res.data;
+      console.log("✅ Plans fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching plans:", error);
+      return [];
+    }
+  }
+
+  const getPlanInstanceByPlanID = async (planInstanceId: string) => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/plan-instances/${planInstanceId}/full`
+      );
+      const data = res.data;
+      console.log("✅ Plan instance fetched successfully:", data);
+      return data;  
+    } catch (error) {
+      console.error("❌ Error fetching plan instance:", error);
+      return null;
+    }
+  };
+
   return {
     customers_fetching,
     assessments_fetching,
@@ -559,5 +585,7 @@ export const useApiCalls = () => {
     patch_user,
     question_Updation,
     questionCreation,
+    getPlans,
+    getPlanInstanceByPlanID
   };
 };

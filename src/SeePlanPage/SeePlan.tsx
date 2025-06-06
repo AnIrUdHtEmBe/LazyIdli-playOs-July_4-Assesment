@@ -34,12 +34,13 @@ const [endDate, setEndDate] = useState(dayjs().endOf("month"));
     <div className="bg-white min-h-screen">
     <Header userData={user} ></Header>
       <DateRangePicker
+        userId={userId}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
       />
-      <EventCalendar data={data}/>
+      <EventCalendar data={data} />
     
     {/* <button className="border-2 p-3 bg-green-300 ">Update Changes</button> */}
     </div>

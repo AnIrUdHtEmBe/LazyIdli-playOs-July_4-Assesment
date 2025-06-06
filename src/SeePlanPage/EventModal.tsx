@@ -62,7 +62,8 @@ export default function EventModal({ isOpen, onClose, eventData }) {
         </button>
         <h2 className="text-2xl font-bold mb-2">{eventData.title}</h2>
         <div className="text-sm text-gray-700 space-y-2">
-          <p><strong>Plan ID:</strong> {eventData.extendedProps.planInstanceId}</p>
+          {/* <p><strong>Plan ID:</strong> {eventData.extendedProps.planInstanceId}</p> */}
+          <p><strong>Plan Name: </strong>{eventData.extendedProps.planTitle}</p>
             {details?.activityDetails && (
                 <div>
                 <strong>Activities:</strong>
