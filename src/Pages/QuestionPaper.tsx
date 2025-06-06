@@ -21,7 +21,7 @@ function QuestionPaper() {
   console.log(userDetail);
 
   const [notes, setNotes] = useState<Notes[]>([]);
-  // console.log(notes);
+  console.log(notes);
   const context = useContext(DataContext);
 
   if (!context) {
@@ -180,7 +180,7 @@ function QuestionPaper() {
               userDetail.userId,
               Number(value)
             );
-            console.log("✅ Extracted score:", value_score);
+            // console.log("✅ Extracted score:", value_score);
             scoreZone = value_score?.scoreZone ?? null;
             scoreValue = value_score?.scoreValue ?? null;
             scoreLevel = value_score?.scoreLevel ?? null;
@@ -189,6 +189,7 @@ function QuestionPaper() {
           const noteObj = notes.find(
             (n) => n.questionId === question.questionId
           );
+          console.log("Note Object:", noteObj);
 
           return {
             questionId: question.questionId,
@@ -201,7 +202,7 @@ function QuestionPaper() {
         })
       );
 
-      console.log("Submitting answers:", ans);
+      // console.log("Submitting answers:", ans);
       await assessmet_submission(instanceId, ans);
     } catch (error) {
       console.error("Submission error:", error);
