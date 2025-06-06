@@ -6,7 +6,6 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import dayjs from "dayjs";
 
 import {
   Activity_Api_call,
@@ -29,12 +28,14 @@ import { Mediation, NordicWalking } from "@mui/icons-material";
 import Header from "../planPageComponent/Header";
 import { useApiCalls } from "../store/axios";
 import PlanCreatorGrid from "./PlanCreatorGrid";
+import { useNavigate } from "react-router-dom";
 
 function SessionPage() {
+  const navigate = useNavigate();
   const [blocks, setBlocks] = useState(28);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const {
-    selectComponent,
+    setSelectComponent,
     sessions_api_call,
     activities_api_call,
     setSessions_api_call,
@@ -246,6 +247,12 @@ function SessionPage() {
 
   console.log(sessions);
   console.log(updateModal);
+
+
+  const handleRouting = () => {
+    navigate("/sessions");
+    setSelectComponent("/sessions");
+  }
   return (
     <div className="responses-root">
       <Header />
@@ -294,7 +301,8 @@ function SessionPage() {
             >
               <Trash2 size={20} className="text-red-500" />
             </button>
-            <button className="new-button">
+            <button className="new-button"
+            onClick={handleRouting}>
               <Plus size={20} />
               <span>New</span>
             </button>

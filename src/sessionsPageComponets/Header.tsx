@@ -14,7 +14,7 @@ function Header() {
     <div className="header-containerrr">
       <div className="header-topper">
         <FileText size={35} />
-        <span className="header-titler">{selectComponent === "/sessions" ? "Session Creation" : "All Sessions"}</span>
+        <span className="header-titler">{selectComponent === "/sessions" || selectComponent === "dashboard" ? "Session Creation" : "All Sessions"}</span>
       </div>
       <div className="header-tabsss">
         <button

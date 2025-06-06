@@ -4,6 +4,7 @@ import Header from "../questionPaperComponents/Header";
 import { DataContext } from "../store/DataContext";
 import "./QuestionPaper.css";
 import { useApiCalls } from "../store/axios";
+import { enqueueSnackbar } from "notistack";
 
 type Notes = {
   questionId: number;
@@ -211,7 +212,10 @@ function QuestionPaper() {
   const calculateScore = async (questionId: string, questionIndex: number) => {
     const val = answers[questionIndex];
     if (val === "" || val === undefined) {
-      alert("Please provide an answer before calculating the score.");
+    enqueueSnackbar("Please provide an answer before calculating the score.", {
+      variant: "warning",
+      autoHideDuration: 3000,
+    });
       return;
     }
     try {
@@ -240,7 +244,10 @@ function QuestionPaper() {
       }));
     } catch (error) {
       console.error("Error calculating score:", error);
-      alert("An error occurred while calculating the score. Please try again.");
+      enqueueSnackbar("An error occurred while calculating the score. Please try again." ,{
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
     }
   };
 

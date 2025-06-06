@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = () => {
         selectComponent === "dashboard" ? (
           <button
             className={`tab-button ${
-              selectComponent === "/plans" ? "active" : ""
+              selectComponent === "/plans" || selectComponent === "dashboard"? "active" : ""
             }`}
             onClick={() => setSelectComponent("/plans")}
           >

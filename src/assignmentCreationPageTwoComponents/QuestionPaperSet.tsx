@@ -178,6 +178,8 @@ function QuestionPaperSet() {
         {/* Final Question Paper Section */}
         <div className="qp-final-section">
           <div className="qp-toggle-section">
+{/* NOTE THE BELOW CODE IS NO TO BE REMOVED , THIS IS AN IMPORTANT PIECE OF CODE  */}
+
             {/* <span className="qp-toggle-text">Q only</span>
             <button
               className="qp-toggle-options"
@@ -243,7 +245,7 @@ function QuestionPaperSet() {
                       <div>
                         <textarea
                           className="qp-textarea"
-                          placeholder="Type will be Typing your answer here... "
+                          placeholder="This is the format to type your answer here...This will not be Saved in the database"
                         ></textarea>
                       </div>
                     ) : question.answerType === "number" ? (
@@ -251,7 +253,7 @@ function QuestionPaperSet() {
                         <input
                           type="number"
                           className="qp-number-input"
-                          placeholder="You Will be Type your answer(Number) here..."
+                          placeholder="Answer will be a number...This will not be Saved in the database"
                         />
                       </div>
                     ) : question.answerType === "date" ? (
@@ -259,7 +261,7 @@ function QuestionPaperSet() {
                         <input
                           type="date"
                           className="qp-date-input"
-                          placeholder="You Will be Type your answer(Date) here..."
+                          placeholder="Answer will be a Date...This will not be Saved in the database"
                         />
                       </div>
                     ) : question.answerType === "yesno" ? (

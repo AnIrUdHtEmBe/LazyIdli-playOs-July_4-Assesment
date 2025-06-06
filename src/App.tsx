@@ -17,12 +17,15 @@ import AllPlans from "./planPageComponent/AllPlans";
 import QuestionBank from "./QuestionBank/QuestionBank";
 import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
 import SeePlan from "./SeePlanPage/SeePlan";  
+import { Snackbar } from "@mui/material";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   const { selectComponent } = useContext(DataContext);
 
   console.log(selectComponent);
   return (
+    <SnackbarProvider>
     <Router>
       <Layout>
         <Routes>
@@ -80,6 +83,7 @@ function App() {
         </Routes>
       </Layout>
     </Router>
+    </SnackbarProvider>
   );
 }
 
