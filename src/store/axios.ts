@@ -30,6 +30,8 @@ export const useApiCalls = () => {
   } = context;
 
   const customer_creation = async (customer: any) => {
+
+    console.log("Creating customer with data:", customer);
     try {
       const res = await axios.post(`${API_BASE_URL}/humans`, customer);
       console.log("Customer created successfully:", res.data);

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useRef, useState } from "react";
 import { Customers_Api_call, DataContext } from "../store/DataContext";
 import "./CustomerTable.css";
@@ -87,14 +85,18 @@ const CustomerTable = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUserIDs, setSelectedUserIDs] = useState<Array<string>>([]);
 
+  console.log("Customers API Call:", customers_Api_call);
+
   const [formData, setFormData] = useState({
     name: "",
     age: "",
     gender: "",
-    membershipType: "",
+    mobile: "",
+    email: "",
     height: "",
     weight: "",
     healthCondition: "",
+    membershipType: "",
   });
 
   const modalHeaderStyle: React.CSSProperties = {
@@ -150,18 +152,23 @@ const CustomerTable = () => {
     const payload = {
       ...formData,
       age: Number(formData.age),
-      height: Number(formData.height),
-      weight: Number(formData.weight),
+      height: Number(formData.height) || null ,
+      weight: Number(formData.weight) || null,
+      healthCondition: formData.healthCondition || null,
     };
     await customer_creation(payload); // assuming this returns a promise
     setModalOpen(false);
     // Optionally, reset form fields here
   };
 
-  // const handleAddCustomer = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
-  const { customers_fetching, customer_creation, patch_user , getPlanInstanceByPlanID } = useApiCalls();
+  const {
+    customers_fetching,
+    customer_creation,
+    patch_user,
+    getPlanInstanceByPlanID,
+  } = useApiCalls();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,6 +204,7 @@ const CustomerTable = () => {
       { field: "name", headerName: "Name" },
       { field: "age", headerName: "Age" },
       { field: "gender", headerName: "Gender" },
+      { field: "email", headerName: "Email" },
       { field: "joinedOn", headerName: "Joined On" },
       { field: "phoneNumber", headerName: "Phone Number" },
       { field: "memberShip", headerName: "Membership" },
@@ -215,51 +223,34 @@ const CustomerTable = () => {
     ];
   };
 
-  // const generateRows = () => {
-  //   return customers_Api_call.map((customer, i) => ({
-  //     no: i + 1,
-  //     id: customer.userId,
-  //     name: customer.name,
-  //     age: customer.age,
-  //     gender: customer.gender || "-",
-  //     joinedOn: dateChangeHandler(customer.created_on),
-  //     phoneNumber: customer.mobile || "-",
-  //     memberShip: customer.membershipType,
-  //     lastAssessedOn: customer.lastAssessed || "-",
-  //     planAllocated: customer.plansAllocated?.[0] || "-",
-  //     customerData: customer,
-  //   }));
-  // };
-
   const generateRows = async () => {
-  const rows = await Promise.all(
-    customers_Api_call.map(async (customer, i) => {
-      const plan = customer.plansAllocated?.[0]
-        ? await getPlanInstanceByPlanID(customer.plansAllocated[0]).then(
-            (plan) => plan?.PlanTemplateName || "-"
-          )
-        : "-";
+    const rows = await Promise.all(
+      customers_Api_call.map(async (customer :any, i :any) => {
+        const plan = customer.plansAllocated?.[0]
+          ? await getPlanInstanceByPlanID(customer.plansAllocated[0]).then(
+              (plan) => plan?.PlanTemplateName || "-"
+            )
+          : "-";
 
-      return {
-        no: i + 1,
-        id: customer.userId,
-        name: customer.name,
-        age: customer.age,
-        gender: customer.gender || "-",
-        joinedOn: dateChangeHandler(customer.created_on),
-        phoneNumber: customer.mobile || "-",
-        memberShip: customer.membershipType,
-        lastAssessedOn: customer.lastAssessed || "-",
-        planAllocated: plan || "-",
-        customerData: customer,
-      };
-    })
-  );
+        return {
+          no: i + 1,
+          id: customer.userId,
+          name: customer.name,
+          age: customer.age,
+          gender: customer.gender || "-",
+          email: customer.email || "-",
+          joinedOn: dateChangeHandler(customer.created_on),
+          phoneNumber: customer.mobile || "-",
+          memberShip: customer.membershipType,
+          lastAssessedOn: customer.lastAssessed || "-",
+          planAllocated: plan || "-",
+          customerData: customer,
+        };
+      })
+    );
 
-  return rows;
-};
-
-
+    return rows;
+  };
 
   const formatColumns = (columns: GridColDef[]) => {
     const width = ref.current?.clientWidth || 900;
@@ -268,49 +259,46 @@ const CustomerTable = () => {
         return { ...col, width: 70, headerAlign: "center", align: "center" };
       }
       if (col.field === "action") {
-        return { ...col, width: 170, headerAlign: "center", align: "center" };
+        return { ...col, width: 150, headerAlign: "center", align: "center" };
+      }
+      if(col.field === "gender"){
+        return {...col , width: 100, headerAlign: "center", align: "center"};
+      }
+      if(col.field === "age"){
+        return {...col , width: 80, headerAlign: "center", align: "center"};
       }
       return {
         ...col,
-        width: width / 9.7,
+        width: width / 10,
         headerAlign: "center",
         align: "center",
       };
     });
   };
 
-  // useEffect(() => {
-  //   if (!ref.current) return;
-  //   const _rows = generateRows();
-  //   const _columns = formatColumns(generateColumns());
-  //   setRows(_rows);
-  //   setFilteredRows(_rows); // initially same as full list
-  //   setColumns(_columns);
-  // }, [customers_Api_call]);
-
   useEffect(() => {
-  if (!ref.current) return;
+    if (!ref.current) return;
 
-  const fetchData = async () => {
-    const _rows = await generateRows(); // ✅ Wait for async rows
-    const _columns = formatColumns(generateColumns());
+    const fetchData = async () => {
+      const _rows = await generateRows(); // ✅ Wait for async rows
+      const _columns = formatColumns(generateColumns());
 
-    setRows(_rows);
-    setFilteredRows(_rows);
-    setColumns(_columns);
-  };
+      setRows(_rows);
+      setFilteredRows(_rows);
+      setColumns(_columns);
+    };
 
-  fetchData(); // ✅ Call the async wrapper
-}, [customers_Api_call]);
-
+    fetchData(); // ✅ Call the async wrapper
+  }, [customers_Api_call]);
 
   useEffect(() => {
     const lowerTerm = term.toLowerCase();
     const filtered = rows.filter(
       (row) =>
         row.name.toLowerCase().includes(lowerTerm) ||
-        row.mobile?.toLowerCase().includes(lowerTerm) ||
-        row.memberShip?.toLowerCase().includes(lowerTerm)
+        row.phoneNumber?.includes(lowerTerm) ||
+        row.memberShip?.toLowerCase().includes(lowerTerm) || 
+        row.email?.toLowerCase().includes(lowerTerm)
     );
     setFilteredRows(filtered);
   }, [term, rows]);
@@ -526,16 +514,34 @@ const CustomerTable = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="">Select Gender</option>
+              <option value="" disabled hidden>
+                Select Gender
+              </option>
               <option value="male">Male</option>
+              <option value="other">Other</option>
               <option value="female">Female</option>
             </select>
+            <input
+              type="text"
+              style={modalInputStyle}
+              onChange={handleInputChange}
+              value={formData.mobile}
+              placeholder="Mobile"
+              name="mobile"
+            />
+             <input
+              type="email"
+              style={modalInputStyle}
+              onChange={handleInputChange}
+              value={formData.email}
+              placeholder="Email"
+              name="email"
+            />
             <select
               style={modalInputStyle}
               name="membershipType"
               value={formData.membershipType}
               onChange={handleInputChange}
-              required
             >
               <option value="">Select Membership</option>
               <option value="premium">PREMIUM</option>
@@ -549,7 +555,6 @@ const CustomerTable = () => {
               placeholder="Height (cm)"
               value={formData.height}
               onChange={handleInputChange}
-              required
             />
             <input
               style={modalInputStyle}
@@ -559,7 +564,6 @@ const CustomerTable = () => {
               placeholder="Weight (kg)"
               value={formData.weight}
               onChange={handleInputChange}
-              required
             />
             <input
               style={modalInputStyle}
