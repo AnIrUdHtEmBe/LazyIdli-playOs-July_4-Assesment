@@ -6,8 +6,11 @@ import EventCalendar from "./EventCalendar"; // Adjust the path if needed
 import Header from "./Header";
 function SeePlan() {
   const {getPlansForInterval} = useApiCalls();
-  const [startDate, setStartDate] = useState(dayjs().startOf("month"));
-const [endDate, setEndDate] = useState(dayjs().endOf("month"));
+  // const [startDate, setStartDate] = useState(dayjs().startOf("month"));
+  const [startDate, setStartDate] = useState(dayjs().year(2025).month(0).date(1));
+  const [endDate, setEndDate] = useState(dayjs().year(2025).month(11).date(31));
+
+// const [endDate, setEndDate] = useState(dayjs().endOf("month"));
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");    
   const userId =  user.userId || "defaultUserId"; // Fallback to a default user ID if not found
