@@ -8,6 +8,7 @@ import {
 
 import "./ActivityTable.css";
 import {
+  Autocomplete,
   FormControl,
   InputLabel,
   MenuItem,
@@ -32,6 +33,8 @@ function ActivityTable() {
   const [category, setCategory] = useState<string>("Fitness");
   const [activityForTable, setActivityForTable] = useState<Activity_Api_call>();
   const [showModal, setShowModal] = useState(false);
+  // const [trackDublicate , setTrackDublicate] = useState<object[]>([]);
+  // console.log(trackDublicate)
   const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([
     {
       name: "",
@@ -108,7 +111,9 @@ function ActivityTable() {
     ]);
   };
 
+
   const handleModalSave = async () => {
+
     const validActivities = newActivities.filter(
       (activity) =>
         activity.name.trim() !== "" &&
@@ -117,11 +122,12 @@ function ActivityTable() {
         activity.unit.trim() !== ""
     );
 
-
     if (validActivities.length === 0) {
       setShowModal(false);
       return;
     }
+
+    
 
     const newItems = validActivities.map((activity) => ({
       name: activity.name,
@@ -129,7 +135,6 @@ function ActivityTable() {
       target: activity.target,
       unit: activity.unit,
     }));
-
     const postEachActivity = async () => {
       try {
         for (const item of newItems) {
@@ -190,6 +195,8 @@ function ActivityTable() {
     setSelectedActivities((prev) => ({ ...prev, [id]: value }));
     updateTheActivitityById(value, id);
   };
+
+  console.log(newActivities);
 
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
@@ -255,16 +262,21 @@ function ActivityTable() {
           <table className="w-full table-auto border-collapse">
             <thead className="sticky top-0 bg-white z-10">
               <tr className="text-left text-gray-700 text-sm md:text-base">
-                {["Sl No.", "Activity", "Description", "Target","Unit" , ""].map(
-                  (item, index) => (
-                    <th
-                      key={index}
-                      className="justify-center font-roberto px-4 py-2 md:py-6 border-b border-b-gray-300 text-center"
-                    >
-                      {item}
-                    </th>
-                  )
-                )}
+                {[
+                  "Sl No.",
+                  "Activity",
+                  "Description",
+                  "Target",
+                  "Unit",
+                  "",
+                ].map((item, index) => (
+                  <th
+                    key={index}
+                    className="justify-center font-roberto px-4 py-2 md:py-6 border-b border-b-gray-300 text-center"
+                  >
+                    {item}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -330,8 +342,8 @@ function ActivityTable() {
                   </td>
                 </tr>
               ))}
-              <tr>
-                <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
+              <tr className="border-b border-b-gray-300">
+                <td className="p-3  " colSpan={5}>
                   <button
                     className="space-x-2 px-4 py-2 add-row"
                     onClick={addNewRow}
@@ -391,15 +403,49 @@ function ActivityTable() {
                           {index + 1}
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
-                          <input
-                            type="text"
-                            value={activity.name}
-                            onChange={(e) => {
+                          <Autocomplete
+                            options={activities_api_call}
+                            getOptionLabel={(option) => option.name || ""}
+                            getOptionDisabled={() => true} // disables all options
+                            value={
+                              activities_api_call.find(
+                                (a) => a.name === activity.name
+                              ) || null
+                            }
+                            onInputChange={(_, newInputValue) => {
                               const updated = [...newActivities];
-                              updated[index].name = e.target.value;
+                              updated[index].name = newInputValue;
+                              // Optionally, clear other fields if not matching an existing activity
                               setNewActivities(updated);
+                              // Optionally, call handleType here if you want live type detection
                             }}
-                            className="w-full border rounded p-2 border border-gray-400"
+                            // onChange={(_, newValue) => {
+                            //   const updated = [...newActivities];
+                            //   if (newValue) {
+                            //     updated[index].name = newValue.name;
+                            //     updated[index].description =
+                            //       newValue.description || "";
+                            //     updated[index].unit = newValue.unit || "";
+                            //     updated[index].target = newValue.target ||"";
+                            //     // setTrackDublicate((prev) => [...prev, {name : newValue.name , index}]);
+                            //   } else {
+                            //     updated[index].name = "";
+                            //     updated[index].description = "";
+                            //     updated[index].unit = "";
+                            //     updated[index].target = "";
+                            //   }
+                            //   setNewActivities(updated);
+                            // }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Activity Name"
+                                variant="outlined"
+                                // fullWidth
+                                sx={{ width: "205px" }} // Set width here
+                              />
+                            )}
+                           freeSolo // allows custom input as well as selection
                           />
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
