@@ -455,7 +455,17 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching session:", error);
     }
   };
-
+  const getAllSessions = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/session-templates`);
+      const data = res.data;
+      console.log("✅ All sessions fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching all sessions:", error);
+      return [];
+    }
+  };
   const getPlansForInterval = async (
     startDate: string,
     endDate: string,
@@ -595,6 +605,7 @@ export const useApiCalls = () => {
     question_Updation,
     questionCreation,
     getPlans,
-    getPlanInstanceByPlanID
+    getPlanInstanceByPlanID,
+    getAllSessions
   };
 };

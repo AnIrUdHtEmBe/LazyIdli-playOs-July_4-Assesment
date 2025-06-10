@@ -7,7 +7,7 @@ import { useApiCalls } from "../store/axios";
 import EventModal from "./EventModal"; 
 import AddPlanInstance from "./AddPlanInstance"; // Adjust the path if needed
 
-export default function EventCalendar({ data }) {
+export default function EventCalendar({ data ,  onEventClick }) {
   const [events, setEvents] = useState([]);
   const { getSessionById , updateSessionInPlanInstance } = useApiCalls();
 
@@ -101,6 +101,7 @@ useEffect(() => {
       selectable={true}
       height="auto"
       dateClick={(info) => {
+        onEventClick(info.dateStr);
         console.log("New event on:", info.dateStr);
       }}
       eventClick={handleEventClick}

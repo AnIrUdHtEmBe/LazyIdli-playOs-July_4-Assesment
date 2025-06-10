@@ -291,7 +291,7 @@ const QuestionBank = () => {
                   </button>
                   <button
                     className="question-bank-main-body-left-header-button"
-                    onClick={handleEditDone}
+                    // onClick={handleEditDone}
                   >
                     <X size={20} />
                   </button>

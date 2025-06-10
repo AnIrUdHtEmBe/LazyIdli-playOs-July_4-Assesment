@@ -4,7 +4,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddPlanInstance from './AddPlanInstance';
-export default function DateRangePicker({ startDate, setStartDate, endDate, setEndDate ,userId }) {
+import AddSession from './AddSession';
+export default function DateRangePicker({ startDate, userDate ,setStartDate, endDate, setEndDate ,userId ,planForAlacatre} ) {
+  React.useEffect(()=> {
+    console.log(userDate);
+     
+  }, [userDate]);
   return (
     <div className='p-4 flex justify-between'>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -28,8 +33,9 @@ export default function DateRangePicker({ startDate, setStartDate, endDate, setE
       
       </Stack>
     </LocalizationProvider>
-    <div className='flex items-center'>
+    <div className='flex items-center gap-2'>
     <AddPlanInstance userId={userId} />
+    <AddSession userId={userId} userDate={userDate} planForAlacarte={planForAlacatre}/>
     </div>
     </div>
   );

@@ -227,11 +227,10 @@ const CustomerTable = () => {
     const rows = await Promise.all(
       customers_Api_call.map(async (customer :any, i :any) => {
         const plan = customer.plansAllocated?.[0]
-          ? await getPlanInstanceByPlanID(customer.plansAllocated[0]).then(
-              (plan) => plan?.PlanTemplateName || "-"
-            )
-          : "-";
-
+            ? await getPlanInstanceByPlanID(customer.plansAllocated[0]).then(
+                (plan) => plan?.PlanTemplateName == "alacartePH" ?  "-" : plan?.PlanTemplateName || "-"
+              )
+            : "-";
         return {
           no: i + 1,
           id: customer.userId,
@@ -298,7 +297,8 @@ const CustomerTable = () => {
         row.name.toLowerCase().includes(lowerTerm) ||
         row.phoneNumber?.includes(lowerTerm) ||
         row.memberShip?.toLowerCase().includes(lowerTerm) || 
-        row.email?.toLowerCase().includes(lowerTerm)
+        row.email?.toLowerCase().includes(lowerTerm)||
+        row.gender?.toLowerCase().includes(lowerTerm) 
     );
     setFilteredRows(filtered);
   }, [term, rows]);
