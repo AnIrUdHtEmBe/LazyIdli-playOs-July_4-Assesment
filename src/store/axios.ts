@@ -389,11 +389,17 @@ export const useApiCalls = () => {
   };
 
   const createActivity = async (activity: Activity_Api_call) => {
+    console.log("Creating activity with data:", activity);
     try {
       const res = await axios.post(
         `${API_BASE_URL}/activity-templates`,
         activity
       );
+      // alert("Activity created successfully!");
+      enqueueSnackbar("Activity created successfully!", {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
       console.log("Activity created successfully:", res.data);
     } catch (error) {
       console.error("❌ Error creating activity:", error);

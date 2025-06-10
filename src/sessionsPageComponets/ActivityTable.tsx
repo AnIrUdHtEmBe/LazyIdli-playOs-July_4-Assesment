@@ -1,16 +1,10 @@
-import { Refresh, ReplayOutlined } from "@mui/icons-material";
-
+import { LucideCircleMinus, Plus, Save, X } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import {
-  Activity,
-  Cross,
-  LucideCircleMinus,
-  Plus,
-  RefreshCcw,
-  Save,
-  X,
-} from "lucide-react";
-import React, { act, useContext, useEffect, useState } from "react";
-import { Activity_Api_call, DataContext, Session_Api_call } from "../store/DataContext";
+  Activity_Api_call,
+  DataContext,
+  Session_Api_call,
+} from "../store/DataContext";
 
 import "./ActivityTable.css";
 import {
@@ -26,22 +20,13 @@ function ActivityTable() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { getActivities, createActivity , getActivityById , createSession } = useApiCalls();
+  const { getActivities, createActivity, getActivityById, createSession } =
+    useApiCalls();
   useEffect(() => {
     getActivities();
-    
   }, []);
 
-
-
-  const {
-    setSelectComponent,
-    activityTypePlan,
-    setActivityTypePlan,
-    activities_api_call,
-    setActivities_api_call,
-    
-  } = context;
+  const { setSelectComponent, activities_api_call } = context;
 
   const [planName, setPlanName] = useState<string>("");
   const [category, setCategory] = useState<string>("Fitness");
@@ -49,78 +34,89 @@ function ActivityTable() {
   const [showModal, setShowModal] = useState(false);
   const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([
     {
-    name: "",
-    description: "",
-    reps: "",
-    icon: "",
-    
-  }
+      name: "",
+      description: "",
+      target: null,
+      unit: "",
+    },
   ]);
-    const [emptyArr, setEmptyArr] = useState<Activity_Api_call[]>([
-  {
-    name: "",
-    description: "",
-    reps: "",
-    icon: ""
-  }
-]);
+  const [emptyArr, setEmptyArr] = useState<Activity_Api_call[]>([
+    {
+      name: "",
+      description: "",
+      target: null,
+      unit: "",
+      icon: "",
+    },
+  ]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     console.log(emptyArr);
     const activityIds = emptyArr.map((activity) => activity.activityId);
     console.log(activityIds);
-    
   }, [emptyArr]);
-
 
   useEffect(() => {
     console.log(activities_api_call);
   }, [activities_api_call]);
+
   const handlePlanSaving = () => {
     setSelectComponent("AllSessions");
   };
-  
-const handleSessionCreation = async () => {
-  // const activityIds = emptyArr.map((activity) => activity.activityId);
-  const activityIds: string[] =emptyArr
-  .map(item => item.activityId)
-  .filter((id): id is string => typeof id === "string");
 
-  const sessionToBeCreated : Session_Api_call = {
-    title: planName,
-    description: "",
-    category: category,
-    activityIds: activityIds
-  }
-  console.log(sessionToBeCreated);
-  await createSession(sessionToBeCreated);
-  console.log("Session created successfully");
-}
+  const handleSessionCreation = async () => {
+    // const activityIds = emptyArr.map((activity) => activity.activityId);
+    const activityIds: string[] = emptyArr
+      .map((item) => item.activityId)
+      .filter((id): id is string => typeof id === "string");
 
+    const sessionToBeCreated: Session_Api_call = {
+      title: planName,
+      description: "",
+      category: category,
+      activityIds: activityIds,
+    };
+    console.log(sessionToBeCreated);
+    await createSession(sessionToBeCreated);
+  };
 
   const handleAddNewRow = () => {
     setNewActivities((prev) => [
       ...prev,
-      { activityId: Date.now().toString(), name: "", description: "", reps: "" },
+      {
+        activityId: Date.now().toString(),
+        name: "",
+        description: "",
+        target: null,
+        unit: "",
+        icon: "",
+      },
     ]);
   };
 
+  const addNewRow = () => {
+    setEmptyArr((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        name: "",
+        description: "",
+        target: null,
+        unit: "",
+        icon: "",
+      },
+    ]);
+  };
 
-const addNewRow = () => {
-  setEmptyArr((prev) => [
-    ...prev,
-    { id: Date.now().toString(), name: "", description: "", reps: "" },
-  ]);
-};
-
-  const handleModalSave =async  () => {
+  const handleModalSave = async () => {
     const validActivities = newActivities.filter(
       (activity) =>
         activity.name.trim() !== "" &&
         activity.description.trim() !== "" &&
-        activity.reps.trim() !== ""
+        (activity.target !== 0 || activity.target !== null) &&
+        activity.unit.trim() !== ""
     );
+
 
     if (validActivities.length === 0) {
       setShowModal(false);
@@ -130,40 +126,29 @@ const addNewRow = () => {
     const newItems = validActivities.map((activity) => ({
       name: activity.name,
       description: activity.description,
-      reps: activity.reps,
+      target: activity.target,
+      unit: activity.unit,
     }));
-
-     
 
     const postEachActivity = async () => {
       try {
-        // await Promise.all(
-        //   newItems.map((item) => createActivity(item))
-        // );
         for (const item of newItems) {
           await createActivity(item);
         }
-        // console.log("All activities posted successfully.");
       } catch (error) {
         console.error("Error posting some activities:", error);
       }
     };
-
-    
-
-  
     // ✅ Wait for posting to finish
     await postEachActivity();
-  
     // ✅ Then update the state
     await getActivities();
-    
-  
     setNewActivities([
       {
         name: "",
         description: "",
-        reps: "",
+        target: null,
+        unit: "",
       },
     ]);
     setShowModal(false);
@@ -188,22 +173,22 @@ const addNewRow = () => {
       return shiftedActivities;
     });
   };
-  const updateTheActivitityById = async (activityId: string,index:number) => {
-    const activity =await getActivityById(activityId);
+  const updateTheActivitityById = async (activityId: string, index: number) => {
+    const activity = await getActivityById(activityId);
     if (activity) {
       emptyArr[index] = activity;
       setEmptyArr([...emptyArr]);
     } else {
       console.error("Activity not found");
     }
-}
+  };
   const [selectedActivities, setSelectedActivities] = useState<{
     [id: number]: string;
   }>({});
 
   const handleActivitySelectChange = (id: number, value: string) => {
     setSelectedActivities((prev) => ({ ...prev, [id]: value }));
-    updateTheActivitityById(value,id);
+    updateTheActivitityById(value, id);
   };
 
   return (
@@ -227,11 +212,10 @@ const addNewRow = () => {
 
           <div className="flex flex-col w-full ">
             <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
-               <InputLabel id="demo-select-label"> Category</InputLabel>
+              <InputLabel id="demo-select-label"> Category</InputLabel>
               <Select
                 value={category}
                 label="Category"
-                
                 onChange={(e) => setCategory(e.target.value)}
                 displayEmpty
                 sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
@@ -250,14 +234,11 @@ const addNewRow = () => {
         <div className="flex flex-wrap gap-3">
           <button
             className="flex items-center space-x-2 p-2  text-sm md:text-base plus-new-actvity"
-             onClick={() => setShowModal(true)}
+            onClick={() => setShowModal(true)}
           >
             <Plus />
             <span>Create New Activity</span>
           </button>
-          {/* <div className="p-2 border border-gray-300 rounded-xl">
-            <ReplayOutlined></ReplayOutlined>
-          </div> */}
           <button
             className="flex items-center space-x-2 text-white px-4 py-2 rounded-xl text-sm md:text-base btn2 "
             onClick={handleSessionCreation}
@@ -274,7 +255,7 @@ const addNewRow = () => {
           <table className="w-full table-auto border-collapse">
             <thead className="sticky top-0 bg-white z-10">
               <tr className="text-left text-gray-700 text-sm md:text-base">
-                {["Sl No.", "Activity", "Description", "Time/Reps", ""].map(
+                {["Sl No.", "Activity", "Description", "Target","Unit" , ""].map(
                   (item, index) => (
                     <th
                       key={index}
@@ -287,7 +268,7 @@ const addNewRow = () => {
               </tr>
             </thead>
             <tbody>
-              {emptyArr.map((activity , index) => (
+              {emptyArr.map((activity, index) => (
                 <tr
                   key={index}
                   className="text-sm text-gray-800 hover:bg-gray-50"
@@ -300,11 +281,11 @@ const addNewRow = () => {
                     <FormControl sx={{ width: 200 }} size="small">
                       <Select
                         value={selectedActivities[index] || ""}
-                        onChange={(e) =>{
-                          handleActivitySelectChange(index, e.target.value)
-                          console.log("Selected activity:", e.target.value);
-                          
-                          setActivityForTable(activity)
+                        onChange={(e) => {
+                          handleActivitySelectChange(index, e.target.value);
+                          // console.log("Selected activity:", e.target.value);
+
+                          setActivityForTable(activity);
                         }}
                         displayEmpty
                         MenuProps={{
@@ -337,7 +318,10 @@ const addNewRow = () => {
                     {activity.description}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {activity.reps}
+                    {activity.target}
+                  </td>
+                  <td className="px-4 py-7 border-b border-b-gray-200 text-center">
+                    {activity.unit}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <button onClick={() => handleDelete(index)}>
@@ -350,7 +334,7 @@ const addNewRow = () => {
                 <td className="p-3 border-b-gray-300 border-b" colSpan={5}>
                   <button
                     className="space-x-2 px-4 py-2 add-row"
-                   onClick={addNewRow}
+                    onClick={addNewRow}
                   >
                     <Plus />
                     <span>Add Row</span>
@@ -393,9 +377,10 @@ const addNewRow = () => {
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="px-4 py-2">Sl.No</th>
-                      <th className="px-4 py-2">Activity Type</th>
+                      <th className="px-4 py-2">Activity Name</th>
                       <th className="px-4 py-2">Description</th>
-                      <th className="px-4 py-2">Time/reps</th>
+                      <th className="px-4 py-2">Target</th>
+                      <th className="px-4 py-2">Units</th>
                       <th className="px-4 py-2"></th>
                     </tr>
                   </thead>
@@ -431,11 +416,23 @@ const addNewRow = () => {
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
                           <input
-                            type="text"
-                            value={activity.reps}
+                            type="number"
+                            value={activity.target}
                             onChange={(e) => {
                               const updated = [...newActivities];
-                              updated[index].reps = e.target.value;
+                              updated[index].target = e.target.value;
+                              setNewActivities(updated);
+                            }}
+                            className="w-full border border-gray-400 rounded p-2"
+                          />
+                        </td>
+                        <td className="px-4 py-2 border-b-2 border-gray-200">
+                          <input
+                            type="text"
+                            value={activity.unit}
+                            onChange={(e) => {
+                              const updated = [...newActivities];
+                              updated[index].unit = e.target.value;
                               setNewActivities(updated);
                             }}
                             className="w-full border border-gray-400 rounded p-2"
@@ -449,7 +446,10 @@ const addNewRow = () => {
                               setNewActivities(updated);
                             }}
                           >
-                            <LucideCircleMinus className="text-red-500" size={20} />
+                            <LucideCircleMinus
+                              className="text-red-500"
+                              size={20}
+                            />
                           </button>
                         </td>
                       </tr>
@@ -474,6 +474,5 @@ const addNewRow = () => {
     </div>
   );
 }
-
 
 export default ActivityTable;

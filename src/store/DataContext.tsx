@@ -22,7 +22,8 @@ export type Activity_Api_call = {
   activityId?: string;
   name: string,
   description: string,
-  reps: string,
+  target: number | null,
+  unit: string,
   icon?: string
 }
 
