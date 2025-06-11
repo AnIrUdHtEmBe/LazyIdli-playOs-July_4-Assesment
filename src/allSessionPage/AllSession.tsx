@@ -1,26 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Activity_Api_call,
   DataContext,
   Session_Api_call,
 } from "../store/DataContext";
 import { useApiCalls } from "../store/axios";
-import {
-  Calendar,
-  Columns,
-  Dumbbell,
-  LucideCircleMinus,
-  Plus,
-  Rows,
-} from "lucide-react";
+import { Dumbbell, Plus } from "lucide-react";
 import "./AllSession.css";
 import {
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
-  Switch,
   TextField,
 } from "@mui/material";
 import { Mediation, NordicWalking } from "@mui/icons-material";
@@ -34,13 +26,6 @@ interface Activity {
   description: string;
   timeInMinutes: number;
 }
-
-interface Session {
-  sessionName: string;
-  sessionType: string;
-  activities: Activity[];
-}
-
 function AllSession() {
   const context = useContext(DataContext);
   const { getSessions, patchSession, getActivities, getActivityById } =
@@ -48,8 +33,12 @@ function AllSession() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { activities_api_call, sessions, setSessions, sessions_api_call , setSelectComponent} =
-    context;
+  const {
+    activities_api_call,
+    sessions,
+    sessions_api_call,
+    setSelectComponent,
+  } = context;
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selecteddPlan, setSelectedPlan] = useState<Session_Api_call | null>(
@@ -59,6 +48,8 @@ function AllSession() {
   const [category, setCategory] = useState<string>(
     selecteddPlan?.category || "Fitness"
   );
+
+  const [loadingRowIndex, setLoadingRowIndex] = useState<number | null>(null);
 
   console.log(sessions);
   useEffect(() => {
@@ -105,7 +96,9 @@ function AllSession() {
     activityId: "", // or maybe use `uuid()` if needed
     name: "",
     description: "",
-    reps: "",
+    target: null,
+    unit: "",
+    icon: "",
   };
   const addEmptyActivityRow = () => {
     const updatedActivities = [...selecteddPlan.activities, emptyActivity];
@@ -163,10 +156,12 @@ function AllSession() {
             >
               <NordicWalking style={{ fontSize: "20px" }} />
             </button>
-           
           </div>
 
-          <button onClick={() => setSelectComponent("/sessions")}className="new-button">
+          <button
+            onClick={() => setSelectComponent("/sessions")}
+            className="new-button"
+          >
             <Plus size={20} className="new-button-icon" />
             <span className="new-button-text">New</span>
           </button>
@@ -246,67 +241,98 @@ function AllSession() {
                   <th className="actone">Sl.No</th>
                   <th className="acttwo">Activity</th>
                   <th className="actthree">Description</th>
-                  <th className="actfour"> Time/Reps</th>
+                  <th className="actfour"> Target</th>
+                  <th>Unit</th>
                 </tr>
               </thead>
               <tbody className="activities-table-header">
                 {selecteddPlan?.activities?.map(
                   (item: Activity_Api_call, index: number) => (
                     <tr key={index} className="activity-row">
-                      <td className="activity-cell font-bold">{slNo++}</td>
-                      <td className="activity-cell">
-                        <FormControl fullWidth>
-                          {/* <InputLabel id={`activity-select-label-${index}`}>
-                            Activity
-                          </InputLabel> */}
-                          <Select
-                            labelId={`activity-select-label-${index}`}
-                            value={item.activityId}
-                            
-                            onChange={async (e) => {
-                              const selectedId = e.target.value;
-                              console.log("Selected ID:", selectedId);
+                      {loadingRowIndex === index ? (
+                         <td colSpan={5} className="activity-cell text-center py-4">
+                         <div className="flex items-center justify-center gap-2">
+                           <CircularProgress size={30} className="text-blue-500" />
+                         </div>
+                       </td>
+                      ) : (
+                        <>
+                          <td className="activity-cell font-bold">{slNo++}</td>
+                          <td className="activity-cell">
+                            <FormControl fullWidth>
+                              <Select
+                                labelId={`activity-select-label-${index}`}
+                                value={item.activityId}
+                                onChange={async (e) => {
+                                  const selectedId = e.target.value;
+                                  console.log("Selected ID:", selectedId);
+                                  setLoadingRowIndex(index);
 
-                              try {
-                                const edittedActivity = await getActivityById(
-                                  selectedId
-                                );
+                                  try {
+                                    const edittedActivity =
+                                      await getActivityById(selectedId);
+                                    const updatedActivities = [
+                                      ...selecteddPlan.activities,
+                                    ];
+                                    updatedActivities[index] = edittedActivity;
 
-                                const updatedActivities = [
-                                  ...selecteddPlan.activities,
-                                ];
-                                updatedActivities[index] = edittedActivity;
+                                    const updatedActivityIds = [
+                                      ...selecteddPlan.activityIds,
+                                    ];
+                                    updatedActivityIds[index] =
+                                      edittedActivity.activityId;
 
-                                const updatedActivityIds = [
-                                  ...selecteddPlan.activityIds,
-                                ];
-                                updatedActivityIds[index] =
-                                  edittedActivity.activityId;
+                                    setSelectedPlan({
+                                      ...selecteddPlan,
+                                      activities: updatedActivities,
+                                      activityIds: updatedActivityIds,
+                                    });
 
-                                setSelectedPlan({
-                                  ...selecteddPlan,
-                                  activities: updatedActivities,
-                                  activityIds: updatedActivityIds,
-                                });
-
-                                console.log("Updated Plan:", updatedActivities);
-                              } catch (err) {
-                                console.error("Failed to fetch activity:", err);
-                              }
-                            }}
-                          >
-                            {activities_api_call.map(
-                              (activity: Activity_Api_call, idx: number) => (
-                                <MenuItem key={idx} value={activity.activityId}>
-                                  {activity.name}
-                                </MenuItem>
-                              )
-                            )}
-                          </Select>
-                        </FormControl>
-                      </td>
-                      <td className="activity-cell">{item.description}</td>
-                      <td className="activity-cell">{item.reps}</td>
+                                    console.log(
+                                      "Updated Plan:",
+                                      updatedActivities
+                                    );
+                                  } catch (err) {
+                                    console.error(
+                                      "Failed to fetch activity:",
+                                      err
+                                    );
+                                  } finally {
+                                    setLoadingRowIndex(null);
+                                  }
+                                }}
+                              >
+                                {activities_api_call.map(
+                                  (
+                                    activity: Activity_Api_call,
+                                    idx: number
+                                  ) => (
+                                    <MenuItem
+                                      key={idx}
+                                      value={activity.activityId}
+                                    >
+                                      {activity.name}
+                                    </MenuItem>
+                                  )
+                                )}
+                              </Select>
+                            </FormControl>
+                          </td>
+                          <td className="activity-cell">{item.description}</td>
+                          <td className="activity-cell">{item.target}</td>
+                          <td className="activity-cell">
+                            {item.unit === "weight"
+                              ? "Kg"
+                              : item.unit === "time"
+                              ? "Min"
+                              : item.unit === "distance"
+                              ? "Km"
+                              : item.unit === "repetitions"
+                              ? "Reps"
+                              : ""}
+                          </td>
+                        </>
+                      )}
                     </tr>
                   )
                 )}
