@@ -5,6 +5,7 @@ import {
   DataContext,
   Session_Api_call,
 } from "../store/DataContext";
+import { ActivityUtils } from "../Utils/ActivityUtils";
 
 import "./ActivityTable.css";
 import {
@@ -111,9 +112,7 @@ function ActivityTable() {
     ]);
   };
 
-
   const handleModalSave = async () => {
-
     const validActivities = newActivities.filter(
       (activity) =>
         activity.name.trim() !== "" &&
@@ -126,8 +125,6 @@ function ActivityTable() {
       setShowModal(false);
       return;
     }
-
-    
 
     const newItems = validActivities.map((activity) => ({
       name: activity.name,
@@ -290,40 +287,37 @@ function ActivityTable() {
                   </td>
 
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    <FormControl sx={{ width: 200 }} size="small">
-                      <Select
-                        value={selectedActivities[index] || ""}
-                        onChange={(e) => {
-                          handleActivitySelectChange(index, e.target.value);
-                          // console.log("Selected activity:", e.target.value);
-
-                          setActivityForTable(activity);
-                        }}
-                        displayEmpty
-                        MenuProps={{
-                          PaperProps: {
-                            sx: {
-                              width: 200, // 👈 fixed width for dropdown menu
-                            },
-                          },
-                        }}
-                        sx={{
-                          backgroundColor: "white",
-                          width: 200, // 👈 fixed width for select
-                        }}
-                      >
-                        {activities_api_call.map((activity) => (
-                          <MenuItem
-                            key={activity.icon}
-                            value={activity.activityId}
-                            sx={{ width: "100%" }} // optional, ensures full width of MenuItem
-                            // onChange={setActivityForTable(activity)}
-                          >
-                            {activity.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <Autocomplete
+                      options={activities_api_call}
+                      getOptionLabel={(option) => option.name || ""}
+                      value={
+                        activities_api_call.find(
+                          (a) => a.activityId === selectedActivities[index]
+                        ) || null
+                      }
+                      onChange={(_, newValue) => {
+                        // newValue is the selected activity object or null
+                        handleActivitySelectChange(
+                          index,
+                          newValue ? newValue.activityId : ""
+                        );
+                        setActivityForTable(newValue);
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Select Activity"
+                          variant="outlined"
+                          size="small"
+                          sx={{ width: 250 }}
+                        />
+                      )}
+                      sx={{ width: 100, backgroundColor: "white" }}
+                      isOptionEqualToValue={(option, value) =>
+                        option.activityId === value.activityId
+                      }
+                      freeSolo
+                    />
                   </td>
 
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
@@ -333,7 +327,15 @@ function ActivityTable() {
                     {activity.target}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
-                    {activity.unit}
+                    {activity.unit == "weight"
+                      ? "Kg"
+                      : activity.unit == "distance"
+                      ? "Km"
+                      : activity.unit == "time"
+                      ? "Min"
+                      : activity.unit == "repetitions"
+                      ? "Reps"
+                      : ""}
                   </td>
                   <td className="px-4 py-7 border-b border-b-gray-200 text-center">
                     <button onClick={() => handleDelete(index)}>
@@ -439,13 +441,13 @@ function ActivityTable() {
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                label="Activity Name"
+                                label="Select Activity"
                                 variant="outlined"
-                                // fullWidth
-                                sx={{ width: "205px" }} // Set width here
+                                size="small"
+                                sx={{ width: 200 }}
                               />
                             )}
-                           freeSolo // allows custom input as well as selection
+                            freeSolo // allows custom input as well as selection
                           />
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
@@ -473,7 +475,7 @@ function ActivityTable() {
                           />
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200">
-                          <input
+                          {/* <input
                             type="text"
                             value={activity.unit}
                             onChange={(e) => {
@@ -482,7 +484,27 @@ function ActivityTable() {
                               setNewActivities(updated);
                             }}
                             className="w-full border border-gray-400 rounded p-2"
-                          />
+                          /> */}
+
+                            <Autocomplete
+                              options ={ActivityUtils}
+                              getOptionsLable={(option :any) => option || ""}
+                              value={activity.unit || ""}
+                              onChange={(_ , newValue) => {
+                                const updated = [...newActivities];
+                                updated[index].unit = newValue || "";
+                                setNewActivities(updated);
+                              }}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Select Unit"
+                                  variant="outlined"
+                                  size="small"
+                                  sx={{ width: 180 }}
+                                />
+                              )}
+                            />
                         </td>
                         <td className="px-4 py-2 border-b-2 border-gray-200 text-center">
                           <button
