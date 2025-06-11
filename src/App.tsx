@@ -22,7 +22,7 @@ import { SnackbarProvider } from "notistack";
 function App() {
   const { selectComponent } = useContext(DataContext);
 
-  console.log(selectComponent);
+  // console.log(selectComponent);
   return (
     <SnackbarProvider>
       <Router>

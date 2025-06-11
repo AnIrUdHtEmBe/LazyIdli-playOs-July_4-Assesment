@@ -5,7 +5,7 @@ import {
   Session_Api_call,
 } from "../store/DataContext";
 import { useApiCalls } from "../store/axios";
-import { Dumbbell, Plus } from "lucide-react";
+import { Dumbbell, MinusCircle, Plus } from "lucide-react";
 import "./AllSession.css";
 import {
   CircularProgress,
@@ -17,15 +17,6 @@ import {
 } from "@mui/material";
 import { Mediation, NordicWalking } from "@mui/icons-material";
 
-interface Activity {
-  id: string;
-  activityType: Array<{
-    id: string;
-    activityType: string;
-  }>;
-  description: string;
-  timeInMinutes: number;
-}
 function AllSession() {
   const context = useContext(DataContext);
   const { getSessions, patchSession, getActivities, getActivityById } =
@@ -35,7 +26,6 @@ function AllSession() {
   }
   const {
     activities_api_call,
-    sessions,
     sessions_api_call,
     setSelectComponent,
   } = context;
@@ -51,18 +41,13 @@ function AllSession() {
 
   const [loadingRowIndex, setLoadingRowIndex] = useState<number | null>(null);
 
-  console.log(sessions);
+  // console.log(sessions);
   useEffect(() => {
     getSessions();
   }, []);
 
   useEffect(() => {
     getActivities();
-  }, [selecteddPlan]);
-
-  // const
-  useEffect(() => {
-    console.log("selected", selecteddPlan);
   }, [selecteddPlan]);
 
   useEffect(() => {
@@ -104,12 +89,18 @@ function AllSession() {
     const updatedActivities = [...selecteddPlan.activities, emptyActivity];
     const updatedActivityIds = [...selecteddPlan.activityIds, ""];
 
+    console.log("Updated Activities:", updatedActivities);
+    console.log("Updated Activity IDs:", updatedActivityIds);
+
     setSelectedPlan({
       ...selecteddPlan,
       activities: updatedActivities,
       activityIds: updatedActivityIds,
     });
   };
+
+  console.log("Selected Plan:", selecteddPlan);
+  
 
   const filterPlansAccordingTo = (category: string) => {
     if (activeFilter === category) {
@@ -120,6 +111,19 @@ function AllSession() {
       setSearchTerm(category);
     }
   };
+
+  const handleDelete = async (index : number) => {
+    console.log("Deleting activity at index:", index);
+    selecteddPlan?.activities.splice(index, 1);
+    selecteddPlan?.activityIds.splice(index, 1);
+    
+    setSelectedPlan({
+      ...selecteddPlan,
+      activities: [...selecteddPlan.activities],
+      activityIds: [...selecteddPlan.activityIds],
+    });
+  }
+
 
   let slNo = 1;
 
@@ -243,6 +247,7 @@ function AllSession() {
                   <th className="actthree">Description</th>
                   <th className="actfour"> Target</th>
                   <th>Unit</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody className="activities-table-header">
@@ -331,6 +336,7 @@ function AllSession() {
                               ? "Reps"
                               : ""}
                           </td>
+                          <td><MinusCircle className="text-red-500" onClick={ () => handleDelete(index)}></MinusCircle></td>
                         </>
                       )}
                     </tr>
