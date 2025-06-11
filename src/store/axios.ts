@@ -193,16 +193,27 @@ export const useApiCalls = () => {
     }
   };
 
-  const getActivities = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/activity-templates`);
-      const data = res.data;
-      setActivities_api_call(res.data);
-      console.log("✅ Activities fetched successfully:", data);
-    } catch (error) {
-      console.error("❌ Error fetching activities:", error);
-    }
-  };
+ const getActivities = async (theme?: string, goal?: string) => {
+  try {
+    const params: Record<string, string> = {};
+
+    if (theme) params.themeTitle = theme;
+    if (goal) params.goalTitle = goal;
+
+    const res = await axios.get(`${API_BASE_URL}/activity-templates`, {
+      params
+    });
+
+    const data = res.data;
+    setActivities_api_call(data);
+    console.log("✅ Activities fetched successfully:", data);
+    console.log(theme);
+    
+  } catch (error) {
+    console.error("❌ Error fetching activities:", error);
+  }
+};
+
 
   const assessments_intsnce_fetching = async (
     assessmentInstanceIdArray: string[]
@@ -586,6 +597,19 @@ export const useApiCalls = () => {
     }
   };
 
+  const getTags = async () => {
+    try{
+      const res = await axios.get(`${API_BASE_URL}/tags`);
+      const data = res.data;
+      console.log("✅ Tags fetched successfully:", data);
+      return data;    
+    }
+    catch (error) {
+      console.error("❌ Error fetching tags:", error);
+      return [];
+    }
+  }
+
   return {
     customers_fetching,
     assessments_fetching,
@@ -619,6 +643,7 @@ export const useApiCalls = () => {
     getPlans,
     getPlanInstanceByPlanID,
     getAllSessions,
-    addSessionFromCalendar
+    addSessionFromCalendar,
+    getTags
   };
 };

@@ -127,15 +127,36 @@ function QuestionPaper() {
     });
   };
 
-  const allAnswered = questions
-    .filter((q) => q.isRequired)
-    .every((q: any, index: any) => {
-      const val = answers[index];
-      if (q.answerType === "choose_many") {
-        return Array.isArray(val) && val.length > 0;
-      }
-      return val !== undefined && val !== "";
-    });
+  // const allAnswered = questions
+  //   .filter((q) => q.isRequired)
+  //   .every((q: any, index: any) => {
+  //     const val = answers[index];
+  //     if (q.answerType === "choose_many") {
+  //       return Array.isArray(val) && val.length > 0;
+  //     }
+  //     return val !== undefined && val !== "";
+  //   });
+
+
+const allAnswered = questions
+  .filter((q) => q.isRequired)
+  .every((q, index) => {
+    const val = answers[index];
+
+    const isAnswered = q.answerType === "choose_many"
+      ? Array.isArray(val) && val.length > 0
+      : val !== undefined && val !== "";
+
+    
+
+    const note = notes.find((n) => n.questionId === q.questionId);
+    const isCommentValid = note && note.comment.trim() !== "";
+    
+    
+    // Accept if either answered or commented
+    return isAnswered || isCommentValid;
+  });
+
 
   console.log(JSON.parse(localStorage.getItem("latestAssessmentTemplate")));
   console.log(
@@ -148,7 +169,15 @@ function QuestionPaper() {
   //   localStorage.getItem("assessmentDetails")
   // ))
 
+
   const handleSubmit = async () => {
+    if(!allAnswered) {
+      enqueueSnackbar("Please answer all required questions before submitting or add comments in it", {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
+      return;
+    }
     try {
       let instanceId;
       if (localStorage.getItem("type") === "start") {
@@ -165,7 +194,14 @@ function QuestionPaper() {
 
       const ans = await Promise.all(
         questions.map(async (question: any, index: number) => {
+          
           let value = answers[index] || "";
+          let isSkipped = false;
+          if(value == ""){
+            value = null;
+            isSkipped = true;
+          }
+
           let scoreZone = null;
           let scoreValue = null;
           let scoreLevel = null;
@@ -175,15 +211,19 @@ function QuestionPaper() {
           }
 
           if (question.answerType === "number_ws") {
-            const value_score = await getScore(
-              question.questionId,
-              userDetail.userId,
-              Number(value)
-            );
-            // console.log("✅ Extracted score:", value_score);
-            scoreZone = value_score?.scoreZone ?? null;
-            scoreValue = value_score?.scoreValue ?? null;
-            scoreLevel = value_score?.scoreLevel ?? null;
+
+            
+           
+                const value_score = await getScore(
+                  question.questionId,
+                  userDetail.userId,
+                  Number(value)
+                );
+                // console.log("✅ Extracted score:", value_score);
+                scoreZone = value_score?.scoreZone ?? null;
+                scoreValue = value_score?.scoreValue ?? null;
+                scoreLevel = value_score?.scoreLevel ?? null;
+          
           }
 
           const noteObj = notes.find(
@@ -198,6 +238,7 @@ function QuestionPaper() {
             scoreValue,
             scoreZone,
             notes: noteObj ? noteObj.comment : null,
+           isSkipped
           };
         })
       );
@@ -263,7 +304,8 @@ function QuestionPaper() {
   };
 
   console.log(answers);
-
+  useEffect(() => {console.log("these",notes)}, [notes]);
+  
   return (
     <div className="dashboard-container">
       {/* Fixed Header */}
@@ -291,9 +333,9 @@ function QuestionPaper() {
                 </div>
               </div>
               <button
-                disabled={!allAnswered}
+                // disabled={!allAnswered}
                 onClick={handleSubmit}
-                className={`submit-btn ${allAnswered ? "active" : "disabled"}`}
+                className={`submit-btn active `}
               >
                 Submit
               </button>

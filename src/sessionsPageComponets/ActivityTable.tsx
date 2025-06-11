@@ -22,20 +22,45 @@ function ActivityTable() {
   if (!context) {
     return <div>Loading...</div>;
   }
-  const { getActivities, createActivity, getActivityById, createSession } =
+  const { getActivities, createActivity, getActivityById, createSession ,getTags} =
     useApiCalls();
   useEffect(() => {
     getActivities();
   }, []);
 
+  
   const { setSelectComponent, activities_api_call } = context;
-
+  const [tags, setTags] = useState([]);
   const [planName, setPlanName] = useState<string>("");
   const [category, setCategory] = useState<string>("Fitness");
-  const [activityForTable, setActivityForTable] = useState<Activity_Api_call>();
+  const [theme, setTheme] = useState("");
+  const [goal, setGoal] = useState("");
+  const [themes , setThemes] = useState([]);
+  const [goals, setGoals ] = useState([]);
+   const [activityForTable, setActivityForTable] = useState<Activity_Api_call>();
   const [showModal, setShowModal] = useState(false);
   // const [trackDublicate , setTrackDublicate] = useState<object[]>([]);
   // console.log(trackDublicate)
+  useEffect(() => {} , [])
+
+  useEffect(() => {
+    const taggetter = async () => {
+      const res = await getTags();
+      if (res) {
+        setTags(res);
+        setThemes(res.filter((tag) => tag.type === "theme"));
+        setGoals(res.filter((tag) => tag.type === "goal"));
+      } else {
+        console.error("Failed to fetch tags");
+      }
+    };
+    taggetter();
+
+     
+  }, []);
+  useEffect(() => {
+    console.log("Tags fetched:", tags);
+  }, [tags]);
   const [newActivities, setNewActivities] = useState<Activity_Api_call[]>([
     {
       name: "",
@@ -194,7 +219,33 @@ function ActivityTable() {
   };
 
   console.log(newActivities);
+useEffect(() => {
+  console.log(theme);
+  console.log(goal);
+}
+, [theme, goal]);
 
+useEffect(() => {
+    if (theme && goal) {
+      console.log("Theme and Goal are set:", theme, goal);
+      getActivities(theme, goal);
+      return;
+      // You can add any additional logic here that depends on both theme and goal being set
+    }
+    if(theme){
+      console.log("Theme is set:", theme);
+      getActivities(theme,"");
+      return;
+    }
+    if(goal){
+      console.log("Goal is set:", goal);
+      getActivities("",goal);
+      return;
+    }
+    getActivities();
+  }, [theme , goal]);
+
+  
   return (
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
@@ -228,7 +279,67 @@ function ActivityTable() {
                 <MenuItem value="SPORTS">Sports</MenuItem>
                 <MenuItem value="WELLNESS">Wellness</MenuItem>
                 <MenuItem value="OTHER">Other</MenuItem>
-                {/* You can add more categories here */}
+                
+              </Select>
+            </FormControl>
+          </div>
+         <div className="flex flex-col w-full">
+  <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+    <InputLabel id="demo-select-label" shrink={true}>
+      Theme
+    </InputLabel>
+    <Select
+      labelId="demo-select-label"
+      value={theme}
+      onChange={(e) => setTheme(e.target.value)}
+      displayEmpty
+      renderValue={(selected) => {
+        if (!selected) {
+          return <span ></span>;
+        }
+        return selected;
+      }}
+      sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
+    >
+      <MenuItem value="">
+        <em>None</em>
+      </MenuItem>
+      {themes.map((tag, i) => (
+        <MenuItem key={i} value={tag?.title}>
+          {tag.title}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+</div>
+
+
+          <div className="flex flex-col w-full ">
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel id="demo-select-label" shrink={true}> Goal</InputLabel>
+              <Select
+                labelId="demo-select-label"
+                value={goal}
+               
+                onChange={(e) => setGoal(e.target.value)}
+                displayEmpty
+                sx={{ fontSize: "1.25rem", fontFamily: "Roboto" }}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <span ></span>;
+                  }
+                  return selected;
+                }}
+              >
+                <MenuItem value="">
+                  None
+                </MenuItem>
+                {goals.map((tag, i) => (
+                  <MenuItem key={i} value={tag?.title}>
+                    {tag.title}
+                  </MenuItem>
+                ))}
+                
               </Select>
             </FormControl>
           </div>
