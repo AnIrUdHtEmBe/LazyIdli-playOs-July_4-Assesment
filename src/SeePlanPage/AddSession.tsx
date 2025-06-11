@@ -28,11 +28,11 @@ import { Button,
 };
 import { useApiCalls } from "../store/axios"; // Adjust if needed
 import dayjs from 'dayjs';
-function AddSession({ userId , userDate ,planForAlacarte }) {
+function AddSession({ userId , userDate ,planForAlacarte,getData }) {
      const [open, setOpen] = useState(false);
      const [option, setOption] = useState("");
      const [date, setDate] = useState( null);
-    const {getAllSessions } = useApiCalls();
+    const {getAllSessions , addSessionFromCalendar} = useApiCalls();
     const [sessions, setSessions] = useState([]);
     useEffect(() => {
         const fetchSessions = async () => {
@@ -56,24 +56,36 @@ useEffect(() => {
   useEffect(() => {
       console.log("Selected session option:", option);
   }, [option]);
+const handleConfirm = async () => {
+  if (!option || !date) {
+    console.error("Please select a session and a date.");
+    return;
+  }
 
-    const handleConfirm = () => {
-        if (!option || !date) {
-            console.error("Please select a session and a date.");
-            return;
-        }
-        const sessionData = {
-            sessionId: option,
-            userId: userId,
-            date: date.toISOString(),
-            planId: planForAlacarte?.planInstanceId // Ensure date is in ISO format
-        };
-        console.log("Session Data to be sent:", sessionData);
-        alert("Session added successfully!");
-        setOpen(false);
-        setOption("");
-        setDate(null);
-      }   
+  // Ensure 'date' is a Date object
+  const parsedDate = new Date(date);
+
+  if (isNaN(parsedDate.getTime())) {
+    console.error("Invalid date provided:", date);
+    return;
+  }
+
+  const sessionData = {
+    sessionTemplateId: option,
+    userId: userId,
+    scheduledDate: parsedDate.toLocaleDateString("en-CA"), // format: yyyy-mm-dd
+    planInstanceId: planForAlacarte?.planInstanceId
+  };
+
+  console.log("Session Data to be sent:", sessionData);
+
+  await addSessionFromCalendar(sessionData);
+  getData();
+  setOpen(false);
+  setOption("");
+  setDate(null);
+};
+
   return (
     <div>
         <Button variant="contained" onClick={() => setOpen(true)} >

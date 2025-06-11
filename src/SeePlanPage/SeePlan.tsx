@@ -15,14 +15,13 @@ function SeePlan() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");    
   const userId =  user.userId || "defaultUserId"; // Fallback to a default user ID if not found
     const [data, setData] = React.useState(null);
-  useEffect( () => {
-        // Convert dayjs objects to formatted strings 
-        const getData = async () => {
+     const getData = async () => {
             const res = await getPlansForInterval(dayjs(startDate).format("YYYY-MM-DD"), dayjs(endDate).format("YYYY-MM-DD"),userId); 
             setData(res);
-            
-            
         }
+  useEffect( () => {
+        // Convert dayjs objects to formatted strings 
+       
       if (startDate && endDate) {
          getData();
       }
@@ -66,8 +65,9 @@ function SeePlan() {
         setEndDate={setEndDate}
         userDate={userDate}
         planForAlacatre={planForAlacatre}
+         getData={getData}
       />
-      <EventCalendar data={data} onEventClick={handleEventClick} />
+      <EventCalendar data={data} onEventClick={handleEventClick}/>
 
     
     {/* <button className="border-2 p-3 bg-green-300 ">Update Changes</button> */}

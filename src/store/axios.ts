@@ -455,7 +455,19 @@ export const useApiCalls = () => {
       console.error("❌ Error fetching session:", error);
     }
   };
-  const getAllSessions = async () => {
+
+  const addSessionFromCalendar = async (session) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/session-instances/generate` ,session );
+      const data = res.data;
+      console.log("✅ Sessions fetched successfully:", data);
+      return data;
+    } catch (error) {
+      console.error("❌ Error fetching sessions:", error);
+      return [];
+    }
+  }
+   const getAllSessions = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/session-templates`);
       const data = res.data;
@@ -606,6 +618,7 @@ export const useApiCalls = () => {
     questionCreation,
     getPlans,
     getPlanInstanceByPlanID,
-    getAllSessions
+    getAllSessions,
+    addSessionFromCalendar
   };
 };
