@@ -250,9 +250,9 @@ useEffect(() => {
     <div className="activity-table-container bg-white w-full flex flex-col px-4 md:px-8">
       {/* Header */}
       <div className="flex justify-between items-center py-4">
-        <div className="flex w-2xl gap-23">
+        <div className="flex w-2xl gap-8">
           <div className="flex flex-col w-full">
-            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 170 }}>
               <TextField
                 label="Session Name"
                 variant="standard"
