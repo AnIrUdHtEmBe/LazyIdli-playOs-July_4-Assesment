@@ -11,7 +11,7 @@ import {
 // import { Dispatch, SetStateAction } from 'react';
 import { createAssessmentTemplate } from "./DataContext";
 import { enqueueSnackbar } from "notistack";
-const API_BASE_URL = "http://3.111.32.88:8080";
+const API_BASE_URL = "https://forge-play-backend.forgehub.in";
 
 export const useApiCalls = () => {
   const context = useContext(DataContext);

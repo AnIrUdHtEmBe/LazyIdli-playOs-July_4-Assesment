@@ -136,7 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
               // <img className="h-50px w-102.5px" src="/play-black.png"></img>
               ""
             ) : (
-              <img className="h-13 w-30" src="public/play-black.png"></img>
+              <img className="h-13 w-30" src="/play-black.png"></img>
             
             )}
           </div>
