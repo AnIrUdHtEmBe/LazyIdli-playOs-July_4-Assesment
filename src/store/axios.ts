@@ -68,8 +68,11 @@ export const useApiCalls = () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/humans`);
       const data = res.data;
+      const filteredData = [...data].filter((user) => user.type == "forge");
+      console.log("Filtered Data:", filteredData);
+      setCustomers_Api_call(filteredData);
+      // console.log("✅ Customers fetched successfully:", data);
 
-      setCustomers_Api_call(data);
       console.log("Status:", res.status);
     } catch (error) {
       console.error("❌ Error fetching customers:", error);
