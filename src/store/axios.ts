@@ -12,7 +12,7 @@ import {
 import { createAssessmentTemplate } from "./DataContext";
 import { enqueueSnackbar } from "notistack";
 const API_BASE_URL = "https://forge-play-backend.forgehub.in";
-
+const API_BASE_URL2="https://play-os-backend.forgehub.in";
 export const useApiCalls = () => {
   const context = useContext(DataContext);
   if (!context) {
@@ -32,8 +32,29 @@ export const useApiCalls = () => {
   const customer_creation = async (customer: any) => {
 
     console.log("Creating customer with data:", customer);
+    const data={
+      type:customer.type,
+      name:customer.name,
+      age:customer.age,
+      gender:customer.gender,
+      mobile:customer.mobile,
+      email:customer.email,
+      password:customer.password
+    }
+    const data2={
+       type:customer.type,
+      name:customer.name,
+      age:customer.age,
+      gender:customer.gender,
+      mobile:customer.mobile,
+      email:customer.email,
+      height: customer.height,
+      weight: customer.weight,
+      healthCondition: customer.healthCondition,
+      membershipType: customer.membershipType,
+    }
     try {
-      const res = await axios.post(`${API_BASE_URL}/humans`, customer);
+      const res = await axios.post(`${API_BASE_URL2}/human/register`, data);
       console.log("Customer created successfully:", res.data);
       // alert("Customer created successfully!");
       enqueueSnackbar("Customer created successfully!", {
@@ -41,6 +62,8 @@ export const useApiCalls = () => {
         autoHideDuration: 3000,
       });
 
+      const res_2=await axios.patch(`${API_BASE_URL2}/human/${res.data.userId.userId}`,data2);
+      console.log("Customer updated successfully:", res_2.data);
       customers_fetching(); // Refresh the customer list after creation
     } catch (error) {
       console.error("❌ Error creating customer:", error);
