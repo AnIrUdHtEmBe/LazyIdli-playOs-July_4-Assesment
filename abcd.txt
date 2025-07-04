@@ -1,0 +1,57 @@
+{
+"hostId": "USER_HZSU81",
+"sport": "yoga",
+"sportId": "SPRT_NWDG76",
+"courtId": "COUR_DYCI97",
+"startTime": "2025-07-17T13:00:00",
+"endTime": "2025-07-17T14:00:00",
+"bookedBy": "USER_WTSP08",
+"difficultyLevel": "Beginner",
+"maxPlayers": "5",
+"priceType": "",
+"rackPrice": 0,
+"quotePrice": 0
+}
+
+
+
+USER_HZSU81
+
+{
+  "hostId": "USER_HZSU81",
+  "sport": "yoga",
+  "sportId": "SPRT_NWDG76",
+  "courtId": "COUR_DYCI97",
+  "startTime": "2025-07-17T08:30:00",
+  "endTime": "2025-07-17T09:30:00",
+  "bookedBy": "USER_WTSP08",
+  "difficultyLevel": "Beginner",
+  "maxPlayers": "5",
+  "priceType": "",
+  "rackPrice": 0,
+  "quotePrice": 0
+}
+
+
+//// lATEST
+new yoga game for below courtId aND DATE
+{
+  "hostId": "USER_HZSU81",
+  "sport": "yoga",
+  "sportId": "SPRT_NWDG76",
+  "courtId": "COUR_DYCI97",
+  "startTime": "2025-07-17T10:30:00",
+  "endTime": "2025-07-17T11:30:00",
+  "bookedBy": "USER_HZSU81",
+  "difficultyLevel": "Beginner",
+  "maxPlayers": "5",
+  "priceType": "",
+  "rackPrice": 0,
+  "quotePrice": 0
+}
+== {
+  "message": "Game GAME_JPFY52 created",
+  "gameId": "GAME_JPFY52"
+}
+
+get court booking by date = https://play-os-backend.forgehub.in/court/COUR_DYCI97/bookings?date=2025-07-17
