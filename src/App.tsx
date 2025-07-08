@@ -18,6 +18,7 @@ import QuestionBank from "./QuestionBank/QuestionBank";
 import UserPersonalisedPlan from "./Pages/UserPersonalisedPlan";
 import SeePlan from "./SeePlanPage/SeePlan";
 import { SnackbarProvider } from "notistack";
+import UserProfile from "./UserPages/ProfilePage";
 
 function App() {
   const { selectComponent } = useContext(DataContext);
@@ -77,6 +78,11 @@ function App() {
                 selectComponent === "AllPlans" ? <AllPlans /> : <PlansPage />
               }
             />
+              <Route
+              path="/profile"
+              element={<UserProfile></UserProfile>}
+              />
+           
           </Routes>
         </Layout>
       </Router>

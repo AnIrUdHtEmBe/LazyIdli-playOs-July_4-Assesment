@@ -85,7 +85,7 @@ const CustomerTable = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUserIDs, setSelectedUserIDs] = useState<Array<string>>([]);
 
-  console.log("Customers API Call:", customers_Api_call);
+  // console.log("Customers API Call:", customers_Api_call);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -200,7 +200,7 @@ const CustomerTable = () => {
       day: "numeric",
     });
   };
-
+  // console.log(dateChangeHandler("1"),"data")
   const generateColumns = () => {
     return [
       { field: "no", headerName: "SI.No" },
@@ -212,7 +212,7 @@ const CustomerTable = () => {
       { field: "phoneNumber", headerName: "Phone Number" },
       { field: "memberShip", headerName: "Membership" },
       { field: "lastAssessedOn", headerName: "Last Assessed On" },
-      { field: "planAllocated", headerName: "Plan Allocated" },
+      // { field: "planAllocated", headerName: "Plan Allocated" },
       {
         field: "action",
         headerName: "",
@@ -268,15 +268,17 @@ const CustomerTable = () => {
   const generateRows = async () => {
   const rows = await Promise.all(
     customers_Api_call.map(async (customer: any, i: any) => {
-      console.log(customer, "eeee", customer.plansAllocated?.[0]);
+      // console.log(customer, "eeee", customer.plansAllocated?.[0]);
 
-      const planInstance = await getPlanInstanceByPlanID(customer.plansAllocated?.[customer.plansAllocated.length-1]);
+      // const planInstance = await getPlanInstanceByPlanID(customer.plansAllocated?.[customer.plansAllocated.length-1]);
 
-      const plan = planInstance?.PlanTemplateName === "alacartePH"
-        ? "-"
-        : planInstance?.PlanTemplateName;
+      // const plan = planInstance?.PlanTemplateName === "alacartePH"
+      //   ? "-"
+      //   : planInstance?.PlanTemplateName;
 
-      console.log("rtrtrtrtrt", planInstance?.PlanTemplateName,customer.name,customer.plansAllocated?.[-1]);
+      const plan='-'
+      // console.log("rtrtrtrtrt", planInstance?.PlanTemplateName,customer.name,customer.plansAllocated?.[-1]);
+      // console.log(customer.createdOn,"createdzzzzzzzzzz")
 
       return {
         no: i + 1,
@@ -285,11 +287,11 @@ const CustomerTable = () => {
         age: customer.age,
         gender: customer.gender || "-",
         email: customer.email || "-",
-        joinedOn: dateChangeHandler(customer.created_on),
+        joinedOn: dateChangeHandler(customer.createdOn),
         phoneNumber: customer.mobile || "-",
         memberShip: customer.membershipType,
         lastAssessedOn: customer.lastAssessed || "-",
-        planAllocated: plan,
+        // planAllocated: plan,
         customerData: customer,
       };
     })
