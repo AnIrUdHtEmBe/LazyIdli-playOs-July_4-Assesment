@@ -64,3 +64,26 @@ SLOT_LOKE54
 SLOT_JDJC06 == blocked
 
 skatepark=120min , indoor badminton = 90mins
+
+
+
+modal submit -> joinedPlayers
+reschedule
+
+TODO
+{
+  weekly price range
+  RBAC
+  notifications
+
+  1. type msg,sender from anybody
+  2. type, heading text, content text , message expiry ,sender,[buttons,actions]
+  3. 
+}
+
+//Today
+{
+  send message modal..
+  admin can see all msgs of USers
+  room names with ids
+}
