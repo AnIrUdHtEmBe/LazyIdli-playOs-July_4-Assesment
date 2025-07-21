@@ -75,11 +75,9 @@ TODO
   weekly price range
   RBAC
   notifications
-
-  1. type msg,sender from anybody
-  2. type, heading text, content text , message expiry ,sender,[buttons,actions]
-  3. 
-}
+ 
+ // chatId for my-game and my-sport
+}// rescheduling - fix - 
 
 //Today
 {
@@ -87,3 +85,59 @@ TODO
   admin can see all msgs of USers
   room names with ids
 }
+
+1. type msg,sender from anybody
+  2. type, heading text, content text , message expiry ,sender,[buttons,actions]
+  3. 
+
+
+
+chatId for my-game and my-sport
+}// rescheduling - fix - 
+  notifications
+  game chat ids
+  reschedule
+
+  [
+  time slot based on arena time
+  merge cells based on slot time
+  mark unavailable court slots N/A
+  notifications red color dot...
+  time stamp 
+  count of msgs
+  user photos in chatt
+  ]
+  
+  gamechat ids user modal
+
+
+mon - july - 20
+time slot based on arena time
+  merge cells based on slot time
+  mark unavailable court slots N/A
+
+//doable....  
+  notifications red color dot...
+  time stamp 
+  count of msgs
+  user photos in chatt
+    gamechat ids user modal
+
+    chatId for my-game and my-sport
+// rescheduling - fix - 
+  notifications
+  game chat ids
+  reschedule
+
+
+
+
+  user-photo
+  my-game-chat-names
+  my-tribe-chat-name
+
+  tribe and game = userName on msg sent
+  notifications red color dot...
+  time stamp 
+  count of msgs
+  modify mygame chat name with date and remove timestamp
